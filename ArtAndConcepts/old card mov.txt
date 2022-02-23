@@ -1,0 +1,40 @@
+private void Update()
+        {
+            float _detlaTime = Time.deltaTime * 30;
+            if (!isMouseOff)
+            {
+                Vector3 startMousePos = _cardColliderScript.GetRaycastHit().point;
+                float relativeXToMouse = (_startCardPos.x - startMousePos.x) / (_cardSpriteSize.x / 2);
+                float relativeYToMouse = (_startCardPos.y - startMousePos.y) / (_cardSpriteSize.y / 2);
+                float relativeToMouse = (Mathf.Abs(relativeXToMouse) + Mathf.Abs(relativeYToMouse)) / 2;
+                Vector3 asd = new Vector3(15 * relativeXToMouse, 15 * relativeYToMouse, 0);
+                _spriteRenderer.transform.SetPositionAndRotation(_spriteRenderer.transform.position, Quaternion.FromToRotation(_spriteRenderer.transform.position,new Vector3(startMousePos.x, startMousePos.y, _spriteRenderer.transform.position.z)));
+                //_spriteRenderer.transform.Rotate(new Vector3(0.1f + relativeXToMouse * _detlaTime * _cardRotateMultiplier, 0.1f + relativeYToMouse * _detlaTime * _cardRotateMultiplier, 0f));
+
+                if (transform.position.z > -3f)
+                {
+                    transform.position = transform.position + _cardMoveDirection * _detlaTime * _cardMoveMultiplier;
+                    if (transform.position.z < -3) { transform.position = new Vector3(transform.position.x, transform.position.y,-3);
+                        if (_cardCollider.GetComponent<CardCollider2D>().GetTrueMousePosition()) { isMouseOff = true; }
+                    };
+                    //_sizeMult = Mathf.Pow(1.1f, Mathf.Abs(1 - transform.position.z));
+                    //_cardCollider.GetComponent<BoxCollider>().size = _spriteRenderer.size * _sizeMult;
+                }
+            }
+            else
+            {
+
+                if (_spriteRenderer.transform.localRotation.x != 0 && _spriteRenderer.transform.localRotation.y != 0 && _spriteRenderer.transform.localRotation.z != 0)
+                {
+                    _spriteRenderer.transform.Rotate(new Vector3(-_spriteRenderer.transform.localRotation.x * _detlaTime * _cardRotateMultiplier, -_spriteRenderer.transform.localRotation.y * _detlaTime * _cardRotateMultiplier, -_spriteRenderer.transform.localRotation.z * _detlaTime * _cardRotateMultiplier * 2));
+
+                    if (transform.position.z < -2)
+                    {
+                        transform.position = transform.position - _cardMoveDirection * _detlaTime * _cardMoveMultiplier;
+                        //_sizeMult = Mathf.Pow(1.1f, Mathf.Abs(1 - transform.position.z));
+                        //_cardCollider.GetComponent<BoxCollider>().size = _spriteRenderer.size * _sizeMult;
+                        if (transform.position.z > -2) { transform.position = new Vector3(transform.position.x, transform.position.y, -2);};
+                    }
+                }
+            }
+        }
