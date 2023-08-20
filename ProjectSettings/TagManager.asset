@@ -41,3 +41,15 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: UI
+    uniqueID: 484459215
+    locked: 0
+  - name: Background
+    uniqueID: 2773978195
+    locked: 0
+  - name: Cards
+    uniqueID: 749436469
+    locked: 0
+  - name: Battlefield
+    uniqueID: 1801604777
+    locked: 0
