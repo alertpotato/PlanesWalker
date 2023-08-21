@@ -1,16 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+public enum eventState { chosingCards, presentArmies };
 public class GameLoopSharedData : MonoBehaviour
 {
     public eventState state { get; private set; }
     public List<GameObject> _cards;
     public List<GameObject> _cardsEnemy;
-    public List<ArmyUnitClass> _newArmyList;
+    public List<GameObject> _newArmyList;
     [SerializeField]private GameObject YourHero;
     [SerializeField]private GameObject EvilHero;
     [SerializeField]private GameObject YourArmy;
+    [SerializeField]private GameObject Unit;
+    [SerializeField]private GameObject UnitCardMain;
     private int _countUnitsSelected;
     public ListOfCommonUnits listOfCommonUnits;
 
@@ -22,15 +24,12 @@ public class GameLoopSharedData : MonoBehaviour
     {
         YourHero = Instantiate(YourHero);
         EvilHero = Instantiate(EvilHero);
-        _newArmyList = new List<ArmyUnitClass>();
+        _newArmyList = new List<GameObject>();
         _cards = new List<GameObject>();
         _cardsEnemy = new List<GameObject>();
-        //listOfCommonUnits = ScriptableObject.CreateInstance<ListOfCommonUnits>();
-        //listOfCommonObjects = ScriptableObject.CreateInstance<ListOfObjects>();
-        listOfCommonUnits.CreateUnits();
     }
     
-    private void Start() 
+    private void Start()
     {
         YourHero.GetComponent<Hero>().modifyHero("Chosen one", 1, 1);
         EvilHero.GetComponent<Hero>().modifyHero("Dark Lord", 1, 1);
@@ -41,6 +40,7 @@ public class GameLoopSharedData : MonoBehaviour
         _countUnitsSelected = 0;
         spriteUiList = new List<Sprite>(Resources.LoadAll<Sprite>("Sprites/ui"));
         YourArmy = Instantiate(YourArmy);
+        listOfCommonUnits.GetRandomUnit("p");
     }
     private void Update()
     {
@@ -77,7 +77,7 @@ public class GameLoopSharedData : MonoBehaviour
 
             //Sprite _sprite = listOfCommonObjects.GetSpriteByName(cardChosenToField.GetComponent<UnitCardMain>().GetCardUnit().unitname, "units") ;
 
-            _chosenCell.GetComponent<ArmyCellScript>().backSpriteRendererScript.SetSpriteByName(cardChosenToField.GetComponent<UnitCardMain>().GetCardUnit().unitname);
+            _chosenCell.GetComponent<ArmyCellScript>().backSpriteRendererScript.SetSpriteByName(cardChosenToField.GetComponent<UnitCardMain>().GetCardUnit().GetComponent<ArmyUnitClass>().unitname);
             //_chosenCell.GetComponent<ArmyCellScript>().backSpriteRendererScript.SetSpriteByName(cardChosenToField.GetComponent<UnitCardMain>().GetCardUnit().unitname);
             //_chosenCell.GetComponent<ArmyCellScript>().ChangeSprite(_sprite);
 
@@ -94,13 +94,13 @@ public class GameLoopSharedData : MonoBehaviour
         {
             var a = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width / 4, (Screen.height / (_yourHero.bannersList.Count + 1)) * (i + 1), 8));
             _cards.Add(Instantiate(Resources.Load<GameObject>("Prefab/UnitCardMain")));
-            _cards[i].GetComponent<UnitCardMain>().SetUnitParameters(_yourHero.bannersList[i].unitname, _yourHero.bannersList[i], a,true);
+            _cards[i].GetComponent<UnitCardMain>().SetUnitParameters(_yourHero.bannersList[i], a,true);
         }
         for (int i = 0; i < _enemyHero.bannersList.Count; i++)
         {
             var a = Camera.main.ScreenToWorldPoint(new Vector3((Screen.width / 4) * 3, (Screen.height / (_enemyHero.bannersList.Count + 1)) * (i + 1), 8));
             _cardsEnemy.Add(Instantiate(Resources.Load<GameObject>("Prefab/UnitCardMain")));
-            _cardsEnemy[i].GetComponent<UnitCardMain>().SetUnitParameters(_enemyHero.bannersList[i].unitname, _enemyHero.bannersList[i], a, true);
+            _cardsEnemy[i].GetComponent<UnitCardMain>().SetUnitParameters(_enemyHero.bannersList[i], a, true);
         }
     }
     private void ChosingArmyEvent() { CreateCardChoice(5); }
@@ -112,10 +112,12 @@ public class GameLoopSharedData : MonoBehaviour
             //float r = Random.value;
             var a = Camera.main.ScreenToWorldPoint(new Vector3((Screen.width / (cardsNum + 2)) * (i + 1), Screen.height/2, 8));
             var _newUnit = listOfCommonUnits.GetRandomUnit("p");
-            ArmyUnitClass newSquad =  new ArmyUnitClass(_newUnit.Item1, _newUnit.Item2);
+            GameObject newSquad = Instantiate(Unit);
+            newSquad.GetComponent<ArmyUnitClass>().UpdateUnitCharacteristics(_newUnit.Item1, _newUnit.Item2);
             _newArmyList.Add(newSquad);
-            _cards.Add(Instantiate(Resources.Load<GameObject>("Prefab/UnitCardMain")));
-            _cards[i].GetComponent<UnitCardMain>().SetUnitParameters(newSquad.unitname, newSquad, a,false);
+            GameObject newCard = Instantiate(UnitCardMain);
+            _cards.Add(newCard);
+            _cards[i].GetComponent<UnitCardMain>().SetUnitParameters(newSquad, a,false);
         }
     }
 
@@ -128,7 +130,7 @@ public class GameLoopSharedData : MonoBehaviour
         {
             Destroy(__card);
         }
-        foreach (ArmyUnitClass _army in _newArmyList)
+        foreach (GameObject _army in _newArmyList)
         {
             Destroy(_army);
         }
@@ -155,11 +157,14 @@ public class GameLoopSharedData : MonoBehaviour
     private void AddEvilArmy(Hero _hero)
     {
         var army1 = listOfCommonUnits.GetRandomUnit("e");
-        ArmyUnitClass firstEvilSquad = new ArmyUnitClass(army1.Item1, army1.Item2);
+        GameObject firstEvilSquad = Instantiate(Unit);
+        firstEvilSquad.GetComponent<ArmyUnitClass>().UpdateUnitCharacteristics(army1.Item1, army1.Item2);
         var army2 = listOfCommonUnits.GetRandomUnit("e");
-        ArmyUnitClass seconEvildSquad = new ArmyUnitClass(army2.Item1, army2.Item2);
+        GameObject seconEvildSquad = Instantiate(Unit);
+        seconEvildSquad.GetComponent<ArmyUnitClass>().UpdateUnitCharacteristics(army2.Item1, army2.Item2);
         var army3 = listOfCommonUnits.GetRandomUnit("e");
-        ArmyUnitClass thirdEvilSquad = new ArmyUnitClass(army3.Item1, army3.Item2);
+        GameObject thirdEvilSquad = Instantiate(Unit);
+        thirdEvilSquad.GetComponent<ArmyUnitClass>().UpdateUnitCharacteristics(army3.Item1, army3.Item2);
         _hero.AddBannerList(firstEvilSquad); _hero.AddBannerList(seconEvildSquad);_hero.AddBannerList(thirdEvilSquad);
     }
     //private void StaticCardChise()

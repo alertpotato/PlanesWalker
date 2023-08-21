@@ -24,15 +24,15 @@ class Battle
         int RightI = rnd.Next(0, hero1.bannersList.Count);
 
         Console.WriteLine($"---=== Round {roundnumber}, Left army hp {hero2.GetArmyTotalHp()}, Right army hp {hero1.GetArmyTotalHp()},");
+        
+//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA Rewrite later
+        //int hero1unitdmg = hero1.bannersList[RightI].GetUnitDamage().currentunitdamage; int hero1squaddmg = hero1.bannersList[RightI].GetAlldamage(); string hero1unitname = hero1.bannersList[RightI].unitname;
+        //int hero2unitdmg = hero2.bannersList[LeftI].GetUnitDamage().currentunitdamage; int hero2squaddmg = hero2.bannersList[LeftI].GetAlldamage(); string hero2unitname = hero2.bannersList[LeftI].unitname;
 
-        int hero1unitdmg = hero1.bannersList[RightI].GetUnitDamage().currentunitdamage; int hero1squaddmg = hero1.bannersList[RightI].GetAlldamage(); string hero1unitname = hero1.bannersList[RightI].unitname;
-        int hero2unitdmg = hero2.bannersList[LeftI].GetUnitDamage().currentunitdamage; int hero2squaddmg = hero2.bannersList[LeftI].GetAlldamage(); string hero2unitname = hero2.bannersList[LeftI].unitname;
+        //TakeDamage(hero2.bannersList[LeftI], hero1squaddmg, hero1unitdmg, hero1unitname);
+        //TakeDamage(hero1.bannersList[RightI], hero2squaddmg, hero2unitdmg, hero2unitname);
 
-
-        TakeDamage(hero2.bannersList[LeftI], hero1squaddmg, hero1unitdmg, hero1unitname);
-        TakeDamage(hero1.bannersList[RightI], hero2squaddmg, hero2unitdmg, hero2unitname);
-
-        hero2.IsUnitAlive(hero2.bannersList[LeftI]); hero1.IsUnitAlive(hero1.bannersList[RightI]);
+        //hero2.IsUnitAlive(hero2.bannersList[LeftI]); hero1.IsUnitAlive(hero1.bannersList[RightI]);
 
         if (hero2.GetArmyTotalHp() == 0) { Console.WriteLine($"{hero2.name} defeted..."); battlecontinue = false; }
         if (hero1.GetArmyTotalHp() == 0) { Console.WriteLine($"{hero1.name} defeted..."); battlecontinue = false; }

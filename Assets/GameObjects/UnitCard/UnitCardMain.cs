@@ -2,13 +2,13 @@ using UnityEngine;
 
 public class UnitCardMain : MonoBehaviour
 {
+    public GameObject RelatedUnit;
     private GameObject _cardCollider;
     private UnitCardCollider _cardColliderScript;
     private GameObject _cardSprite;
     private GameObject _cardText;
     private SpriteRenderer _spriteRenderer;
     private Camera _mainCamera;
-    private ArmyUnitClass thisUnit;
     [SerializeField] private Vector2 _cardSpriteSize;
     [SerializeField] private float _cardMoveMultiplier;
     [SerializeField] private float _cardRotateMultiplier;
@@ -88,15 +88,16 @@ public class UnitCardMain : MonoBehaviour
             }
         }
     }
-    public void SetUnitParameters(string unitname, ArmyUnitClass unit, Vector3 _pos, bool isInArmy)
+    public void SetUnitParameters(GameObject unit,Vector3 _pos, bool isInArmy)
     {
-        _cardSprite.GetComponent<UnitCardSprite>().SetSpriteByName(unitname);
+        RelatedUnit = unit;
+        ArmyUnitClass RelatedUnitClass = RelatedUnit.GetComponent<ArmyUnitClass>();
+        _cardSprite.GetComponent<UnitCardSprite>().SetSpriteByName(RelatedUnitClass.unitname);
         _cardSpriteSize = _spriteRenderer.size;
         _cardCollider.GetComponent<BoxCollider>().size = new Vector3(_spriteRenderer.size.x, _spriteRenderer.size.y, 0.1f);
-        _cardText.GetComponent<UnitCardText>().ChangeText(unit.armyunithealth.startunithealth, unit.armyunithealth.currentsquadhealth, unit.armyunithealth.startsquadhealth, unit.numberofunits.currentnumberofunits, unit.numberofunits.startnumberofunits, unit.unitdamage.startunitdamage, unit.unitstats.currentinitiative, unit.unitstats.startinitiative, unit.unitstats.currentcohesion, unit.unitstats.startcohesion, unit.unitstats.currentarmour, unit.unitUpgrades);
+        _cardText.GetComponent<UnitCardText>().ChangeText(RelatedUnitClass.CurrentUnitCharacteristics.ucunithealth, RelatedUnitClass.CurrentUnitCharacteristics.ucunithealth, RelatedUnitClass.CurrentUnitCharacteristics.ucunithealth, RelatedUnitClass.CurrentUnitCharacteristics.ucnumberofunits, RelatedUnitClass.CurrentUnitCharacteristics.ucnumberofunits, RelatedUnitClass.CurrentUnitCharacteristics.ucunitdamage, RelatedUnitClass.CurrentUnitCharacteristics.ucunitinitiative, RelatedUnitClass.CurrentUnitCharacteristics.ucunitinitiative, RelatedUnitClass.CurrentUnitCharacteristics.ucunitcohesion, RelatedUnitClass.CurrentUnitCharacteristics.ucunitcohesion, RelatedUnitClass.CurrentUnitCharacteristics.unitarmour, RelatedUnitClass.unitUpgrades);
         transform.position = _pos;
         transform.localPosition = _pos;
-        thisUnit = unit;
         isUnitInArmy = isInArmy;
     }
     public void OnMouseEnterCollider()
@@ -121,6 +122,6 @@ public class UnitCardMain : MonoBehaviour
     {
         EventManager.StartCardChosen(this.gameObject,isUnitInArmy);
     }
-    public ArmyUnitClass GetCardUnit()
-    { return thisUnit; }
+    public GameObject GetCardUnit()
+    { return RelatedUnit; }
 }

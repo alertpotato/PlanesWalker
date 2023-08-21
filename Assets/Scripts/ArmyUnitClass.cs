@@ -1,14 +1,16 @@
 ﻿using System;
 using UnityEngine;
 
+[System.Serializable]
 public struct UnitCharacteristics 
 {
-    public string ucunitname; public int ucnumberofunits; public int ucunithealth; public int ucunitdamage; public int ucunitinitiative; public int ucunitcohesion; public int unitarmour;
-    public UnitCharacteristics(string n, int num, int h, int d, int init, int coh, int armour) 
+    public int ucnumberofunits; public int ucunithealth; public int ucunitdamage; public int ucunitinitiative; public int ucunitcohesion; public int unitarmour;
+    public UnitCharacteristics(int num, int h, int d, int init, int coh, int armour)
     {
-        ucunitname = n;ucnumberofunits = num; ucunithealth = h; ucunitdamage = d; ucunitinitiative = init; ; ucunitcohesion = coh; unitarmour = armour;
+        ucnumberofunits = num; ucunithealth = h; ucunitdamage = d; ucunitinitiative = init; ; ucunitcohesion = coh; unitarmour = armour;
     }
 }
+[System.Serializable]
 public struct CountUnitUpgrades
 {
     public int chealth; public int cnumber; public int cdamage; public int cinitiative; public int ccohesion; public int carmour;
@@ -23,9 +25,9 @@ public class ArmyUnitClass : MonoBehaviour
     public struct ArmyUnitHealth { public int startunithealth; public int currentunithealth; public int regenunithealth; public int startsquadhealth; public int currentsquadhealth; }
     public struct UnitDamage { public int startunitdamage; public int currentunitdamage; }
     public struct UnitStats { public int startinitiative; public int currentinitiative; public int startcohesion; public int currentcohesion; public int startarmour; public int currentarmour; }
-
+    public UnitCharacteristics BaseUnitCharacteristics;
+    public UnitCharacteristics CurrentUnitCharacteristics;
     public NumberOfUnits numberofunits; public ArmyUnitHealth armyunithealth; public UnitDamage unitdamage; public UnitStats unitstats; public CountUnitUpgrades unitUpgrades;
-
     public int[] battletarget = new int[] { 0, 0 };
     private bool ismelee = true;
     private bool isranged = false;
@@ -33,7 +35,8 @@ public class ArmyUnitClass : MonoBehaviour
     public string armytype = "infantry";
     public string unitname;
     public string unitnameprefix;
-
+    
+    public ScriptableObject BaseLineCharacteristics;
     public ArmyUnitClass(string n, int num, int h, int d, int init, int coh, int regen, int armour)
     {
         unitname = n;
@@ -47,7 +50,7 @@ public class ArmyUnitClass : MonoBehaviour
     }
     public ArmyUnitClass(UnitCharacteristics uchar, CountUnitUpgrades uupgrd)
     {
-        unitname = uchar.ucunitname;
+        UpdateUnitCharacteristics(uchar,uupgrd);
         numberofunits.startnumberofunits = numberofunits.currentnumberofunits = uchar.ucnumberofunits;
         armyunithealth.startunithealth = armyunithealth.currentunithealth = uchar.ucunithealth; armyunithealth.regenunithealth = 0;
         armyunithealth.startsquadhealth = armyunithealth.currentsquadhealth = armyunithealth.startunithealth * numberofunits.startnumberofunits;
@@ -57,6 +60,13 @@ public class ArmyUnitClass : MonoBehaviour
         unitUpgrades = uupgrd;
         if (uchar.ucunitcohesion < 0 & numberofunits.currentnumberofunits > 1) { unitnameprefix = "Rabble of "; }
     }
+
+    public void UpdateUnitCharacteristics(UnitCharacteristics uchar,CountUnitUpgrades cupgrd)
+    {
+        CurrentUnitCharacteristics = uchar;
+        unitUpgrades = cupgrd;
+    }
+
     public string Getinfo()
     {
         string main_text = "";
@@ -70,7 +80,7 @@ public class ArmyUnitClass : MonoBehaviour
     public int GetUnitHP() { return armyunithealth.currentsquadhealth; }
     public (UnitCharacteristics,CountUnitUpgrades) GetUnitCharacteristics()
     {
-        var unitchar = new UnitCharacteristics(unitname, numberofunits.currentnumberofunits, armyunithealth.currentunithealth, unitdamage.currentunitdamage, unitstats.currentinitiative, unitstats.currentcohesion,unitstats.currentarmour);
+        var unitchar = new UnitCharacteristics(numberofunits.currentnumberofunits, armyunithealth.currentunithealth, unitdamage.currentunitdamage, unitstats.currentinitiative, unitstats.currentcohesion,unitstats.currentarmour);
         return (unitchar,unitUpgrades);
     }
     public void ApplyHeroModifyers(int hminitiative, int hmcohesion) { unitstats.currentinitiative = unitstats.startinitiative + hminitiative; unitstats.currentcohesion = unitstats.startcohesion + hmcohesion; }

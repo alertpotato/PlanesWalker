@@ -6,17 +6,17 @@ using UnityEngine;
 public enum cellType { Forbidden, Empty, Occupied };
 public struct ArmyCell
 {
-    ArmyUnitClass unit; public cellType type { get; set; }
+    GameObject unit; public cellType type { get; set; }
     int initiativeMod; int cohesionMod; int defenceMod; int regenCohMod; int damageMod;
     public ArmyCell(cellType _type) { unit = null; type = _type; initiativeMod = 0; cohesionMod = 0; defenceMod = 0; regenCohMod = 0; damageMod = 0; }
-    public ArmyCell(ArmyUnitClass _unit, int _init, int _coh, int _def, int _reg, int _dam) { unit = _unit; type = cellType.Occupied; initiativeMod = _init; cohesionMod = _coh; defenceMod = _def; regenCohMod = _reg; damageMod = _dam; }
+    public ArmyCell(GameObject _unit, int _init, int _coh, int _def, int _reg, int _dam) { unit = _unit; type = cellType.Occupied; initiativeMod = _init; cohesionMod = _coh; defenceMod = _def; regenCohMod = _reg; damageMod = _dam; }
 }
 public class Hero : MonoBehaviour
 {
     public string heroName;
     [SerializeField] private int modinit = 0;
     [SerializeField] private int modcoh = 0;
-    public List<ArmyUnitClass> bannersList = new List<ArmyUnitClass> { };
+    public List<GameObject> bannersList = new List<GameObject> { };
     public struct Army { public int lineNumber; public int columnNumber; public ArmyUnitClass unit; }
     public List<List<ArmyCell>> ArmyFormation = new List<List<ArmyCell>>();
     private void Awake()
@@ -50,35 +50,35 @@ public class Hero : MonoBehaviour
         int totalHP = 0;
         for (int i = 0; i != bannersList.Count; i++)
         {
-            totalHP = totalHP + bannersList[i].GetUnitHP();
+            totalHP = totalHP + bannersList[i].GetComponent<ArmyUnitClass>().GetUnitHP();
         }
         return totalHP;
     }
     public void IsUnitAlive(ArmyUnitClass checkedunit)
     {
         //if (checkedunit.unit.GetUnitHP() == 0) { Console.WriteLine($"--Unit {checkedunit.unit.unitname} DESTOYED--"); bannersList.Remove(checkedunit); checkedunit.unit = null; }
-        if (checkedunit.GetUnitHP() == 0) { Console.WriteLine($"--Unit {checkedunit.unitname} DESTOYED--"); bannersList.Remove(checkedunit); checkedunit = null; }
+        //if (checkedunit.GetUnitHP() == 0) { Console.WriteLine($"--Unit {checkedunit.unitname} DESTOYED--"); bannersList.Remove(checkedunit); checkedunit = null; }
     }
-    public void AddBannerList(ArmyUnitClass unit)
+    public void AddBannerList(GameObject unit)
     {
         bannersList.Add(unit);
-        unit.ApplyHeroModifyers(modinit, modcoh);
+        unit.GetComponent<ArmyUnitClass>().ApplyHeroModifyers(modinit, modcoh);
     }
     public int GetMaxInitiative()
     {
-        int MaxInit = bannersList[0].GetUnitCharacteristics().Item1.ucunitinitiative;
+        int MaxInit = bannersList[0].GetComponent<ArmyUnitClass>().GetUnitCharacteristics().Item1.ucunitinitiative;
         for (int i = 0; i < bannersList.Count; i++)
         {
-            if (MaxInit < bannersList[i].GetUnitCharacteristics().Item1.ucunitinitiative) { MaxInit = bannersList[i].GetUnitCharacteristics().Item1.ucunitinitiative; }
+            if (MaxInit < bannersList[i].GetComponent<ArmyUnitClass>().GetUnitCharacteristics().Item1.ucunitinitiative) { MaxInit = bannersList[i].GetComponent<ArmyUnitClass>().GetUnitCharacteristics().Item1.ucunitinitiative; }
         }
         return MaxInit;
     }
     public int GetMinInitiative()
     {
-        int MinInit = bannersList[0].GetUnitCharacteristics().Item1.ucunitinitiative;
+        int MinInit = bannersList[0].GetComponent<ArmyUnitClass>().GetUnitCharacteristics().Item1.ucunitinitiative;
         for (int i = 0; i < bannersList.Count; i++)
         {
-            if (MinInit > bannersList[i].GetUnitCharacteristics().Item1.ucunitinitiative) { MinInit = bannersList[i].GetUnitCharacteristics().Item1.ucunitinitiative; }
+            if (MinInit > bannersList[i].GetComponent<ArmyUnitClass>().GetUnitCharacteristics().Item1.ucunitinitiative) { MinInit = bannersList[i].GetComponent<ArmyUnitClass>().GetUnitCharacteristics().Item1.ucunitinitiative; }
         }
         return MinInit;
     }
@@ -86,8 +86,8 @@ public class Hero : MonoBehaviour
     public string GetBannerList()
     {
         string asd = ""; int i = 1;
-        foreach (ArmyUnitClass banner in bannersList)
-        { asd = $"{asd} {i} {banner.unitname}"; i++; }
+        foreach (GameObject banner in bannersList)
+        { asd = $"{asd} {i} {banner.GetComponent<ArmyUnitClass>().unitname}"; i++; }
         return asd;
     }
 }

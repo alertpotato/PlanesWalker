@@ -53,6 +53,8 @@ MonoBehaviour:
   YourHero: {fileID: 4566354792725591614, guid: 2132259902ea23648a531edf4119b785, type: 3}
   EvilHero: {fileID: 4566354792725591614, guid: 2132259902ea23648a531edf4119b785, type: 3}
   YourArmy: {fileID: 1663674510673476570, guid: 46bc1bb052637164895a4735126149da, type: 3}
+  Unit: {fileID: 918958474132185176, guid: bf59c730e343e07429aca668f5e86307, type: 3}
+  UnitCardMain: {fileID: 5469837566480996917, guid: d12a8ca1ab4c2d04289b0ea6fc21720b, type: 3}
   listOfCommonUnits: {fileID: 11400000, guid: 4df28bdcbf64e5241a86717ac39ecdeb, type: 2}
   listOfCommonObjects: {fileID: 11400000, guid: 581108407c6fb1c4bb9229ec66c349ba, type: 2}
 --- !u!114 &6890867112935168127

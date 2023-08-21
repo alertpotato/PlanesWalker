@@ -12,4 +12,227 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39f478c9b29317a4ca0c10ba7f1474a2, type: 3}
   m_Name: List Of Common Units
   m_EditorClassIdentifier: 
-  testVal: 1
+  pointsRandomizerList:
+  - points: 2
+    weight: 500
+  - points: 3
+    weight: 1000
+  - points: 4
+    weight: 250
+  - points: 5
+    weight: 10
+  - points: 6
+    weight: 1
+  UnitGoodList:
+  - UnitType: local_militia
+    UnitCharacteristics:
+      ucunitname: local_militia
+      ucnumberofunits: 14
+      ucunithealth: 3
+      ucunitdamage: 3
+      ucunitinitiative: -1
+      ucunitcohesion: -1
+      unitarmour: 0
+    CharacteristicsWeightsList:
+    - unitParam: number
+      cost: 1
+      paramMod: 5
+      paramWeight: 12
+    - unitParam: health
+      cost: 1
+      paramMod: 1
+      paramWeight: 10
+    - unitParam: damage
+      cost: 2
+      paramMod: 1
+      paramWeight: 8
+    - unitParam: init
+      cost: 1
+      paramMod: 1
+      paramWeight: 5
+    - unitParam: coh
+      cost: 1
+      paramMod: 1
+      paramWeight: 5
+    - unitParam: armour
+      cost: 5
+      paramMod: 1
+      paramWeight: 2
+    UnitWeight: 10
+  - UnitType: dirty_thieves
+    UnitCharacteristics:
+      ucunitname: dirty_thieves
+      ucnumberofunits: 7
+      ucunithealth: 5
+      ucunitdamage: 6
+      ucunitinitiative: 0
+      ucunitcohesion: -2
+      unitarmour: 0
+    CharacteristicsWeightsList:
+    - unitParam: number
+      cost: 2
+      paramMod: 4
+      paramWeight: 7
+    - unitParam: health
+      cost: 1
+      paramMod: 1
+      paramWeight: 10
+    - unitParam: damage
+      cost: 1
+      paramMod: 2
+      paramWeight: 10
+    - unitParam: init
+      cost: 1
+      paramMod: 1
+      paramWeight: 12
+    - unitParam: coh
+      cost: 1
+      paramMod: 1
+      paramWeight: 5
+    - unitParam: armour
+      cost: 5
+      paramMod: 1
+      paramWeight: 2
+    UnitWeight: 8
+  - UnitType: trained_warriors
+    UnitCharacteristics:
+      ucunitname: trained_warriors
+      ucnumberofunits: 5
+      ucunithealth: 8
+      ucunitdamage: 5
+      ucunitinitiative: 0
+      ucunitcohesion: 2
+      unitarmour: 0
+    CharacteristicsWeightsList:
+    - unitParam: number
+      cost: 1
+      paramMod: 2
+      paramWeight: 7
+    - unitParam: health
+      cost: 1
+      paramMod: 2
+      paramWeight: 12
+    - unitParam: damage
+      cost: 2
+      paramMod: 2
+      paramWeight: 10
+    - unitParam: init
+      cost: 1
+      paramMod: 1
+      paramWeight: 9
+    - unitParam: coh
+      cost: 1
+      paramMod: 2
+      paramWeight: 4
+    - unitParam: armour
+      cost: 3
+      paramMod: 1
+      paramWeight: 4
+    UnitWeight: 6
+  UnitEvilList:
+  - UnitType: ogre
+    UnitCharacteristics:
+      ucunitname: ogre
+      ucnumberofunits: 1
+      ucunithealth: 40
+      ucunitdamage: 15
+      ucunitinitiative: 0
+      ucunitcohesion: -3
+      unitarmour: 2
+    CharacteristicsWeightsList:
+    - unitParam: number
+      cost: 4
+      paramMod: 1
+      paramWeight: 2
+    - unitParam: health
+      cost: 1
+      paramMod: 15
+      paramWeight: 10
+    - unitParam: damage
+      cost: 1
+      paramMod: 5
+      paramWeight: 10
+    - unitParam: init
+      cost: 1
+      paramMod: 1
+      paramWeight: 7
+    - unitParam: coh
+      cost: 1
+      paramMod: 2
+      paramWeight: 4
+    - unitParam: armour
+      cost: 2
+      paramMod: 1
+      paramWeight: 4
+    UnitWeight: 6
+  - UnitType: goblin_rogue
+    UnitCharacteristics:
+      ucunitname: goblin_rogue
+      ucnumberofunits: 12
+      ucunithealth: 3
+      ucunitdamage: 3
+      ucunitinitiative: 2
+      ucunitcohesion: -1
+      unitarmour: 0
+    CharacteristicsWeightsList:
+    - unitParam: number
+      cost: 2
+      paramMod: 5
+      paramWeight: 10
+    - unitParam: health
+      cost: 1
+      paramMod: 1
+      paramWeight: 8
+    - unitParam: damage
+      cost: 1
+      paramMod: 1
+      paramWeight: 12
+    - unitParam: init
+      cost: 1
+      paramMod: 1
+      paramWeight: 12
+    - unitParam: coh
+      cost: 1
+      paramMod: 1
+      paramWeight: 8
+    - unitParam: armour
+      cost: 5
+      paramMod: 1
+      paramWeight: 2
+    UnitWeight: 8
+  - UnitType: goblin_punks
+    UnitCharacteristics:
+      ucunitname: goblin_punks
+      ucnumberofunits: 20
+      ucunithealth: 3
+      ucunitdamage: 2
+      ucunitinitiative: -1
+      ucunitcohesion: -3
+      unitarmour: 0
+    CharacteristicsWeightsList:
+    - unitParam: number
+      cost: 2
+      paramMod: 7
+      paramWeight: 12
+    - unitParam: health
+      cost: 1
+      paramMod: 1
+      paramWeight: 5
+    - unitParam: damage
+      cost: 2
+      paramMod: 1
+      paramWeight: 8
+    - unitParam: init
+      cost: 1
+      paramMod: 1
+      paramWeight: 12
+    - unitParam: coh
+      cost: 1
+      paramMod: 1
+      paramWeight: 5
+    - unitParam: armour
+      cost: 6
+      paramMod: 1
+      paramWeight: 2
+    UnitWeight: 10
+  UnitPrefab: {fileID: 918958474132185176, guid: bf59c730e343e07429aca668f5e86307, type: 3}
