@@ -1,13 +1,13 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class UnitCardMain : MonoBehaviour
 {
     public GameObject RelatedUnit;
-    private GameObject _cardCollider;
-    private UnitCardCollider _cardColliderScript;
-    private GameObject _cardSprite;
-    private GameObject _cardText;
-    private SpriteRenderer _spriteRenderer;
+    public BoxCollider _cardCollider;
+    public SpriteRenderer _cardSprite;
+    public GameObject _cardText;
+    public List<Sprite> spriteList;
     private Camera _mainCamera;
     [SerializeField] private Vector2 _cardSpriteSize;
     [SerializeField] private float _cardMoveMultiplier;
@@ -25,26 +25,16 @@ public class UnitCardMain : MonoBehaviour
 
     private void Awake()
     {
-        _cardCollider = Instantiate(Resources.Load<GameObject>("Prefab/UnitCardCollider"));
-        _cardCollider.transform.SetParent(this.transform);
-        _cardColliderScript = _cardCollider.GetComponent<UnitCardCollider>();
-        _cardSprite = Instantiate(Resources.Load<GameObject>("Prefab/UnitCardSprite"));
-        _cardSprite.transform.SetParent(this.transform);
-        _cardText = Instantiate(Resources.Load<GameObject>("Prefab/UnitCardText"));
-        _cardText.transform.SetParent(_cardSprite.transform);
-        _spriteRenderer = _cardSprite.GetComponent<SpriteRenderer>();
+        _cardText = Instantiate(_cardText);
         _mainCamera = Camera.main;
-        _cardCollider.transform.position = this.transform.position;
-        _spriteRenderer.transform.position = this.transform.position;
         _cardText.transform.position = this.transform.position;
     }
     private void Start()
     {
-        _cardCollider.GetComponent<UnitCardCollider>().GetParent(this);
-        _spriteRenderer.color = _startCardColor;
-        _startCardSize = _spriteRenderer.size;
-
-        _startCardPos = _spriteRenderer.transform.position;
+        spriteList = new List<Sprite>(Resources.LoadAll<Sprite>("Sprites/spites"));
+        _cardSprite.color = _startCardColor;
+        _startCardSize = _cardSprite.size;
+        _startCardPos = _cardSprite.transform.position;
         _cardMoveMultiplier = 3;
         _cardRotateMultiplier = 10;
         _cardText.transform.localPosition = new Vector3(_cardSpriteSize.x / 2,0,-0.05f);
@@ -57,12 +47,12 @@ public class UnitCardMain : MonoBehaviour
         if (!isMouseOff)
         {
             float _approach = 0.1f * (_mainCamera.transform.position.z - _startCardPos.z);
-            Vector3 startMousePos = _cardColliderScript.GetRaycastHit().point;
+            Vector3 startMousePos = GetRaycastHit().point;
             float relativeXToMouse = (transform.position.x - startMousePos.x) / (_cardSpriteSize.x / 2);
             float relativeYToMouse = (transform.position.y - startMousePos.y) / (_cardSpriteSize.y / 2);
             float relativeToMouse = (Mathf.Abs(relativeXToMouse) + Mathf.Abs(relativeYToMouse)) / 2;
             Vector3 asd = new Vector3(15 * relativeXToMouse, 15 * relativeYToMouse, 0);
-            _spriteRenderer.transform.SetPositionAndRotation(_spriteRenderer.transform.position, Quaternion.FromToRotation(_spriteRenderer.transform.position,new Vector3(startMousePos.x, startMousePos.y, _spriteRenderer.transform.position.z)));
+            transform.SetPositionAndRotation(transform.position, Quaternion.FromToRotation(transform.position,new Vector3(startMousePos.x, startMousePos.y, transform.position.z)));
             //if (transform.position.z > transform.position.z+_approach)
             //{
             //    transform.position = transform.position + _cardMoveDirection * _detlaTime * _cardMoveMultiplier;
@@ -75,9 +65,9 @@ public class UnitCardMain : MonoBehaviour
         }
         else
         {
-            if (_spriteRenderer.transform.localRotation.x != 0 && _spriteRenderer.transform.localRotation.y != 0 && _spriteRenderer.transform.localRotation.z != 0)
+            if (transform.localRotation.x != 0 && transform.localRotation.y != 0 && transform.localRotation.z != 0)
             {
-                _spriteRenderer.transform.Rotate(new Vector3(-_spriteRenderer.transform.localRotation.x * _detlaTime * _cardRotateMultiplier, -_spriteRenderer.transform.localRotation.y * _detlaTime * _cardRotateMultiplier, -_spriteRenderer.transform.localRotation.z * _detlaTime * _cardRotateMultiplier * 2));
+                transform.Rotate(new Vector3(-transform.localRotation.x * _detlaTime * _cardRotateMultiplier, -transform.localRotation.y * _detlaTime * _cardRotateMultiplier, -transform.localRotation.z * _detlaTime * _cardRotateMultiplier * 2));
                 //if (transform.position.z < -2)
                 //{
                 //    transform.position = transform.position - _cardMoveDirection * _detlaTime * _cardMoveMultiplier;
@@ -93,8 +83,8 @@ public class UnitCardMain : MonoBehaviour
         RelatedUnit = unit;
         ArmyUnitClass RelatedUnitClass = RelatedUnit.GetComponent<ArmyUnitClass>();
         _cardSprite.GetComponent<UnitCardSprite>().SetSpriteByName(RelatedUnitClass.unitname);
-        _cardSpriteSize = _spriteRenderer.size;
-        _cardCollider.GetComponent<BoxCollider>().size = new Vector3(_spriteRenderer.size.x, _spriteRenderer.size.y, 0.1f);
+        _cardSpriteSize = _cardSprite.size;
+        _cardCollider.size = new Vector3(_cardSprite.size.x, _cardSprite.size.y, 0.1f);
         _cardText.GetComponent<UnitCardText>().ChangeText(RelatedUnitClass.CurrentUnitCharacteristics.ucunithealth, RelatedUnitClass.CurrentUnitCharacteristics.ucunithealth, RelatedUnitClass.CurrentUnitCharacteristics.ucunithealth, RelatedUnitClass.CurrentUnitCharacteristics.ucnumberofunits, RelatedUnitClass.CurrentUnitCharacteristics.ucnumberofunits, RelatedUnitClass.CurrentUnitCharacteristics.ucunitdamage, RelatedUnitClass.CurrentUnitCharacteristics.ucunitinitiative, RelatedUnitClass.CurrentUnitCharacteristics.ucunitinitiative, RelatedUnitClass.CurrentUnitCharacteristics.ucunitcohesion, RelatedUnitClass.CurrentUnitCharacteristics.ucunitcohesion, RelatedUnitClass.CurrentUnitCharacteristics.unitarmour, RelatedUnitClass.unitUpgrades);
         transform.position = _pos;
         transform.localPosition = _pos;
@@ -103,19 +93,19 @@ public class UnitCardMain : MonoBehaviour
     public void OnMouseEnterCollider()
     {
         isMouseOff = false;
-        _spriteRenderer.color = _newCardColor;
-        _spriteRenderer.size *= 1.5f;
+        _cardSprite.color = _newCardColor;
+        _cardSprite.size *= 1.5f;
         _cardSprite.transform.position = new Vector3(_startCardPos.x, _startCardPos.y, _startCardPos.z + _approach);
-        _cardCollider.GetComponent<BoxCollider>().size = new Vector3(_spriteRenderer.size.x, _spriteRenderer.size.y, 0.1f);
+        _cardCollider.size = new Vector3(_cardSprite.size.x, _cardSprite.size.y, 0.1f);
         _cardText.GetComponent<UnitCardText>().UnHideText();
     }
     public void OnMouseExitCollider()
     {
         isMouseOff = true;
-        _spriteRenderer.color = _startCardColor;
-        _spriteRenderer.size = _startCardSize;
+        _cardSprite.color = _startCardColor;
+        _cardSprite.size = _startCardSize;
         _cardSprite.transform.position = _startCardPos;
-        _cardCollider.GetComponent<BoxCollider>().size = new Vector3(_spriteRenderer.size.x, _spriteRenderer.size.y, 0.1f);
+        _cardCollider.size = new Vector3(_cardSprite.size.x, _cardSprite.size.y, 0.1f);
         _cardText.GetComponent<UnitCardText>().HideText();
     }
     public void OnMouseUpCollider()
@@ -124,4 +114,39 @@ public class UnitCardMain : MonoBehaviour
     }
     public GameObject GetCardUnit()
     { return RelatedUnit; }
+    //--------------Collider
+    public RaycastHit GetRaycastHit()
+    {
+        Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition), out RaycastHit raycastHit);
+        return raycastHit;
+    }
+    private void OnMouseExit()
+    {
+        isMouseOff = true;
+        OnMouseExitCollider();
+    }
+    private void OnMouseEnter()
+    {
+        isMouseOff = false;
+        OnMouseEnterCollider();
+    }
+    private void OnMouseUp()
+    {
+        OnMouseUpCollider();
+    }
+    //--------------SPRITE
+    public void SetSpriteByName(string _spriteName)
+    {
+        _cardSprite.sprite = GetSpriteByName(_spriteName);
+    }
+    public Sprite GetSpriteByName(string _name)
+    {
+        int i = -1;
+        foreach (Sprite _sprite in spriteList)
+        {
+            i++;
+            if (_sprite.name == _name) { return _sprite; }
+        }
+        return spriteList[i];
+    }
 }

@@ -12,6 +12,23 @@ public struct UnitWeightsOfChars
         unitParam=uparam;cost=_cost;paramMod=mparam;paramWeight=wparam;
     }
 }
+[System.Serializable]
+public class serializableUnitClass
+{
+    public string UnitType;
+    public string UnitRace;
+    public UnitCharacteristics UnitCharacteristics;
+    public List<UnitWeightsOfChars> CharacteristicsWeightsList;
+    public int UnitWeight;
+    public serializableUnitClass(string unitType,string unitRace,UnitCharacteristics uChar, List<UnitWeightsOfChars> wList,int unitWeight)
+    {
+        UnitType = unitType;
+        UnitRace = unitRace; 
+        UnitCharacteristics = uChar;
+        CharacteristicsWeightsList = wList;
+        UnitWeight = unitWeight;
+    }
+}
 
 [CreateAssetMenu]
 public class ListOfCommonUnits : ScriptableObject
@@ -23,40 +40,17 @@ public class ListOfCommonUnits : ScriptableObject
         public PointsToRandomuzeUnitWeights(int p, int w)
         { points = p;weight = w; }
     }
-    [System.Serializable]
-    public class serializableUnitClass
-    {
-        public string UnitType; 
-        public UnitCharacteristics UnitCharacteristics;
-        public List<UnitWeightsOfChars> CharacteristicsWeightsList;
-        public int UnitWeight;
-        public serializableUnitClass(string unitType,UnitCharacteristics uChar, List<UnitWeightsOfChars> wList,int unitWeight)
-        {
-            UnitType = unitType;
-            UnitCharacteristics = uChar;
-            CharacteristicsWeightsList = wList;
-            UnitWeight = unitWeight;
-        }
-    }
-    public List<PointsToRandomuzeUnitWeights> pointsRandomizerList;
-    public List<serializableUnitClass> UnitGoodList = new List<serializableUnitClass>();
-    public List<serializableUnitClass> UnitEvilList = new List<serializableUnitClass>();
-    public GameObject UnitPrefab;
-    public (UnitCharacteristics, CountUnitUpgrades) GetRandomUnit(string unitClass)
-    {
-        List<serializableUnitClass> localList;
-        if (unitClass == "p") { localList = UnitGoodList; Debug.Log("Using plebListOfUnitBaseCharacteristics"); }
-        else if (unitClass == "e")
-        {
-            localList = UnitEvilList;
-            Debug.Log("Using evilListOfUnitBaseCharacteristics");
-        }
-        else
-        {
-            Debug.LogError("Unsupported unit type!!!");
-            localList = new List<serializableUnitClass>();
-        }
 
+    public List<PointsToRandomuzeUnitWeights> pointsRandomizerList;
+    public List<serializableUnitClass> UnitList = new List<serializableUnitClass>();
+    public GameObject UnitPrefab;
+    public (UnitCharacteristics, CountUnitUpgrades) GetRandomUnit(string unitRace)
+    {
+        List<serializableUnitClass> localList = new List<serializableUnitClass>();
+        foreach (serializableUnitClass _class in UnitList.FindAll(x => x.UnitRace.Equals(unitRace)))
+        {
+            localList.Add(_class);
+        }
         var localUnitWeights = new int[localList.Count];
         for (int i = 0; i < localList.Count; i++) { localUnitWeights[i] = localList[i].UnitWeight;}
         int indexOfSelectedUnit = GetRandomWeightedIndex(localUnitWeights);
@@ -66,10 +60,8 @@ public class ListOfCommonUnits : ScriptableObject
         int indexOfNumberOfPoints = GetRandomWeightedIndex(localPointsToRandomize);
 
         CountUnitUpgrades unitUpgrades = new CountUnitUpgrades();
-        GameObject NewUnit = Instantiate(UnitPrefab);
         (UnitCharacteristics,CountUnitUpgrades) newUnit = GetUnitWithRandomizedStats(localList[indexOfSelectedUnit], pointsRandomizerList[indexOfNumberOfPoints].points,
             unitUpgrades);
-        NewUnit.GetComponent<ArmyUnitClass>().UpdateUnitCharacteristics(newUnit.Item1,newUnit.Item2);
         return (newUnit.Item1,newUnit.Item2);
     }
 
@@ -122,13 +114,11 @@ public class ListOfCommonUnits : ScriptableObject
     }
     private void OnEnable()
     {
-        //FillListOfUnitChars();
-        //RefillList();
+        FillListOfUnitChars();
     }
     private void FillListOfUnitChars()
     {
-        UnitGoodList.Clear();
-        UnitEvilList.Clear();
+        UnitList.Clear();
         var p_lmilita_b = new UnitCharacteristics(14, 3, 3, -1, -1, 0);
         List<UnitWeightsOfChars> p_militia_stats = new List<UnitWeightsOfChars>
         {
@@ -139,7 +129,7 @@ public class ListOfCommonUnits : ScriptableObject
             new UnitWeightsOfChars("coh", 1, 1, 5),
             new UnitWeightsOfChars("armour", 5, 1, 2)
         };
-        UnitGoodList.Add(new serializableUnitClass("local_militia",p_lmilita_b,p_militia_stats,10) );
+        UnitList.Add(new serializableUnitClass("local_militia","human",p_lmilita_b,p_militia_stats,10) );
 
         var p_dthieves_b = new UnitCharacteristics(7, 5, 6, 0, -2, 0);
         List<UnitWeightsOfChars> p_dthieves_b_stats = new List<UnitWeightsOfChars>
@@ -151,7 +141,7 @@ public class ListOfCommonUnits : ScriptableObject
             new UnitWeightsOfChars("coh", 1, 1, 5),
             new UnitWeightsOfChars("armour", 5, 1, 2)
         };
-        UnitGoodList.Add(new serializableUnitClass("dirty_thieves",p_dthieves_b,p_dthieves_b_stats,8) );
+        UnitList.Add(new serializableUnitClass("dirty_thieves","human",p_dthieves_b,p_dthieves_b_stats,8) );
 
         var p_twarriors_b = new UnitCharacteristics(5, 8, 5, 0, 2, 0);
         List<UnitWeightsOfChars> p_twarriors_b_stats = new List<UnitWeightsOfChars>
@@ -163,7 +153,7 @@ public class ListOfCommonUnits : ScriptableObject
             new UnitWeightsOfChars("coh", 1, 2, 4),
             new UnitWeightsOfChars("armour", 3, 1, 4)
         };
-        UnitGoodList.Add(new serializableUnitClass("trained_warriors",p_twarriors_b,p_twarriors_b_stats,6) );
+        UnitList.Add(new serializableUnitClass("trained_warriors","human",p_twarriors_b,p_twarriors_b_stats,6) );
 
         var e_ogre_b = new UnitCharacteristics(1, 40, 15, 0, -3, 2);
         List<UnitWeightsOfChars> p_ogre_b_stats = new List<UnitWeightsOfChars>
@@ -175,7 +165,7 @@ public class ListOfCommonUnits : ScriptableObject
             new UnitWeightsOfChars("coh", 1, 2, 4),
             new UnitWeightsOfChars("armour", 2, 1, 4)
         };
-        UnitEvilList.Add(new serializableUnitClass("ogre",e_ogre_b,p_ogre_b_stats,6) );
+        UnitList.Add(new serializableUnitClass("ogre","goblin",e_ogre_b,p_ogre_b_stats,6) );
 
         var e_rgoblin_b = new UnitCharacteristics(12, 3, 3, 2, -1, 0);
         List<UnitWeightsOfChars> p_rgoblin_b_stats = new List<UnitWeightsOfChars>
@@ -187,7 +177,7 @@ public class ListOfCommonUnits : ScriptableObject
             new UnitWeightsOfChars("coh", 1, 1, 8),
             new UnitWeightsOfChars("armour", 5, 1, 2)
         };
-        UnitEvilList.Add(new serializableUnitClass("goblin_rogue",e_rgoblin_b,p_rgoblin_b_stats,8) );
+        UnitList.Add(new serializableUnitClass("goblin_rogue","goblin",e_rgoblin_b,p_rgoblin_b_stats,8) );
 
         var e_pgoblin_b = new UnitCharacteristics(20, 3, 2, -1, -3, 0);
         List<UnitWeightsOfChars> p_pgoblin_b_stats = new List<UnitWeightsOfChars>
@@ -199,6 +189,6 @@ public class ListOfCommonUnits : ScriptableObject
             new UnitWeightsOfChars("coh", 1, 1, 5),
             new UnitWeightsOfChars("armour", 6, 1, 2)
         };
-        UnitEvilList.Add(new serializableUnitClass("goblin_punks",e_pgoblin_b,p_pgoblin_b_stats,10) );
+        UnitList.Add(new serializableUnitClass("goblin_punks","goblin",e_pgoblin_b,p_pgoblin_b_stats,10) );
     }
 }

@@ -16,25 +16,5 @@ public class UnitCardCollider : MonoBehaviour
     {
         if (parentCard == null) { parentCard = _parent; };
     }
-    public RaycastHit GetRaycastHit()
-    {
-        Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition), out RaycastHit raycastHit);
-        return raycastHit;
-    }
-    public bool GetTrueMousePosition()
-    { return isMouseOff; }
-    private void OnMouseExit()
-    {
-        isMouseOff = true;
-        parentCard.OnMouseExitCollider();
-    }
-    private void OnMouseEnter()
-    {
-        isMouseOff = false;
-        parentCard.OnMouseEnterCollider();
-    }
-    private void OnMouseUp()
-    {
-        parentCard.OnMouseUpCollider();
-    }
+    
 }

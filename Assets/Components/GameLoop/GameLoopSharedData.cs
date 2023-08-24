@@ -33,6 +33,8 @@ public class GameLoopSharedData : MonoBehaviour
     {
         YourHero.GetComponent<Hero>().modifyHero("Chosen one", 1, 1);
         EvilHero.GetComponent<Hero>().modifyHero("Dark Lord", 1, 1);
+        YourHero.name = YourHero.GetComponent<Hero>().heroName;
+        EvilHero.name = EvilHero.GetComponent<Hero>().heroName;
 
         GameObject.Find("ArmyDeck").GetComponent<ArmyDeck>().GetArmyHero(YourHero.GetComponent<Hero>());
 
@@ -40,7 +42,6 @@ public class GameLoopSharedData : MonoBehaviour
         _countUnitsSelected = 0;
         spriteUiList = new List<Sprite>(Resources.LoadAll<Sprite>("Sprites/ui"));
         YourArmy = Instantiate(YourArmy);
-        listOfCommonUnits.GetRandomUnit("p");
     }
     private void Update()
     {
@@ -105,15 +106,16 @@ public class GameLoopSharedData : MonoBehaviour
     }
     private void ChosingArmyEvent() { CreateCardChoice(5); }
     private void StaticChosingArmyEvent() { CreateCardChoice(5); }
-    private void CreateCardChoice(int cardsNum) 
+    private void CreateCardChoice(int cardsNum)
     {
         for (int i = 0; i < cardsNum; i++)
         {
             //float r = Random.value;
             var a = Camera.main.ScreenToWorldPoint(new Vector3((Screen.width / (cardsNum + 2)) * (i + 1), Screen.height/2, 8));
-            var _newUnit = listOfCommonUnits.GetRandomUnit("p");
+            var _newUnit = listOfCommonUnits.GetRandomUnit("human");
             GameObject newSquad = Instantiate(Unit);
             newSquad.GetComponent<ArmyUnitClass>().UpdateUnitCharacteristics(_newUnit.Item1, _newUnit.Item2);
+            newSquad.name = $"{newSquad.GetComponent<ArmyUnitClass>().unitname}_{newSquad.GetInstanceID()}";
             _newArmyList.Add(newSquad);
             GameObject newCard = Instantiate(UnitCardMain);
             _cards.Add(newCard);
@@ -156,13 +158,13 @@ public class GameLoopSharedData : MonoBehaviour
 
     private void AddEvilArmy(Hero _hero)
     {
-        var army1 = listOfCommonUnits.GetRandomUnit("e");
+        var army1 = listOfCommonUnits.GetRandomUnit("goblin");
         GameObject firstEvilSquad = Instantiate(Unit);
         firstEvilSquad.GetComponent<ArmyUnitClass>().UpdateUnitCharacteristics(army1.Item1, army1.Item2);
-        var army2 = listOfCommonUnits.GetRandomUnit("e");
+        var army2 = listOfCommonUnits.GetRandomUnit("goblin");
         GameObject seconEvildSquad = Instantiate(Unit);
         seconEvildSquad.GetComponent<ArmyUnitClass>().UpdateUnitCharacteristics(army2.Item1, army2.Item2);
-        var army3 = listOfCommonUnits.GetRandomUnit("e");
+        var army3 = listOfCommonUnits.GetRandomUnit("goblin");
         GameObject thirdEvilSquad = Instantiate(Unit);
         thirdEvilSquad.GetComponent<ArmyUnitClass>().UpdateUnitCharacteristics(army3.Item1, army3.Item2);
         _hero.AddBannerList(firstEvilSquad); _hero.AddBannerList(seconEvildSquad);_hero.AddBannerList(thirdEvilSquad);

@@ -63,6 +63,7 @@ public class Hero : MonoBehaviour
     {
         bannersList.Add(unit);
         unit.GetComponent<ArmyUnitClass>().ApplyHeroModifyers(modinit, modcoh);
+        unit.transform.SetParent(transform);
     }
     public int GetMaxInitiative()
     {
