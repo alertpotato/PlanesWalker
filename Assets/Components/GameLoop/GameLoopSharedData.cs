@@ -15,8 +15,8 @@ public class GameLoopSharedData : MonoBehaviour
     [SerializeField]private GameObject UnitCardMain;
     private int _countUnitsSelected;
     public ListOfCommonUnits listOfCommonUnits;
-
     public ListOfObjects listOfCommonObjects;
+    
     private List<Sprite> spriteUiList;
 
     private GameObject cardChosenToField;
@@ -125,6 +125,8 @@ public class GameLoopSharedData : MonoBehaviour
             var a = Camera.main.ScreenToWorldPoint(new Vector3((Screen.width / (cardsNum + 2)) * (i + 1), Screen.height/2, 8));
             _newArmyList.Add(newUnit);
             GameObject newCard = Instantiate(UnitCardMain);
+            newCard.name = $"{newUnit.name}_Card";
+            newCard.transform.SetParent(newUnit.transform);
             _cards.Add(newCard);
             _cards[i].GetComponent<UnitCardMain>().SetUnitParameters(newUnit, a,false);
         }

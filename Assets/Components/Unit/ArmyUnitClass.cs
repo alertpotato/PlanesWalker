@@ -11,7 +11,7 @@ public struct UnitCharacteristics
     }
 }
 [System.Serializable]
-public struct CountUnitUpgrades
+public struct CountUnitUpgrades 
 {
     public int chealth; public int cnumber; public int cdamage; public int cinitiative; public int ccohesion; public int carmour;
     CountUnitUpgrades(int h, int n, int d, int i, int c, int a)

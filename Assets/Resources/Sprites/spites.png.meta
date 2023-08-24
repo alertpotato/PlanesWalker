@@ -21,7 +21,7 @@ TextureImporter:
       213: 8892535972957892312
     second: ogre
   externalObjects: {}
-  serializedVersion: 11
+  serializedVersion: 12
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -38,11 +38,12 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
+    flipGreenChannel: 0
   isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
-  ignoreMasterTextureLimit: 0
+  ignoreMipmapLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -81,6 +82,8 @@ TextureImporter:
   textureFormatSet: 0
   ignorePngGamma: 0
   applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 1
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
@@ -142,7 +145,7 @@ TextureImporter:
         width: 64
         height: 88
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -163,7 +166,7 @@ TextureImporter:
         width: 64
         height: 88
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -184,7 +187,7 @@ TextureImporter:
         width: 64
         height: 88
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -205,7 +208,7 @@ TextureImporter:
         width: 64
         height: 88
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -226,7 +229,7 @@ TextureImporter:
         width: 64
         height: 88
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -247,7 +250,7 @@ TextureImporter:
         width: 64
         height: 88
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -255,6 +258,27 @@ TextureImporter:
       bones: []
       spriteID: 8dea98c4a52a86b70800000000000000
       internalID: 8892535972957892312
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: not_found
+      rect:
+        serializedVersion: 2
+        x: 391
+        y: 711
+        width: 64
+        height: 88
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dec6c4946d472f74d8e2255aba271937
+      internalID: 1385804525
       vertices: []
       indices: 
       edges: []
@@ -270,15 +294,15 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      goblin_rogue: 2197581395775422221
-      goblin_punks: -7688275970275504176
-      trained_warrior: -2678533829946459592
       dirty_thieves: 1030156410204593616
-      ogre: 8892535972957892312
+      goblin_punks: -7688275970275504176
+      goblin_rogue: 2197581395775422221
       local_militia: 8262504977018808151
-  spritePackingTag: 
+      not_found: 1385804525
+      ogre: 8892535972957892312
+      trained_warrior: -2678533829946459592
+  mipmapLimitGroupName: 
   pSDRemoveMatte: 0
-  pSDShowRemoveMatteOption: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 

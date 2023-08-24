@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
-[System.Serializable] public enum Race { human, goblin };
+[System.Serializable] 
+public enum Race { human, goblin };
 [System.Serializable]
 public struct UnitWeightsOfChars
 {

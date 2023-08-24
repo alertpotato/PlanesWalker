@@ -22,7 +22,7 @@ public class ListOfObjects : ScriptableObject
     }
     public List<Sprite> spriteUiList;
     public List<Sprite> spriteUnitList;
-    void Awake()
+    void OnAwake()
     {
         spriteUiList = new List<Sprite>(Resources.LoadAll<Sprite>("Sprites/ui"));
         spriteUnitList = new List<Sprite>(Resources.LoadAll<Sprite>("Sprites/spites"));

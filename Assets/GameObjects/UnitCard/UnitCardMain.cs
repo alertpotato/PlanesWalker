@@ -26,19 +26,19 @@ public class UnitCardMain : MonoBehaviour
     private void Awake()
     {
         _cardText = Instantiate(_cardText);
+        _cardText.transform.SetParent(transform);
         _mainCamera = Camera.main;
         _cardText.transform.position = this.transform.position;
+        spriteList = new List<Sprite>(Resources.LoadAll<Sprite>("Sprites/spites"));
+        _cardSprite.color = _startCardColor;
     }
     private void Start()
     {
-        spriteList = new List<Sprite>(Resources.LoadAll<Sprite>("Sprites/spites"));
-        _cardSprite.color = _startCardColor;
         _startCardSize = _cardSprite.size;
-        _startCardPos = _cardSprite.transform.position;
+        _startCardPos = transform.position;
         _cardMoveMultiplier = 3;
         _cardRotateMultiplier = 10;
         _cardText.transform.localPosition = new Vector3(_cardSpriteSize.x / 2,0,-0.05f);
-
         _approach = 0.1f * (_mainCamera.transform.position.z - _startCardPos.z);
     }
     private void Update()
@@ -82,7 +82,7 @@ public class UnitCardMain : MonoBehaviour
     {
         RelatedUnit = unit;
         ArmyUnitClass RelatedUnitClass = RelatedUnit.GetComponent<ArmyUnitClass>();
-        _cardSprite.GetComponent<UnitCardSprite>().SetSpriteByName(RelatedUnitClass.UnitName);
+        SetSpriteByName(RelatedUnitClass.UnitName);
         _cardSpriteSize = _cardSprite.size;
         _cardCollider.size = new Vector3(_cardSprite.size.x, _cardSprite.size.y, 0.1f);
         _cardText.GetComponent<UnitCardText>().ChangeText(RelatedUnitClass.CurrentUnitCharacteristics.ucunithealth, RelatedUnitClass.CurrentUnitCharacteristics.ucunithealth, RelatedUnitClass.CurrentUnitCharacteristics.ucunithealth, RelatedUnitClass.CurrentUnitCharacteristics.ucnumberofunits, RelatedUnitClass.CurrentUnitCharacteristics.ucnumberofunits, RelatedUnitClass.CurrentUnitCharacteristics.ucunitdamage, RelatedUnitClass.CurrentUnitCharacteristics.ucunitinitiative, RelatedUnitClass.CurrentUnitCharacteristics.ucunitinitiative, RelatedUnitClass.CurrentUnitCharacteristics.ucunitcohesion, RelatedUnitClass.CurrentUnitCharacteristics.ucunitcohesion, RelatedUnitClass.CurrentUnitCharacteristics.unitarmour, RelatedUnitClass.unitUpgrades);
@@ -104,7 +104,7 @@ public class UnitCardMain : MonoBehaviour
         isMouseOff = true;
         _cardSprite.color = _startCardColor;
         _cardSprite.size = _startCardSize;
-        _cardSprite.transform.position = _startCardPos;
+        transform.position = _startCardPos;
         _cardCollider.size = new Vector3(_cardSprite.size.x, _cardSprite.size.y, 0.1f);
         _cardText.GetComponent<UnitCardText>().HideText();
     }
@@ -147,6 +147,7 @@ public class UnitCardMain : MonoBehaviour
             i++;
             if (_sprite.name == _name) { return _sprite; }
         }
+        Debug.Log($"Номер {i}");
         return spriteList[i];
     }
 }
