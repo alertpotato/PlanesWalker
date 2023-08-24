@@ -29,40 +29,20 @@ public class ArmyUnitClass : MonoBehaviour
     public UnitCharacteristics CurrentUnitCharacteristics;
     public NumberOfUnits numberofunits; public ArmyUnitHealth armyunithealth; public UnitDamage unitdamage; public UnitStats unitstats; public CountUnitUpgrades unitUpgrades;
     public int[] battletarget = new int[] { 0, 0 };
-    private bool ismelee = true;
-    private bool isranged = false;
-    private bool iscavalary = false;
-    public string armytype = "infantry";
-    public string unitname;
-    public string unitnameprefix;
     
-    public ScriptableObject BaseLineCharacteristics;
-    public ArmyUnitClass(string n, int num, int h, int d, int init, int coh, int regen, int armour)
-    {
-        unitname = n;
-        numberofunits.startnumberofunits = numberofunits.currentnumberofunits = num; numberofunits.regennumberofunits = regen;
-        armyunithealth.startunithealth = armyunithealth.currentunithealth = h; armyunithealth.regenunithealth = 0;
-        armyunithealth.startsquadhealth = armyunithealth.startunithealth * numberofunits.startnumberofunits; armyunithealth.currentsquadhealth = armyunithealth.startsquadhealth;
-        unitdamage.startunitdamage = unitdamage.currentunitdamage = d;
-        unitstats.startinitiative = unitstats.currentinitiative = init; unitstats.startcohesion = unitstats.currentcohesion = coh;
-        unitstats.startarmour = unitstats.currentarmour = armour;
-        if (coh < 0 & numberofunits.currentnumberofunits > 1) { unitnameprefix = "Rabble of "; }
-    }
-    public ArmyUnitClass(UnitCharacteristics uchar, CountUnitUpgrades uupgrd)
-    {
-        UpdateUnitCharacteristics(uchar,uupgrd);
-        numberofunits.startnumberofunits = numberofunits.currentnumberofunits = uchar.ucnumberofunits;
-        armyunithealth.startunithealth = armyunithealth.currentunithealth = uchar.ucunithealth; armyunithealth.regenunithealth = 0;
-        armyunithealth.startsquadhealth = armyunithealth.currentsquadhealth = armyunithealth.startunithealth * numberofunits.startnumberofunits;
-        unitdamage.startunitdamage = unitdamage.currentunitdamage = uchar.ucunitdamage;
-        unitstats.startinitiative = unitstats.currentinitiative = uchar.ucunitinitiative; unitstats.startcohesion = unitstats.currentcohesion = uchar.ucunitcohesion;
-        unitstats.startarmour = unitstats.currentarmour = uchar.unitarmour;
-        unitUpgrades = uupgrd;
-        if (uchar.ucunitcohesion < 0 & numberofunits.currentnumberofunits > 1) { unitnameprefix = "Rabble of "; }
-    }
+    public Race UnitRace;
+    public string UnitName;
+    string unitnameprefix;
+    bool isranged = false;
+    bool iscavalary = false;
+    
+    public ListOfCommonUnits BaseLineCharacteristics;
 
-    public void UpdateUnitCharacteristics(UnitCharacteristics uchar,CountUnitUpgrades cupgrd)
+    public void UpdateUnitCharacteristics(string unitName, Race unitRace, UnitCharacteristics uchar,CountUnitUpgrades cupgrd)
     {
+        BaseUnitCharacteristics = BaseLineCharacteristics.UnitList.Find(x => x.UnitType.Equals(unitName)).Characteristics;
+        UnitName = unitName;
+        UnitRace = unitRace;
         CurrentUnitCharacteristics = uchar;
         unitUpgrades = cupgrd;
     }
@@ -70,7 +50,7 @@ public class ArmyUnitClass : MonoBehaviour
     public string Getinfo()
     {
         string main_text = "";
-        main_text = $"{unitnameprefix}{unitname} {armytype} squad. There are {numberofunits.currentnumberofunits} of them, unit health:{armyunithealth.currentunithealth}, damage:{unitdamage.currentunitdamage}.";
+        main_text = $"{unitnameprefix}{UnitName} squad. There are {numberofunits.currentnumberofunits} of them, unit health:{armyunithealth.currentunithealth}, damage:{unitdamage.currentunitdamage}.";
         if (unitstats.currentarmour > 0) { main_text += $" Armour hardened by {unitstats.currentarmour}."; }
         main_text += $" Total squad health:{armyunithealth.currentsquadhealth}, initiative:{unitstats.currentinitiative}, cohesion:{unitstats.currentcohesion}.";
         if (unitdamage.currentunitdamage < 4) { main_text += " A pitiful sight..."; } else main_text = main_text + " Fine...";
@@ -86,7 +66,7 @@ public class ArmyUnitClass : MonoBehaviour
     public void ApplyHeroModifyers(int hminitiative, int hmcohesion) { unitstats.currentinitiative = unitstats.startinitiative + hminitiative; unitstats.currentcohesion = unitstats.startcohesion + hmcohesion; }
     public int GetAlldamage() { return numberofunits.currentnumberofunits * unitdamage.currentunitdamage; } //Метод получения общего урона отряда
     //public int GetUnitdamage() { return unitdamage.currentunitdamage; } //Метод получения урона одного юнита
-    public string GetUnitName() { return unitname; } //Метод получения урона одного юнита
+    public string GetUnitName() { return UnitName; } //Метод получения урона одного юнита
 
     public NumberOfUnits GetNumberOfUnits() { return numberofunits; } //Метод всех количеств юнита
     public ArmyUnitHealth GetArmyUnitHealth() { return armyunithealth; } //Метод параметров жизни юнита

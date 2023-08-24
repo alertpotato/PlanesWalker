@@ -82,7 +82,7 @@ public class UnitCardMain : MonoBehaviour
     {
         RelatedUnit = unit;
         ArmyUnitClass RelatedUnitClass = RelatedUnit.GetComponent<ArmyUnitClass>();
-        _cardSprite.GetComponent<UnitCardSprite>().SetSpriteByName(RelatedUnitClass.unitname);
+        _cardSprite.GetComponent<UnitCardSprite>().SetSpriteByName(RelatedUnitClass.UnitName);
         _cardSpriteSize = _cardSprite.size;
         _cardCollider.size = new Vector3(_cardSprite.size.x, _cardSprite.size.y, 0.1f);
         _cardText.GetComponent<UnitCardText>().ChangeText(RelatedUnitClass.CurrentUnitCharacteristics.ucunithealth, RelatedUnitClass.CurrentUnitCharacteristics.ucunithealth, RelatedUnitClass.CurrentUnitCharacteristics.ucunithealth, RelatedUnitClass.CurrentUnitCharacteristics.ucnumberofunits, RelatedUnitClass.CurrentUnitCharacteristics.ucnumberofunits, RelatedUnitClass.CurrentUnitCharacteristics.ucunitdamage, RelatedUnitClass.CurrentUnitCharacteristics.ucunitinitiative, RelatedUnitClass.CurrentUnitCharacteristics.ucunitinitiative, RelatedUnitClass.CurrentUnitCharacteristics.ucunitcohesion, RelatedUnitClass.CurrentUnitCharacteristics.ucunitcohesion, RelatedUnitClass.CurrentUnitCharacteristics.unitarmour, RelatedUnitClass.unitUpgrades);

@@ -96,7 +96,7 @@ class Battle
                 takedmg.armyunithealth.currentsquadhealth = takedmg.armyunithealth.currentsquadhealth - desserts * takedmg.armyunithealth.currentunithealth; //Console.WriteLine($"if squadhealth > mxhp:{decmaxhealth} sqdhp:{squadhealth} coh:{truecohesion} num:{numberof}");  //Дебаг
             }
         }
-        string battlelog = $"The {takedmg.unitname} {takedmg.armytype} squad taken {incdamage} damage from {enemyunitname}. There are {takedmg.numberofunits.currentnumberofunits}/{startnumberof} with {takedmg.armyunithealth.currentsquadhealth} hp.";
+        string battlelog = $"The {takedmg.UnitName} squad taken {incdamage} damage from {enemyunitname}. There are {takedmg.numberofunits.currentnumberofunits}/{startnumberof} with {takedmg.armyunithealth.currentsquadhealth} hp.";
         Console.WriteLine(battlelog + additionallog);
     }
 }

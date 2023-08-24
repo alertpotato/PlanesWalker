@@ -25,7 +25,7 @@ public class ArmyDeck : MonoBehaviour
     private List<GameObject> CreateSortList()
     {
         var armyList = armyHero.bannersList;
-        armyList = armyList.OrderBy(x => x.GetComponent<ArmyUnitClass>().unitname).ToList();
+        armyList = armyList.OrderBy(x => x.GetComponent<ArmyUnitClass>().UnitName).ToList();
         return armyList;
     }
     private void ShowCards()
@@ -36,12 +36,12 @@ public class ArmyDeck : MonoBehaviour
 
         for (int i = 0; i < armyHero.bannersList.Count; i++)
         {
-            if (_armyListSorted[i].GetComponent<ArmyUnitClass>().unitname != prevCardName) { stepY += 150; stepX = 0; stepZ = 0; }
+            if (_armyListSorted[i].GetComponent<ArmyUnitClass>().UnitName != prevCardName) { stepY += 150; stepX = 0; stepZ = 0; }
             else { stepX += 70; stepZ = 0.1f; }
             var a = Camera.main.ScreenToWorldPoint(new Vector3( (Screen.width / 20) + stepX, Screen.height - stepY, 8 + stepZ));
             _cards.Add(Instantiate(Resources.Load<GameObject>("Prefab/UnitCardMain")));
             _cards[i].GetComponent<UnitCardMain>().SetUnitParameters(_armyListSorted[i], a,true);
-            prevCardName = _armyListSorted[i].GetComponent<ArmyUnitClass>().unitname;
+            prevCardName = _armyListSorted[i].GetComponent<ArmyUnitClass>().UnitName;
         }
     }
     private void WipeCards()

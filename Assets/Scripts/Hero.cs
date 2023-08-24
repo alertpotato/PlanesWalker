@@ -88,7 +88,7 @@ public class Hero : MonoBehaviour
     {
         string asd = ""; int i = 1;
         foreach (GameObject banner in bannersList)
-        { asd = $"{asd} {i} {banner.GetComponent<ArmyUnitClass>().unitname}"; i++; }
+        { asd = $"{asd} {i} {banner.GetComponent<ArmyUnitClass>().UnitName}"; i++; }
         return asd;
     }
 }
