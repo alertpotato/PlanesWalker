@@ -85,7 +85,7 @@ public class UnitCardMain : MonoBehaviour
         SetSpriteByName(RelatedUnitClass.UnitName);
         _cardSpriteSize = _cardSprite.size;
         _cardCollider.size = new Vector3(_cardSprite.size.x, _cardSprite.size.y, 0.1f);
-        _cardText.GetComponent<UnitCardText>().ChangeText(RelatedUnitClass.CurrentUnitCharacteristics.ucunithealth, RelatedUnitClass.CurrentUnitCharacteristics.ucunithealth, RelatedUnitClass.CurrentUnitCharacteristics.ucunithealth, RelatedUnitClass.CurrentUnitCharacteristics.ucnumberofunits, RelatedUnitClass.CurrentUnitCharacteristics.ucnumberofunits, RelatedUnitClass.CurrentUnitCharacteristics.ucunitdamage, RelatedUnitClass.CurrentUnitCharacteristics.ucunitinitiative, RelatedUnitClass.CurrentUnitCharacteristics.ucunitinitiative, RelatedUnitClass.CurrentUnitCharacteristics.ucunitcohesion, RelatedUnitClass.CurrentUnitCharacteristics.ucunitcohesion, RelatedUnitClass.CurrentUnitCharacteristics.unitarmour, RelatedUnitClass.unitUpgrades);
+        _cardText.GetComponent<UnitCardText>().ChangeText(RelatedUnitClass.DefaultUnitCharacteristics.Characteristics,RelatedUnitClass.CurrentUnitCharacteristics, RelatedUnitClass.unitUpgrades);
         transform.position = _pos;
         transform.localPosition = _pos;
         isUnitInArmy = isInArmy;
@@ -147,7 +147,6 @@ public class UnitCardMain : MonoBehaviour
             i++;
             if (_sprite.name == _name) { return _sprite; }
         }
-        Debug.Log($"Номер {i}");
         return spriteList[i];
     }
 }

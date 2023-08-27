@@ -67,19 +67,19 @@ public class Hero : MonoBehaviour
     }
     public int GetMaxInitiative()
     {
-        int MaxInit = bannersList[0].GetComponent<ArmyUnitClass>().GetUnitCharacteristics().Item1.ucunitinitiative;
+        int MaxInit = bannersList[0].GetComponent<ArmyUnitClass>().GetUnitCharacteristics().Item1.Initiative;
         for (int i = 0; i < bannersList.Count; i++)
         {
-            if (MaxInit < bannersList[i].GetComponent<ArmyUnitClass>().GetUnitCharacteristics().Item1.ucunitinitiative) { MaxInit = bannersList[i].GetComponent<ArmyUnitClass>().GetUnitCharacteristics().Item1.ucunitinitiative; }
+            if (MaxInit < bannersList[i].GetComponent<ArmyUnitClass>().GetUnitCharacteristics().Item1.Initiative) { MaxInit = bannersList[i].GetComponent<ArmyUnitClass>().GetUnitCharacteristics().Item1.Initiative; }
         }
         return MaxInit;
     }
     public int GetMinInitiative()
     {
-        int MinInit = bannersList[0].GetComponent<ArmyUnitClass>().GetUnitCharacteristics().Item1.ucunitinitiative;
+        int MinInit = bannersList[0].GetComponent<ArmyUnitClass>().GetUnitCharacteristics().Item1.Initiative;
         for (int i = 0; i < bannersList.Count; i++)
         {
-            if (MinInit > bannersList[i].GetComponent<ArmyUnitClass>().GetUnitCharacteristics().Item1.ucunitinitiative) { MinInit = bannersList[i].GetComponent<ArmyUnitClass>().GetUnitCharacteristics().Item1.ucunitinitiative; }
+            if (MinInit > bannersList[i].GetComponent<ArmyUnitClass>().GetUnitCharacteristics().Item1.Initiative) { MinInit = bannersList[i].GetComponent<ArmyUnitClass>().GetUnitCharacteristics().Item1.Initiative; }
         }
         return MinInit;
     }

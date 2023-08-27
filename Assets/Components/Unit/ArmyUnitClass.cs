@@ -1,22 +1,33 @@
 ﻿using System;
 using UnityEngine;
-
+/// <summary>
+/// Все дебафы хранят накладывающие объекты со ссылкой на получателя
+/// </summary>
 [System.Serializable]
 public struct UnitCharacteristics 
 {
-    public int ucnumberofunits; public int ucunithealth; public int ucunitdamage; public int ucunitinitiative; public int ucunitcohesion; public int unitarmour;
+    public int NumberOfUnits; public int Health; public int Damage; public int Initiative; public int Cohesion; public int Armour;
     public UnitCharacteristics(int num, int h, int d, int init, int coh, int armour)
     {
-        ucnumberofunits = num; ucunithealth = h; ucunitdamage = d; ucunitinitiative = init; ; ucunitcohesion = coh; unitarmour = armour;
+        NumberOfUnits = num; Health = h; Damage = d; Initiative = init; ; Cohesion = coh; Armour = armour;
+    }
+    public UnitCharacteristics(BaseUnitCharacteristics baseCharacteristics ,UnitUpgrades unitUpgrades)
+    {
+        NumberOfUnits = baseCharacteristics.Characteristics.NumberOfUnits + baseCharacteristics.NumberOfUnitsUpgrade.Modifier*unitUpgrades.NumberOfUnits;
+        Health = baseCharacteristics.Characteristics.Health + baseCharacteristics.HealthUpgrade.Modifier*unitUpgrades.Health;
+        Damage = baseCharacteristics.Characteristics.Damage + baseCharacteristics.DamageUpgrade.Modifier*unitUpgrades.Damage;
+        Initiative = baseCharacteristics.Characteristics.Initiative + baseCharacteristics.InitiativeUpgrade.Modifier*unitUpgrades.Initiative;
+        Cohesion = baseCharacteristics.Characteristics.Cohesion + baseCharacteristics.CohesionUpgrade.Modifier*unitUpgrades.Cohesion;
+        Armour = baseCharacteristics.Characteristics.Armour + baseCharacteristics.ArmourUpgrade.Modifier*unitUpgrades.Armour;
     }
 }
 [System.Serializable]
-public struct CountUnitUpgrades 
+public struct UnitUpgrades
 {
-    public int chealth; public int cnumber; public int cdamage; public int cinitiative; public int ccohesion; public int carmour;
-    CountUnitUpgrades(int h, int n, int d, int i, int c, int a)
+    public int NumberOfUnits; public int Health; public int Damage; public int Initiative; public int Cohesion; public int Armour;
+    UnitUpgrades(int numberOfUnits, int health, int damage, int initiative, int cohesion, int armour)
     {
-        chealth=h;cnumber=n;cdamage=d;cinitiative=i;ccohesion=c; carmour=a;
+        NumberOfUnits=numberOfUnits;Health=health;Damage=damage;Initiative=initiative;Cohesion=cohesion; Armour=armour;
     }
 }
 public class ArmyUnitClass : MonoBehaviour
@@ -25,11 +36,11 @@ public class ArmyUnitClass : MonoBehaviour
     public struct ArmyUnitHealth { public int startunithealth; public int currentunithealth; public int regenunithealth; public int startsquadhealth; public int currentsquadhealth; }
     public struct UnitDamage { public int startunitdamage; public int currentunitdamage; }
     public struct UnitStats { public int startinitiative; public int currentinitiative; public int startcohesion; public int currentcohesion; public int startarmour; public int currentarmour; }
-    public UnitCharacteristics BaseUnitCharacteristics;
+    public BaseUnitCharacteristics DefaultUnitCharacteristics;
     public UnitCharacteristics CurrentUnitCharacteristics;
-    public NumberOfUnits numberofunits; public ArmyUnitHealth armyunithealth; public UnitDamage unitdamage; public UnitStats unitstats; public CountUnitUpgrades unitUpgrades;
+    public NumberOfUnits numberofunits; public ArmyUnitHealth armyunithealth; public UnitDamage unitdamage; public UnitStats unitstats; 
     public int[] battletarget = new int[] { 0, 0 };
-    
+    public UnitUpgrades unitUpgrades;
     public Race UnitRace;
     public string UnitName;
     string unitnameprefix;
@@ -38,13 +49,17 @@ public class ArmyUnitClass : MonoBehaviour
     
     public ListOfCommonUnits BaseLineCharacteristics;
 
-    public void UpdateUnitCharacteristics(string unitName, Race unitRace, UnitCharacteristics uchar,CountUnitUpgrades cupgrd)
+    public void InitializeUnit(string unitName, Race unitRace, UnitUpgrades upgrades)
     {
-        BaseUnitCharacteristics = BaseLineCharacteristics.UnitList.Find(x => x.UnitType.Equals(unitName)).Characteristics;
+        DefaultUnitCharacteristics = BaseLineCharacteristics.UnitList.Find(x => x.UnitType.Equals(unitName));
         UnitName = unitName;
         UnitRace = unitRace;
-        CurrentUnitCharacteristics = uchar;
-        unitUpgrades = cupgrd;
+        unitUpgrades = upgrades;
+        UpdateUnitCharacteristics(upgrades);
+    }
+    public void UpdateUnitCharacteristics(UnitUpgrades upgrades)
+    {
+        CurrentUnitCharacteristics = new UnitCharacteristics(DefaultUnitCharacteristics,upgrades);
     }
 
     public string Getinfo()
@@ -58,7 +73,7 @@ public class ArmyUnitClass : MonoBehaviour
     }
 
     public int GetUnitHP() { return armyunithealth.currentsquadhealth; }
-    public (UnitCharacteristics,CountUnitUpgrades) GetUnitCharacteristics()
+    public (UnitCharacteristics,UnitUpgrades) GetUnitCharacteristics()
     {
         var unitchar = new UnitCharacteristics(numberofunits.currentnumberofunits, armyunithealth.currentunithealth, unitdamage.currentunitdamage, unitstats.currentinitiative, unitstats.currentcohesion,unitstats.currentarmour);
         return (unitchar,unitUpgrades);

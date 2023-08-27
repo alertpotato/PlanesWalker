@@ -112,7 +112,7 @@ public class GameLoopSharedData : MonoBehaviour
         var newUnitCharacteristics = listOfCommonUnits.GetRandomUnit(unitRace);
         GameObject newUnit = Instantiate(Unit);
         ArmyUnitClass unitClass = newUnit.GetComponent<ArmyUnitClass>();
-        unitClass.UpdateUnitCharacteristics(newUnitCharacteristics.Item1,newUnitCharacteristics.Item2,newUnitCharacteristics.Item3,newUnitCharacteristics.Item4);
+        unitClass.InitializeUnit(newUnitCharacteristics.Item1,newUnitCharacteristics.Item2,newUnitCharacteristics.Item3);
         newUnit.name = $"{unitClass.UnitName}_{newUnit.GetInstanceID()}";
         return newUnit;
     }

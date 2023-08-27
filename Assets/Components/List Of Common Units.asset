@@ -23,16 +23,16 @@ MonoBehaviour:
     weight: 10
   - points: 6
     weight: 1
-  UnitGoodList:
+  UnitList:
   - UnitType: local_militia
-    UnitCharacteristics:
-      ucunitname: local_militia
-      ucnumberofunits: 14
-      ucunithealth: 3
-      ucunitdamage: 3
-      ucunitinitiative: -1
-      ucunitcohesion: -1
-      unitarmour: 0
+    UnitRace: 0
+    Characteristics:
+      NumberOfUnits: 14
+      Health: 3
+      Damage: 3
+      Initiative: -1
+      Cohesion: -1
+      Armour: 0
     CharacteristicsWeightsList:
     - unitParam: number
       cost: 1
@@ -60,14 +60,14 @@ MonoBehaviour:
       paramWeight: 2
     UnitWeight: 10
   - UnitType: dirty_thieves
-    UnitCharacteristics:
-      ucunitname: dirty_thieves
-      ucnumberofunits: 7
-      ucunithealth: 5
-      ucunitdamage: 6
-      ucunitinitiative: 0
-      ucunitcohesion: -2
-      unitarmour: 0
+    UnitRace: 0
+    Characteristics:
+      NumberOfUnits: 7
+      Health: 5
+      Damage: 6
+      Initiative: 0
+      Cohesion: -2
+      Armour: 0
     CharacteristicsWeightsList:
     - unitParam: number
       cost: 2
@@ -95,14 +95,14 @@ MonoBehaviour:
       paramWeight: 2
     UnitWeight: 8
   - UnitType: trained_warriors
-    UnitCharacteristics:
-      ucunitname: trained_warriors
-      ucnumberofunits: 5
-      ucunithealth: 8
-      ucunitdamage: 5
-      ucunitinitiative: 0
-      ucunitcohesion: 2
-      unitarmour: 0
+    UnitRace: 0
+    Characteristics:
+      NumberOfUnits: 5
+      Health: 8
+      Damage: 5
+      Initiative: 0
+      Cohesion: 2
+      Armour: 0
     CharacteristicsWeightsList:
     - unitParam: number
       cost: 1
@@ -129,16 +129,15 @@ MonoBehaviour:
       paramMod: 1
       paramWeight: 4
     UnitWeight: 6
-  UnitEvilList:
   - UnitType: ogre
-    UnitCharacteristics:
-      ucunitname: ogre
-      ucnumberofunits: 1
-      ucunithealth: 40
-      ucunitdamage: 15
-      ucunitinitiative: 0
-      ucunitcohesion: -3
-      unitarmour: 2
+    UnitRace: 1
+    Characteristics:
+      NumberOfUnits: 1
+      Health: 40
+      Damage: 15
+      Initiative: 0
+      Cohesion: -3
+      Armour: 2
     CharacteristicsWeightsList:
     - unitParam: number
       cost: 4
@@ -166,14 +165,14 @@ MonoBehaviour:
       paramWeight: 4
     UnitWeight: 6
   - UnitType: goblin_rogue
-    UnitCharacteristics:
-      ucunitname: goblin_rogue
-      ucnumberofunits: 12
-      ucunithealth: 3
-      ucunitdamage: 3
-      ucunitinitiative: 2
-      ucunitcohesion: -1
-      unitarmour: 0
+    UnitRace: 1
+    Characteristics:
+      NumberOfUnits: 12
+      Health: 3
+      Damage: 3
+      Initiative: 2
+      Cohesion: -1
+      Armour: 0
     CharacteristicsWeightsList:
     - unitParam: number
       cost: 2
@@ -201,14 +200,14 @@ MonoBehaviour:
       paramWeight: 2
     UnitWeight: 8
   - UnitType: goblin_punks
-    UnitCharacteristics:
-      ucunitname: goblin_punks
-      ucnumberofunits: 20
-      ucunithealth: 3
-      ucunitdamage: 2
-      ucunitinitiative: -1
-      ucunitcohesion: -3
-      unitarmour: 0
+    UnitRace: 1
+    Characteristics:
+      NumberOfUnits: 20
+      Health: 3
+      Damage: 2
+      Initiative: -1
+      Cohesion: -3
+      Armour: 0
     CharacteristicsWeightsList:
     - unitParam: number
       cost: 2
