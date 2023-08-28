@@ -32,11 +32,6 @@ public class Hero : MonoBehaviour
         }
         ArmyFormation[0][2] = new ArmyCell(CellType.Available);
     }
-    private void Start()
-    {
-        
-        
-    }
     public void modifyHero(string n, int init, int coh) { heroName = n; modinit = init; modcoh = coh; }
     public string Getinfo()
     {

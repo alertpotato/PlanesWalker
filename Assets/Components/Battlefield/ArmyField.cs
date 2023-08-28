@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using UnityEngine;
 public class ArmyField : MonoBehaviour
 {
-    private ListOfObjects listOfCommonObjects;
     [SerializeField] private List<Sprite> spriteUiList;
     [SerializeField] public List<List<GameObject>> cellList;
     public GameObject ArmyFieldCell;
@@ -11,7 +10,6 @@ public class ArmyField : MonoBehaviour
 
     private void Awake()
     {
-        listOfCommonObjects = ScriptableObject.CreateInstance<ListOfObjects>();
         cellList = new List<List<GameObject>>();
     }
 
@@ -20,36 +18,13 @@ public class ArmyField : MonoBehaviour
         spriteUiList = new List<Sprite>(Resources.LoadAll<Sprite>("Sprites/ui"));
         transform.position = new Vector3(0, 0, -2);
     }
-
     private void Update()
     {
-
-    }
-
-    public void InicializeField(Hero yourHero,Hero enemyHero)
-    {
-        YourHero = yourHero;
-        EnemyHero = enemyHero;
-        for (int column = 0; column < YourHero.ArmyFormation.Count; column++)
-        {
-            var tempList = new List<GameObject>();
-            for (int row = 0; row < YourHero.ArmyFormation[column].Count; row++)
-            {
-                GameObject cell = Instantiate(ArmyFieldCell,transform);
-                tempList.Add(cell);
-            }
-            cellList.Add(tempList);
-        }
-    }
-
-    public void PositionField(Hero hero)
-    {
-        //float step = listOfCommonObjects.GetSpriteByName("armyCellE", spriteUiList).rect.width * 3f;
         float step = spriteUiList[0].rect.width * 3.5f;
         float stepFromLeft = Screen.width / 2;
         float stepFromTop = Screen.height * 0.9f;
         int xcell = -1; int ycell = -1;
-        foreach (List<ArmyCell> _armyCelllist in hero.ArmyFormation)
+        foreach (List<ArmyCell> _armyCelllist in YourHero.ArmyFormation)
         {
             xcell++; ycell = -1;
             foreach (ArmyCell _armyCell in _armyCelllist)
@@ -67,6 +42,21 @@ public class ArmyField : MonoBehaviour
                     cellList[xcell][ycell].GetComponent<ArmyCellScript>().ChangeSprite(spriteUiList[0]);
                 }
             }
+        }
+    }
+    public void InicializeField(Hero yourHero,Hero enemyHero)
+    {
+        YourHero = yourHero;
+        EnemyHero = enemyHero;
+        for (int column = 0; column < YourHero.ArmyFormation.Count; column++)
+        {
+            var tempList = new List<GameObject>();
+            for (int row = 0; row < YourHero.ArmyFormation[column].Count; row++)
+            {
+                GameObject cell = Instantiate(ArmyFieldCell,transform);
+                tempList.Add(cell);
+            }
+            cellList.Add(tempList);
         }
     }
 }

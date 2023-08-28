@@ -19,6 +19,8 @@ public class UnitCardMain : MonoBehaviour
     [SerializeField] private Color _newCardColor = new Color(1, 1, 1, 1);
     [SerializeField] private Vector3 _cardMoveDirection = new Vector3(0, 0, -0.1f);
     [SerializeField] private bool isMouseOff = true;
+    public bool IsSelected = false;
+    public SelectManager SelectingManager;
 
     private bool isUnitInArmy;
     //public float _sizeMult;
@@ -130,9 +132,10 @@ public class UnitCardMain : MonoBehaviour
         isMouseOff = false;
         OnMouseEnterCollider();
     }
-    private void OnMouseUp()
+    private void OnMouseDown()
     {
-        OnMouseUpCollider();
+        //OnMouseUpCollider();
+        SelectingManager.SelectEntity(gameObject);
     }
     //--------------SPRITE
     public void SetSpriteByName(string _spriteName)
@@ -148,5 +151,14 @@ public class UnitCardMain : MonoBehaviour
             if (_sprite.name == _name) { return _sprite; }
         }
         return spriteList[i];
+    }
+
+    public void selectCard()
+    {
+        IsSelected = true;
+    }
+    public void deSelectCard()
+    {
+        IsSelected = false;
     }
 }

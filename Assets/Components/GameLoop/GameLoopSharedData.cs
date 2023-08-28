@@ -18,7 +18,6 @@ public class GameLoopSharedData : MonoBehaviour
     public ListOfObjects listOfCommonObjects;
     public GameObject Battlefield;
     private List<Sprite> spriteUiList;
-
     private GameObject cardChosenToField;
     private void Awake()
     {
@@ -56,7 +55,7 @@ public class GameLoopSharedData : MonoBehaviour
         }
         if (Input.GetKeyDown("r") && state == eventState.chosingCards)
         {
-            Battlefield.GetComponent<ArmyField>().PositionField(YourHero.GetComponent<Hero>());
+            Battlefield.SetActive(!Battlefield.gameObject.activeSelf); 
         }
     }
     private void CardChosen(GameObject _chosenCard,bool isInArmy)
