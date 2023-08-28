@@ -3,13 +3,12 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum cellType { Forbidden, Empty, Occupied };
+public enum CellType { Available, NotAvailable, Occupied };
 public struct ArmyCell
 {
-    GameObject unit; public cellType type { get; set; }
-    int initiativeMod; int cohesionMod; int defenceMod; int regenCohMod; int damageMod;
-    public ArmyCell(cellType _type) { unit = null; type = _type; initiativeMod = 0; cohesionMod = 0; defenceMod = 0; regenCohMod = 0; damageMod = 0; }
-    public ArmyCell(GameObject _unit, int _init, int _coh, int _def, int _reg, int _dam) { unit = _unit; type = cellType.Occupied; initiativeMod = _init; cohesionMod = _coh; defenceMod = _def; regenCohMod = _reg; damageMod = _dam; }
+    GameObject Unit; public CellType Type { get; set; }
+    public ArmyCell(CellType type) { Unit = null; Type = type; }
+    public ArmyCell(GameObject unit) { Unit = unit; Type = CellType.Occupied; }
 }
 public class Hero : MonoBehaviour
 {
@@ -18,26 +17,25 @@ public class Hero : MonoBehaviour
     [SerializeField] private int modcoh = 0;
     public List<GameObject> bannersList = new List<GameObject> { };
     public struct Army { public int lineNumber; public int columnNumber; public ArmyUnitClass unit; }
-    public List<List<ArmyCell>> ArmyFormation = new List<List<ArmyCell>>();
+    public List<List<ArmyCell>> ArmyFormation;
     private void Awake()
     {
-
+        ArmyFormation = new List<List<ArmyCell>>();
+        for (int i = 0; i < 3; i++)
+        {
+            var tempList = new List<ArmyCell>();
+            for (int _i = 0; _i < 5; _i++)
+            {
+                tempList.Add(new ArmyCell(CellType.NotAvailable));
+            }
+            ArmyFormation.Add(tempList);
+        }
+        ArmyFormation[0][2] = new ArmyCell(CellType.Available);
     }
     private void Start()
     {
-        for (int i = 0; i < 5; i++)
-        {
-            var _tempList = new List<ArmyCell>();
-            for (int _i = 0; _i < 5; _i++)
-            {
-                _tempList.Add(new ArmyCell(cellType.Forbidden));
-            }
-            ArmyFormation.Add(_tempList);
-        }
-        ArmyFormation[0][1] = new ArmyCell(cellType.Empty);
-        ArmyFormation[0][2] = new ArmyCell(cellType.Empty);
-        ArmyFormation[0][3] = new ArmyCell(cellType.Empty);
-        ArmyFormation[1][2] = new ArmyCell(cellType.Empty);
+        
+        
     }
     public void modifyHero(string n, int init, int coh) { heroName = n; modinit = init; modcoh = coh; }
     public string Getinfo()
@@ -53,11 +51,6 @@ public class Hero : MonoBehaviour
             totalHP = totalHP + bannersList[i].GetComponent<ArmyUnitClass>().GetUnitHP();
         }
         return totalHP;
-    }
-    public void IsUnitAlive(ArmyUnitClass checkedunit)
-    {
-        //if (checkedunit.unit.GetUnitHP() == 0) { Console.WriteLine($"--Unit {checkedunit.unit.unitname} DESTOYED--"); bannersList.Remove(checkedunit); checkedunit.unit = null; }
-        //if (checkedunit.GetUnitHP() == 0) { Console.WriteLine($"--Unit {checkedunit.unitname} DESTOYED--"); bannersList.Remove(checkedunit); checkedunit = null; }
     }
     public void AddBannerList(GameObject unit)
     {
@@ -83,7 +76,6 @@ public class Hero : MonoBehaviour
         }
         return MinInit;
     }
-
     public string GetBannerList()
     {
         string asd = ""; int i = 1;

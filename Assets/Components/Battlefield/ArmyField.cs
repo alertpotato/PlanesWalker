@@ -5,6 +5,9 @@ public class ArmyField : MonoBehaviour
     private ListOfObjects listOfCommonObjects;
     [SerializeField] private List<Sprite> spriteUiList;
     [SerializeField] public List<List<GameObject>> cellList;
+    public GameObject ArmyFieldCell;
+    public Hero YourHero;
+    public Hero EnemyHero;
 
     private void Awake()
     {
@@ -16,7 +19,6 @@ public class ArmyField : MonoBehaviour
     {
         spriteUiList = new List<Sprite>(Resources.LoadAll<Sprite>("Sprites/ui"));
         transform.position = new Vector3(0, 0, -2);
-        InicializeField();
     }
 
     private void Update()
@@ -24,50 +26,46 @@ public class ArmyField : MonoBehaviour
 
     }
 
-    private void InicializeField()
+    public void InicializeField(Hero yourHero,Hero enemyHero)
     {
-        int cellId = 0;
-        for (int i = 0; i < 5; i++)
+        YourHero = yourHero;
+        EnemyHero = enemyHero;
+        for (int column = 0; column < YourHero.ArmyFormation.Count; column++)
         {
-            var _tempList = new List<GameObject>();
-            for (int _i = 0; _i < 5; _i++)
+            var tempList = new List<GameObject>();
+            for (int row = 0; row < YourHero.ArmyFormation[column].Count; row++)
             {
-                GameObject _cell = Instantiate(Resources.Load<GameObject>("Prefab/ArmyFieldCell"));
-                _cell.transform.SetParent(this.transform);
-                _cell.GetComponent<ArmyCellScript>().SetId(cellId);
-                _tempList.Add(_cell);
-                cellId++;
+                GameObject cell = Instantiate(ArmyFieldCell,transform);
+                tempList.Add(cell);
             }
-            cellList.Add(_tempList);
+            cellList.Add(tempList);
         }
     }
 
-    public void PositionField(Hero _hero)
+    public void PositionField(Hero hero)
     {
-        Debug.Log("pos ArmyField");
         //float step = listOfCommonObjects.GetSpriteByName("armyCellE", spriteUiList).rect.width * 3f;
         float step = spriteUiList[0].rect.width * 3.5f;
         float stepFromLeft = Screen.width / 2;
         float stepFromTop = Screen.height * 0.9f;
         int xcell = -1; int ycell = -1;
-        foreach (List<ArmyCell> _armyCelllist in _hero.ArmyFormation)
+        foreach (List<ArmyCell> _armyCelllist in hero.ArmyFormation)
         {
             xcell++; ycell = -1;
             foreach (ArmyCell _armyCell in _armyCelllist)
             {
                 ycell++;
                 cellList[xcell][ycell].transform.position = Camera.main.ScreenToWorldPoint(new Vector3(stepFromLeft - xcell * step, stepFromTop - ycell * step, 8));
-                if (_armyCell.type == cellType.Forbidden)
+                if (_armyCell.Type == CellType.NotAvailable)
                 {
                     //cellList[xcell][ycell].GetComponent<ArmyCellScript>().ChangeSprite(listOfCommonObjects.GetSpriteByName("armyCellF", spriteUiList));
                     cellList[xcell][ycell].GetComponent<ArmyCellScript>().ChangeSprite(spriteUiList[1]);
                 }
-                else if (_armyCell.type == cellType.Empty)
+                else if (_armyCell.Type == CellType.Available)
                 {
                     //cellList[xcell][ycell].GetComponent<ArmyCellScript>().ChangeSprite(listOfCommonObjects.GetSpriteByName("armyCellE", spriteUiList));
                     cellList[xcell][ycell].GetComponent<ArmyCellScript>().ChangeSprite(spriteUiList[0]);
                 }
-                Debug.Log($"{xcell} {ycell} {_armyCell.type}");
             }
         }
     }

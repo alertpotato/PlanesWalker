@@ -10,13 +10,13 @@ public class GameLoopSharedData : MonoBehaviour
     public List<GameObject> _newArmyList;
     [SerializeField]private GameObject YourHero;
     [SerializeField]private GameObject EvilHero;
-    [SerializeField]private GameObject YourArmy;
+    //[SerializeField]private GameObject YourArmy;
     [SerializeField]private GameObject Unit;
     [SerializeField]private GameObject UnitCardMain;
     private int _countUnitsSelected;
     public ListOfCommonUnits listOfCommonUnits;
     public ListOfObjects listOfCommonObjects;
-    
+    public GameObject Battlefield;
     private List<Sprite> spriteUiList;
 
     private GameObject cardChosenToField;
@@ -35,13 +35,13 @@ public class GameLoopSharedData : MonoBehaviour
         EvilHero.GetComponent<Hero>().modifyHero("Dark Lord", 1, 1);
         YourHero.name = YourHero.GetComponent<Hero>().heroName;
         EvilHero.name = EvilHero.GetComponent<Hero>().heroName;
-
+        Battlefield.GetComponent<ArmyField>().InicializeField(YourHero.GetComponent<Hero>(), EvilHero.GetComponent<Hero>());
         GameObject.Find("ArmyDeck").GetComponent<ArmyDeck>().GetArmyHero(YourHero.GetComponent<Hero>());
 
         AddEvilArmy(EvilHero.GetComponent<Hero>());
         _countUnitsSelected = 0;
         spriteUiList = new List<Sprite>(Resources.LoadAll<Sprite>("Sprites/ui"));
-        YourArmy = Instantiate(YourArmy);
+        //YourArmy = Instantiate(YourArmy);
     }
     private void Update()
     {
@@ -56,7 +56,7 @@ public class GameLoopSharedData : MonoBehaviour
         }
         if (Input.GetKeyDown("r") && state == eventState.chosingCards)
         {
-            YourArmy.GetComponent<ArmyField>().PositionField(YourHero.GetComponent<Hero>());
+            Battlefield.GetComponent<ArmyField>().PositionField(YourHero.GetComponent<Hero>());
         }
     }
     private void CardChosen(GameObject _chosenCard,bool isInArmy)
@@ -78,7 +78,7 @@ public class GameLoopSharedData : MonoBehaviour
 
             //Sprite _sprite = listOfCommonObjects.GetSpriteByName(cardChosenToField.GetComponent<UnitCardMain>().GetCardUnit().unitname, "units") ;
 
-            _chosenCell.GetComponent<ArmyCellScript>().backSpriteRendererScript.SetSpriteByName(cardChosenToField.GetComponent<UnitCardMain>().GetCardUnit().GetComponent<ArmyUnitClass>().UnitName);
+            _chosenCell.GetComponent<ArmyCellScript>().SetSpriteByName(cardChosenToField.GetComponent<UnitCardMain>().GetCardUnit().GetComponent<ArmyUnitClass>().UnitName);
             //_chosenCell.GetComponent<ArmyCellScript>().backSpriteRendererScript.SetSpriteByName(cardChosenToField.GetComponent<UnitCardMain>().GetCardUnit().unitname);
             //_chosenCell.GetComponent<ArmyCellScript>().ChangeSprite(_sprite);
 
@@ -94,13 +94,13 @@ public class GameLoopSharedData : MonoBehaviour
         for (int i = 0; i < _yourHero.bannersList.Count; i++)
         {
             var a = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width / 4, (Screen.height / (_yourHero.bannersList.Count + 1)) * (i + 1), 8));
-            _cards.Add(Instantiate(Resources.Load<GameObject>("Prefab/UnitCardMain")));
+            _cards.Add(Instantiate(UnitCardMain));
             _cards[i].GetComponent<UnitCardMain>().SetUnitParameters(_yourHero.bannersList[i], a,true);
         }
         for (int i = 0; i < _enemyHero.bannersList.Count; i++)
         {
             var a = Camera.main.ScreenToWorldPoint(new Vector3((Screen.width / 4) * 3, (Screen.height / (_enemyHero.bannersList.Count + 1)) * (i + 1), 8));
-            _cardsEnemy.Add(Instantiate(Resources.Load<GameObject>("Prefab/UnitCardMain")));
+            _cardsEnemy.Add(Instantiate(UnitCardMain));
             _cardsEnemy[i].GetComponent<UnitCardMain>().SetUnitParameters(_enemyHero.bannersList[i], a, true);
         }
     }
@@ -121,7 +121,7 @@ public class GameLoopSharedData : MonoBehaviour
     {
         for (int i = 0; i < cardsNum; i++)
         {
-            GameObject newUnit = InstantiateRandomUnit(Race.human);
+            GameObject newUnit = InstantiateRandomUnit(Race.Human);
             var a = Camera.main.ScreenToWorldPoint(new Vector3((Screen.width / (cardsNum + 2)) * (i + 1), Screen.height/2, 8));
             _newArmyList.Add(newUnit);
             GameObject newCard = Instantiate(UnitCardMain);
@@ -169,7 +169,7 @@ public class GameLoopSharedData : MonoBehaviour
     {
         for (int i = 0; i < 3; i++)
         {
-            GameObject newEvilUnit = InstantiateRandomUnit(Race.goblin);
+            GameObject newEvilUnit = InstantiateRandomUnit(Race.Goblin);
             _hero.AddBannerList(newEvilUnit);
         }
     }

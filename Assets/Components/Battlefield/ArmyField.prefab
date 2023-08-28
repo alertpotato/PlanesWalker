@@ -24,13 +24,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1663674510673476570}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1663674510673476571
 MonoBehaviour:
@@ -44,3 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e4745120a672bd4e907bfe956902bd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spriteUiList: []
+  ArmyFieldCell: {fileID: 4341033601640833503, guid: 9a7a7491cb85db945a33a506430810a8, type: 3}
+  YourHero: {fileID: 0}
+  EnemyHero: {fileID: 0}

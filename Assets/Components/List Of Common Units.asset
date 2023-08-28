@@ -20,8 +20,10 @@ MonoBehaviour:
   - points: 4
     weight: 250
   - points: 5
-    weight: 10
+    weight: 50
   - points: 6
+    weight: 10
+  - points: 7
     weight: 1
   UnitList:
   - UnitType: local_militia
@@ -29,70 +31,68 @@ MonoBehaviour:
     Characteristics:
       NumberOfUnits: 14
       Health: 3
-      Damage: 3
+      Damage: 2
       Initiative: -1
       Cohesion: -1
       Armour: 0
-    CharacteristicsWeightsList:
-    - unitParam: number
-      cost: 1
-      paramMod: 5
-      paramWeight: 12
-    - unitParam: health
-      cost: 1
-      paramMod: 1
-      paramWeight: 10
-    - unitParam: damage
-      cost: 2
-      paramMod: 1
-      paramWeight: 8
-    - unitParam: init
-      cost: 1
-      paramMod: 1
-      paramWeight: 5
-    - unitParam: coh
-      cost: 1
-      paramMod: 1
-      paramWeight: 5
-    - unitParam: armour
-      cost: 5
-      paramMod: 1
-      paramWeight: 2
+    NumberOfUnitsUpgrade:
+      Cost: 1
+      Modifier: 4
+      Weight: 12
+    HealthUpgrade:
+      Cost: 2
+      Modifier: 1
+      Weight: 10
+    DamageUpgrade:
+      Cost: 2
+      Modifier: 1
+      Weight: 8
+    InitiativeUpgrade:
+      Cost: 2
+      Modifier: 1
+      Weight: 3
+    CohesionUpgrade:
+      Cost: 1
+      Modifier: 1
+      Weight: 5
+    ArmourUpgrade:
+      Cost: 5
+      Modifier: 1
+      Weight: 2
     UnitWeight: 10
   - UnitType: dirty_thieves
     UnitRace: 0
     Characteristics:
       NumberOfUnits: 7
       Health: 5
-      Damage: 6
-      Initiative: 0
+      Damage: 5
+      Initiative: 2
       Cohesion: -2
       Armour: 0
-    CharacteristicsWeightsList:
-    - unitParam: number
-      cost: 2
-      paramMod: 4
-      paramWeight: 7
-    - unitParam: health
-      cost: 1
-      paramMod: 1
-      paramWeight: 10
-    - unitParam: damage
-      cost: 1
-      paramMod: 2
-      paramWeight: 10
-    - unitParam: init
-      cost: 1
-      paramMod: 1
-      paramWeight: 12
-    - unitParam: coh
-      cost: 1
-      paramMod: 1
-      paramWeight: 5
-    - unitParam: armour
-      cost: 5
-      paramMod: 1
-      paramWeight: 2
+    NumberOfUnitsUpgrade:
+      Cost: 2
+      Modifier: 4
+      Weight: 7
+    HealthUpgrade:
+      Cost: 1
+      Modifier: 1
+      Weight: 10
+    DamageUpgrade:
+      Cost: 1
+      Modifier: 2
+      Weight: 10
+    InitiativeUpgrade:
+      Cost: 1
+      Modifier: 1
+      Weight: 12
+    CohesionUpgrade:
+      Cost: 1
+      Modifier: 1
+      Weight: 5
+    ArmourUpgrade:
+      Cost: 5
+      Modifier: 1
+      Weight: 2
     UnitWeight: 8
   - UnitType: trained_warriors
     UnitRace: 0
@@ -103,31 +103,30 @@ MonoBehaviour:
       Initiative: 0
       Cohesion: 2
       Armour: 0
-    CharacteristicsWeightsList:
-    - unitParam: number
-      cost: 1
-      paramMod: 2
-      paramWeight: 7
-    - unitParam: health
-      cost: 1
-      paramMod: 2
-      paramWeight: 12
-    - unitParam: damage
-      cost: 2
-      paramMod: 2
-      paramWeight: 10
-    - unitParam: init
-      cost: 1
-      paramMod: 1
-      paramWeight: 9
-    - unitParam: coh
-      cost: 1
-      paramMod: 2
-      paramWeight: 4
-    - unitParam: armour
-      cost: 3
-      paramMod: 1
-      paramWeight: 4
+    NumberOfUnitsUpgrade:
+      Cost: 1
+      Modifier: 2
+      Weight: 7
+    HealthUpgrade:
+      Cost: 1
+      Modifier: 2
+      Weight: 12
+    DamageUpgrade:
+      Cost: 2
+      Modifier: 2
+      Weight: 10
+    InitiativeUpgrade:
+      Cost: 1
+      Modifier: 1
+      Weight: 9
+    CohesionUpgrade:
+      Cost: 1
+      Modifier: 2
+      Weight: 5
+    ArmourUpgrade:
+      Cost: 3
+      Modifier: 1
+      Weight: 6
     UnitWeight: 6
   - UnitType: ogre
     UnitRace: 1
@@ -138,31 +137,30 @@ MonoBehaviour:
       Initiative: 0
       Cohesion: -3
       Armour: 2
-    CharacteristicsWeightsList:
-    - unitParam: number
-      cost: 4
-      paramMod: 1
-      paramWeight: 2
-    - unitParam: health
-      cost: 1
-      paramMod: 15
-      paramWeight: 10
-    - unitParam: damage
-      cost: 1
-      paramMod: 5
-      paramWeight: 10
-    - unitParam: init
-      cost: 1
-      paramMod: 1
-      paramWeight: 7
-    - unitParam: coh
-      cost: 1
-      paramMod: 2
-      paramWeight: 4
-    - unitParam: armour
-      cost: 2
-      paramMod: 1
-      paramWeight: 4
+    NumberOfUnitsUpgrade:
+      Cost: 4
+      Modifier: 1
+      Weight: 2
+    HealthUpgrade:
+      Cost: 1
+      Modifier: 15
+      Weight: 10
+    DamageUpgrade:
+      Cost: 1
+      Modifier: 10
+      Weight: 10
+    InitiativeUpgrade:
+      Cost: 1
+      Modifier: 1
+      Weight: 7
+    CohesionUpgrade:
+      Cost: 1
+      Modifier: 2
+      Weight: 4
+    ArmourUpgrade:
+      Cost: 2
+      Modifier: 1
+      Weight: 4
     UnitWeight: 6
   - UnitType: goblin_rogue
     UnitRace: 1
@@ -173,65 +171,62 @@ MonoBehaviour:
       Initiative: 2
       Cohesion: -1
       Armour: 0
-    CharacteristicsWeightsList:
-    - unitParam: number
-      cost: 2
-      paramMod: 5
-      paramWeight: 10
-    - unitParam: health
-      cost: 1
-      paramMod: 1
-      paramWeight: 8
-    - unitParam: damage
-      cost: 1
-      paramMod: 1
-      paramWeight: 12
-    - unitParam: init
-      cost: 1
-      paramMod: 1
-      paramWeight: 12
-    - unitParam: coh
-      cost: 1
-      paramMod: 1
-      paramWeight: 8
-    - unitParam: armour
-      cost: 5
-      paramMod: 1
-      paramWeight: 2
+    NumberOfUnitsUpgrade:
+      Cost: 2
+      Modifier: 5
+      Weight: 10
+    HealthUpgrade:
+      Cost: 1
+      Modifier: 1
+      Weight: 8
+    DamageUpgrade:
+      Cost: 1
+      Modifier: 1
+      Weight: 12
+    InitiativeUpgrade:
+      Cost: 1
+      Modifier: 1
+      Weight: 12
+    CohesionUpgrade:
+      Cost: 1
+      Modifier: 1
+      Weight: 8
+    ArmourUpgrade:
+      Cost: 5
+      Modifier: 1
+      Weight: 2
     UnitWeight: 8
   - UnitType: goblin_punks
     UnitRace: 1
     Characteristics:
-      NumberOfUnits: 20
-      Health: 3
-      Damage: 2
+      NumberOfUnits: 24
+      Health: 2
+      Damage: 1
       Initiative: -1
       Cohesion: -3
       Armour: 0
-    CharacteristicsWeightsList:
-    - unitParam: number
-      cost: 2
-      paramMod: 7
-      paramWeight: 12
-    - unitParam: health
-      cost: 1
-      paramMod: 1
-      paramWeight: 5
-    - unitParam: damage
-      cost: 2
-      paramMod: 1
-      paramWeight: 8
-    - unitParam: init
-      cost: 1
-      paramMod: 1
-      paramWeight: 12
-    - unitParam: coh
-      cost: 1
-      paramMod: 1
-      paramWeight: 5
-    - unitParam: armour
-      cost: 6
-      paramMod: 1
-      paramWeight: 2
+    NumberOfUnitsUpgrade:
+      Cost: 2
+      Modifier: 14
+      Weight: 12
+    HealthUpgrade:
+      Cost: 2
+      Modifier: 1
+      Weight: 5
+    DamageUpgrade:
+      Cost: 3
+      Modifier: 1
+      Weight: 8
+    InitiativeUpgrade:
+      Cost: 1
+      Modifier: 1
+      Weight: 12
+    CohesionUpgrade:
+      Cost: 2
+      Modifier: 2
+      Weight: 5
+    ArmourUpgrade:
+      Cost: 5
+      Modifier: 1
+      Weight: 2
     UnitWeight: 10
-  UnitPrefab: {fileID: 918958474132185176, guid: bf59c730e343e07429aca668f5e86307, type: 3}

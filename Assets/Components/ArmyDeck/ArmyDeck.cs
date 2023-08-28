@@ -4,23 +4,22 @@ using UnityEngine;
 
 public class ArmyDeck : MonoBehaviour
 {
-    private Hero armyHero;
-    private List<GameObject> _cards;
-    private GameObject deckSpace;
+    public Hero armyHero;
+    public List<GameObject> _cards;
+    public GameObject yourDeckSpace;
+    public GameObject enemyDeckSpace;
+    [SerializeField]private GameObject UnitCard;
     public void GetArmyHero(Hero _hero)
     {
         if (armyHero == null) { armyHero = _hero; }
     }
-    private void Awake()
-    {
-        deckSpace = Instantiate(Resources.Load<GameObject>("Prefab/DeckSpace"));
-        deckSpace.transform.SetParent(this.transform);
-    }
     private void Start()
     {
         _cards = new List<GameObject>();
-        deckSpace.transform.localPosition = Camera.main.ScreenToWorldPoint(new Vector3((Screen.width / 10), Screen.height/2, 10));
-        deckSpace.SetActive(false);
+        yourDeckSpace.transform.localPosition = Camera.main.ScreenToWorldPoint(new Vector3((Screen.width / 10), Screen.height/2, 10));
+        yourDeckSpace.SetActive(false);
+        enemyDeckSpace.transform.localPosition = Camera.main.ScreenToWorldPoint(new Vector3((Screen.width / 10)*9, Screen.height/2, 10));
+        enemyDeckSpace.SetActive(false);
     }
     private List<GameObject> CreateSortList()
     {
@@ -39,7 +38,7 @@ public class ArmyDeck : MonoBehaviour
             if (_armyListSorted[i].GetComponent<ArmyUnitClass>().UnitName != prevCardName) { stepY += 150; stepX = 0; stepZ = 0; }
             else { stepX += 70; stepZ = 0.1f; }
             var a = Camera.main.ScreenToWorldPoint(new Vector3( (Screen.width / 20) + stepX, Screen.height - stepY, 8 + stepZ));
-            _cards.Add(Instantiate(Resources.Load<GameObject>("Prefab/UnitCardMain")));
+            _cards.Add(Instantiate(UnitCard));
             _cards[i].GetComponent<UnitCardMain>().SetUnitParameters(_armyListSorted[i], a,true);
             prevCardName = _armyListSorted[i].GetComponent<ArmyUnitClass>().UnitName;
         }
@@ -59,8 +58,8 @@ public class ArmyDeck : MonoBehaviour
     {
         if (Input.GetKeyDown("q") )
         {
-            if (deckSpace.activeSelf == true) { WipeCards(); deckSpace.SetActive(false); }
-            else { deckSpace.SetActive(true); ShowCards(); }
+            if (yourDeckSpace.activeSelf == true) { WipeCards(); yourDeckSpace.SetActive(false); enemyDeckSpace.SetActive(false); }
+            else { yourDeckSpace.SetActive(true);enemyDeckSpace.SetActive(true); ShowCards(); }
         }
     }
 }

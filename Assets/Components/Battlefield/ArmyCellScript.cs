@@ -1,23 +1,18 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ArmyFieldCellBackSpriteScript : MonoBehaviour
+public class ArmyCellScript : MonoBehaviour
 {
-    private SpriteRenderer spriteComponent;
+    public SpriteRenderer spriteComponent;
     [SerializeField] private List<Sprite> spritetList;
-    private void Awake()
+    public void ChangeSprite(Sprite newSprite)
     {
-        spritetList = new List<Sprite>(Resources.LoadAll<Sprite>("Sprites/spites"));
-        spriteComponent = GetComponent<SpriteRenderer>();
-    }
-    private void Start()
-    {
+        spriteComponent.sprite = newSprite;
     }
     public void SetSpriteByName(string _spriteName)
     {
         spriteComponent.sprite = GetSpriteByName(_spriteName);
-        //Debug.Log(GetComponent<SpriteRenderer>().bounds.size.x);
-        //Debug.Log(GetComponent<SpriteRenderer>().bounds);
     }
     public Sprite GetSpriteByName(string _name)
     {
@@ -28,5 +23,9 @@ public class ArmyFieldCellBackSpriteScript : MonoBehaviour
             if (_sprite.name == _name) { return _sprite; }
         }
         return spritetList[i];
+    }
+    private void OnMouseDown()
+    {
+        EventManager.StartCellChosen(this.gameObject);
     }
 }
