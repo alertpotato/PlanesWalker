@@ -1,0 +1,109 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &770874861129112245
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3321685539194807500}
+  - component: {fileID: 6543516443291923443}
+  - component: {fileID: 6890867112935168127}
+  - component: {fileID: 5879750598252854110}
+  - component: {fileID: 4306738705462158818}
+  m_Layer: 0
+  m_Name: GameLoop
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3321685539194807500
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 770874861129112245}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -100}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6543516443291923443
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 770874861129112245}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48afc27ba12b0904f9f0eb83d1538661, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _cards: []
+  _cardsEnemy: []
+  _newArmyList: []
+  YourHero: {fileID: 4566354792725591614, guid: 2132259902ea23648a531edf4119b785,
+    type: 3}
+  EvilHero: {fileID: 4566354792725591614, guid: 2132259902ea23648a531edf4119b785,
+    type: 3}
+  Unit: {fileID: 918958474132185176, guid: bf59c730e343e07429aca668f5e86307, type: 3}
+  UnitCard: {fileID: 5469837566480996917, guid: d12a8ca1ab4c2d04289b0ea6fc21720b,
+    type: 3}
+  listOfCommonUnits: {fileID: 11400000, guid: 4df28bdcbf64e5241a86717ac39ecdeb, type: 2}
+  listOfCommonObjects: {fileID: 11400000, guid: 581108407c6fb1c4bb9229ec66c349ba,
+    type: 2}
+  Battlefield: {fileID: 0}
+  SelectedUnits: {fileID: 11400000, guid: 70579ba0f3af99e42af3dbb17bc1ee46, type: 2}
+--- !u!114 &6890867112935168127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 770874861129112245}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 993854497138d5245bc39d2b752e99c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Config: {fileID: 6543516443291923443}
+  NumberOfRewards: 3
+  NumberOfChoices: 5
+  leftNumberOfRewards: 0
+  isChosing: 0
+  RewardList: []
+  CardList: []
+--- !u!114 &5879750598252854110
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 770874861129112245}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65fc41ab6a9037141b2895cfe045a5f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Config: {fileID: 6543516443291923443}
+--- !u!114 &4306738705462158818
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 770874861129112245}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f952477607a88441f9b40ae56665ec89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _currentState: {fileID: 6890867112935168127}

@@ -1,0 +1,232 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39f478c9b29317a4ca0c10ba7f1474a2, type: 3}
+  m_Name: List Of Common Units
+  m_EditorClassIdentifier: 
+  pointsRandomizerList:
+  - points: 2
+    weight: 500
+  - points: 3
+    weight: 1000
+  - points: 4
+    weight: 250
+  - points: 5
+    weight: 50
+  - points: 6
+    weight: 10
+  - points: 7
+    weight: 1
+  UnitList:
+  - UnitType: local_militia
+    UnitRace: 0
+    Characteristics:
+      NumberOfUnits: 14
+      Health: 3
+      Damage: 2
+      Initiative: -1
+      Cohesion: -1
+      Armour: 0
+    NumberOfUnitsUpgrade:
+      Cost: 1
+      Modifier: 4
+      Weight: 12
+    HealthUpgrade:
+      Cost: 2
+      Modifier: 1
+      Weight: 10
+    DamageUpgrade:
+      Cost: 2
+      Modifier: 1
+      Weight: 8
+    InitiativeUpgrade:
+      Cost: 2
+      Modifier: 1
+      Weight: 3
+    CohesionUpgrade:
+      Cost: 1
+      Modifier: 1
+      Weight: 5
+    ArmourUpgrade:
+      Cost: 5
+      Modifier: 1
+      Weight: 2
+    UnitWeight: 10
+  - UnitType: dirty_thieves
+    UnitRace: 0
+    Characteristics:
+      NumberOfUnits: 7
+      Health: 5
+      Damage: 5
+      Initiative: 2
+      Cohesion: -2
+      Armour: 0
+    NumberOfUnitsUpgrade:
+      Cost: 2
+      Modifier: 4
+      Weight: 7
+    HealthUpgrade:
+      Cost: 1
+      Modifier: 1
+      Weight: 10
+    DamageUpgrade:
+      Cost: 1
+      Modifier: 2
+      Weight: 10
+    InitiativeUpgrade:
+      Cost: 1
+      Modifier: 1
+      Weight: 12
+    CohesionUpgrade:
+      Cost: 1
+      Modifier: 1
+      Weight: 5
+    ArmourUpgrade:
+      Cost: 5
+      Modifier: 1
+      Weight: 2
+    UnitWeight: 8
+  - UnitType: trained_warriors
+    UnitRace: 0
+    Characteristics:
+      NumberOfUnits: 5
+      Health: 8
+      Damage: 5
+      Initiative: 0
+      Cohesion: 2
+      Armour: 0
+    NumberOfUnitsUpgrade:
+      Cost: 1
+      Modifier: 2
+      Weight: 7
+    HealthUpgrade:
+      Cost: 1
+      Modifier: 2
+      Weight: 12
+    DamageUpgrade:
+      Cost: 2
+      Modifier: 2
+      Weight: 10
+    InitiativeUpgrade:
+      Cost: 1
+      Modifier: 1
+      Weight: 9
+    CohesionUpgrade:
+      Cost: 1
+      Modifier: 2
+      Weight: 5
+    ArmourUpgrade:
+      Cost: 3
+      Modifier: 1
+      Weight: 6
+    UnitWeight: 6
+  - UnitType: ogre
+    UnitRace: 1
+    Characteristics:
+      NumberOfUnits: 1
+      Health: 40
+      Damage: 15
+      Initiative: 0
+      Cohesion: -3
+      Armour: 2
+    NumberOfUnitsUpgrade:
+      Cost: 4
+      Modifier: 1
+      Weight: 2
+    HealthUpgrade:
+      Cost: 1
+      Modifier: 15
+      Weight: 10
+    DamageUpgrade:
+      Cost: 1
+      Modifier: 10
+      Weight: 10
+    InitiativeUpgrade:
+      Cost: 1
+      Modifier: 1
+      Weight: 7
+    CohesionUpgrade:
+      Cost: 1
+      Modifier: 2
+      Weight: 4
+    ArmourUpgrade:
+      Cost: 2
+      Modifier: 1
+      Weight: 4
+    UnitWeight: 6
+  - UnitType: goblin_rogue
+    UnitRace: 1
+    Characteristics:
+      NumberOfUnits: 12
+      Health: 3
+      Damage: 3
+      Initiative: 2
+      Cohesion: -1
+      Armour: 0
+    NumberOfUnitsUpgrade:
+      Cost: 2
+      Modifier: 5
+      Weight: 10
+    HealthUpgrade:
+      Cost: 1
+      Modifier: 1
+      Weight: 8
+    DamageUpgrade:
+      Cost: 1
+      Modifier: 1
+      Weight: 12
+    InitiativeUpgrade:
+      Cost: 1
+      Modifier: 1
+      Weight: 12
+    CohesionUpgrade:
+      Cost: 1
+      Modifier: 1
+      Weight: 8
+    ArmourUpgrade:
+      Cost: 5
+      Modifier: 1
+      Weight: 2
+    UnitWeight: 8
+  - UnitType: goblin_punks
+    UnitRace: 1
+    Characteristics:
+      NumberOfUnits: 24
+      Health: 2
+      Damage: 1
+      Initiative: -1
+      Cohesion: -3
+      Armour: 0
+    NumberOfUnitsUpgrade:
+      Cost: 2
+      Modifier: 14
+      Weight: 12
+    HealthUpgrade:
+      Cost: 2
+      Modifier: 1
+      Weight: 5
+    DamageUpgrade:
+      Cost: 3
+      Modifier: 1
+      Weight: 8
+    InitiativeUpgrade:
+      Cost: 1
+      Modifier: 1
+      Weight: 12
+    CohesionUpgrade:
+      Cost: 2
+      Modifier: 2
+      Weight: 5
+    ArmourUpgrade:
+      Cost: 5
+      Modifier: 1
+      Weight: 2
+    UnitWeight: 10
