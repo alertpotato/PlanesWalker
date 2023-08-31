@@ -5,14 +5,14 @@ using UnityEngine;
 [RequireComponent(typeof(GameLoopSharedData))]
 public class GameLoopPreBattleState : StateBehaviour
 {
-    private GameLoopSharedData Config;
+    public GameLoopSharedData Config;
     public override void OnEnter()
     {
-
+        Config.Battlefield.SetActive(true); 
     }
 
     public override void OnUpdate()
     {
-        ChangeState<GameLoopRewardState>();
+        //ChangeState<GameLoopRewardState>();
     }
 }

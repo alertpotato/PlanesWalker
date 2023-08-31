@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14fd09677bf1cb34a95ff412a96e08ac, type: 3}
+  m_Name: Unit Graphic
+  m_EditorClassIdentifier: 
+  UnitGraphics:
+  - UnitType: local_militia
+    Card: {fileID: 736160649, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+    BattleIcon: {fileID: -945918270, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+  - UnitType: dirty_thieves
+    Card: {fileID: -276429951, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+    BattleIcon: {fileID: 77825956, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+  - UnitType: trained_warriors
+    Card: {fileID: 641852959, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+    BattleIcon: {fileID: 2120849509, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+  - UnitType: ogre
+    Card: {fileID: 827792109, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+    BattleIcon: {fileID: 74608049, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+  - UnitType: goblin_rogue
+    Card: {fileID: -1070660373, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+    BattleIcon: {fileID: 9055929, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+  - UnitType: goblin_punks
+    Card: {fileID: 122455890, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+    BattleIcon: {fileID: -1604203927, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}

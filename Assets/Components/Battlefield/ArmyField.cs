@@ -2,52 +2,49 @@ using System.Collections.Generic;
 using UnityEngine;
 public class ArmyField : MonoBehaviour
 {
-    [SerializeField] private List<Sprite> spriteUiList;
-    [SerializeField] public List<List<GameObject>> cellList;
+    public Sprite spriteAvailable;
+    public Sprite spriteNotAvailable;
+    [SerializeField] public List<List<GameObject>> cellList = new List<List<GameObject>>();
     public GameObject ArmyFieldCell;
     public Hero YourHero;
     public Hero EnemyHero;
-
-    private void Awake()
-    {
-        cellList = new List<List<GameObject>>();
-    }
-
+    
     private void Start()
     {
-        spriteUiList = new List<Sprite>(Resources.LoadAll<Sprite>("Sprites/ui"));
-        transform.position = new Vector3(0, 0, -2);
+        transform.position = new Vector3(0, 0, 8);
     }
     private void Update()
     {
-        float step = spriteUiList[0].rect.width * 3.5f;
+        float step = spriteAvailable.rect.width*5f; 
         float stepFromLeft = Screen.width / 2;
         float stepFromTop = Screen.height * 0.9f;
         int xcell = -1; int ycell = -1;
-        foreach (List<ArmyCell> _armyCelllist in YourHero.ArmyFormation)
+        foreach (List<ArmyCell> armyCelllist in YourHero.ArmyFormation)
         {
             xcell++; ycell = -1;
-            foreach (ArmyCell _armyCell in _armyCelllist)
+            foreach (ArmyCell armyCell in armyCelllist)
             {
                 ycell++;
-                cellList[xcell][ycell].transform.position = Camera.main.ScreenToWorldPoint(new Vector3(stepFromLeft - xcell * step, stepFromTop - ycell * step, 8));
-                if (_armyCell.Type == CellType.NotAvailable)
+                cellList[xcell][ycell].transform.position = Camera.main.ScreenToWorldPoint(new Vector3(stepFromLeft - xcell * step, stepFromTop - ycell * step, transform.position.z));
+                if (armyCell.Type == CellType.NotAvailable)
                 {
                     //cellList[xcell][ycell].GetComponent<ArmyCellScript>().ChangeSprite(listOfCommonObjects.GetSpriteByName("armyCellF", spriteUiList));
-                    cellList[xcell][ycell].GetComponent<ArmyCellScript>().ChangeSprite(spriteUiList[1]);
+                    cellList[xcell][ycell].GetComponent<ArmyCellScript>().ChangeSprite(spriteNotAvailable);
                 }
-                else if (_armyCell.Type == CellType.Available)
+                else if (armyCell.Type == CellType.Available)
                 {
                     //cellList[xcell][ycell].GetComponent<ArmyCellScript>().ChangeSprite(listOfCommonObjects.GetSpriteByName("armyCellE", spriteUiList));
-                    cellList[xcell][ycell].GetComponent<ArmyCellScript>().ChangeSprite(spriteUiList[0]);
+                    cellList[xcell][ycell].GetComponent<ArmyCellScript>().ChangeSprite(spriteAvailable);
                 }
             }
         }
     }
-    public void InicializeField(Hero yourHero,Hero enemyHero)
+
+    public void InicializeField(Hero yourHero, Hero enemyHero)
     {
         YourHero = yourHero;
         EnemyHero = enemyHero;
+
         for (int column = 0; column < YourHero.ArmyFormation.Count; column++)
         {
             var tempList = new List<GameObject>();

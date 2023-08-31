@@ -5,7 +5,11 @@ using UnityEngine;
 public class SelectManager : ScriptableObject
 {
     public GameObject SelectedEntity;
-    // Start is called before the first frame update
+
+    public void Start()
+    {
+        SelectedEntity = null;
+    }
     public void SelectEntity(GameObject entity)
     {
         if (SelectedEntity == entity)
@@ -22,11 +26,12 @@ public class SelectManager : ScriptableObject
     }
     public void DeSelectEntity()
     {
-        SelectedEntity.GetComponent<SelectAdapter>()?.Deselect.Invoke();
+        if (SelectedEntity!=null) SelectedEntity.GetComponent<SelectAdapter>()?.Deselect.Invoke();
         SelectedEntity = null;
     }
-    public GameObject GetSelectedEntity()
+    public bool IsEntitySelected()
     {
-        return SelectedEntity;
+        if (ReferenceEquals(SelectedEntity, null)) return false;
+        else return true;
     }
 }
