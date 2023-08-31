@@ -13,9 +13,14 @@ public class Formation
 [Serializable]
 public struct ArmyCell
 {
-    public GameObject Unit; public CellType Type { get; set; }
-    public ArmyCell(CellType type) { Unit = null; Type = type; }
-    public ArmyCell(GameObject unit) { Unit = unit; Type = CellType.Occupied; }
+    public GameObject Unit;
+    public CellType Type { get; set; }
+    public int Line;
+    public int Depth;
+    public ArmyCell(CellType type,int line,int depth) { Unit = null; Type = type;
+        Line = line;
+        Depth = depth;
+    }
 }
 public class Hero : MonoBehaviour
 {
@@ -29,16 +34,16 @@ public class Hero : MonoBehaviour
     private void Awake()
     {
         ArmyFormation = new List<List<ArmyCell>>();
-        for (int i = 0; i < 3; i++)
+        for (int column = 0; column < 3; column++)
         {
             var tempList = new List<ArmyCell>();
-            for (int _i = 0; _i < 5; _i++)
+            for (int row = 0; row < 5; row++)
             {
-                tempList.Add(new ArmyCell(CellType.NotAvailable));
+                tempList.Add(new ArmyCell(CellType.NotAvailable,column,row));
             }
             ArmyFormation.Add(tempList);
         }
-        ArmyFormation[0][2] = new ArmyCell(CellType.Available);
+        ArmyFormation[0][2] = new ArmyCell(CellType.Available,0,2);
     }
     public void modifyHero(string n, int init, int coh) { heroName = n; modinit = init; modcoh = coh; }
     public string Getinfo()
