@@ -1,31 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-public enum eventState { chosingCards, presentArmies };
+using UnityEngine.InputSystem;
 public class GameLoopSharedData : MonoBehaviour
 {
-    public eventState state { get; private set; }
-    public List<GameObject> _cards;
-    public List<GameObject> _cardsEnemy;
-    public List<GameObject> _newArmyList;
+    [Header("Components")]
+    public Camera MainCamera;
+    public SelectManager SelectedUnits;
+    public GameObject Battlefield;
+    public ListOfCommonUnits listOfCommonUnits;
     public GameObject YourHero;
     public GameObject EvilHero;
     public GameObject Unit;
     public GameObject UnitCard;
-    private int _countUnitsSelected;
-    public ListOfCommonUnits listOfCommonUnits;
-    public GameObject Battlefield;
-    private GameObject cardChosenToField;
-    public SelectManager SelectedUnits;
-    public Camera MainCamera;
+
     public LayerMask UnitLayer;
+    public LayerMask BattlefieldLayer;
     private void Awake()
     {
         YourHero = Instantiate(YourHero);
         EvilHero = Instantiate(EvilHero);
-        _newArmyList = new List<GameObject>();
-        _cards = new List<GameObject>();
-        _cardsEnemy = new List<GameObject>();
         Battlefield.SetActive(false);
     }
     
@@ -39,22 +33,27 @@ public class GameLoopSharedData : MonoBehaviour
         GameObject.Find("ArmyDeck").GetComponent<ArmyDeck>().GetArmyHero(YourHero.GetComponent<Hero>());
 
         AddEvilArmy(EvilHero.GetComponent<Hero>());
-        _countUnitsSelected = 0;
     }
-    private void PresentArmies(Hero _yourHero, Hero _enemyHero)
+    void OnClick(InputValue value)
     {
-        for (int i = 0; i < _yourHero.bannersList.Count; i++)
+        Ray ray = MainCamera.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, UnitLayer))
         {
-            var a = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width / 4, (Screen.height / (_yourHero.bannersList.Count + 1)) * (i + 1), 8));
-            _cards.Add(Instantiate(UnitCard));
-            _cards[i].GetComponent<UnitCardMain>().SetUnitParameters(_yourHero.bannersList[i], a,true);
+            SelectedUnits.SelectEntity(hit.collider.gameObject);
+            Debug.Log($"unit hit {hit.collider.gameObject.name}");
         }
-        for (int i = 0; i < _enemyHero.bannersList.Count; i++)
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, BattlefieldLayer) & SelectedUnits.IsEntitySelected())
         {
-            var a = Camera.main.ScreenToWorldPoint(new Vector3((Screen.width / 4) * 3, (Screen.height / (_enemyHero.bannersList.Count + 1)) * (i + 1), 8));
-            _cardsEnemy.Add(Instantiate(UnitCard));
-            _cardsEnemy[i].GetComponent<UnitCardMain>().SetUnitParameters(_enemyHero.bannersList[i], a, true);
+            //hit.collider.gameObject.GetComponent<BattlefieldAdapter>()?.OccupieByUnit.Invoke(hit.collider.gameObject);
+            YourHero.GetComponent<Hero>()
+                .AddUnitToFormation(hit.collider.gameObject.GetComponent<ArmyCellScript>().CellSquad, SelectedUnits.SelectedEntity.GetComponent<ArmyUnitClass>());
+            Debug.Log($"cell hit {hit.collider.gameObject.name}");
         }
+    }
+    private void OnAlternateClick(InputValue value)
+    {
+        SelectedUnits.DeSelectEntity();
     }
     public GameObject InstantiateRandomUnit(Race unitRace)
     {

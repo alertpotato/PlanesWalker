@@ -7,45 +7,90 @@ public enum CellType { Available, NotAvailable, Occupied };
 [Serializable]
 public class Formation
 {
-    //public ArmyCell Army;
-    public List<ArmyCell> ArmyList;
+    public Formation(List<Squad> army)
+    {
+        ArmyLine = army;
+    }
+
+    public List<Squad> ArmyLine;
 }
 [Serializable]
-public struct ArmyCell
+public struct Squad
 {
-    public GameObject Unit;
-    public CellType Type { get; set; }
+    public ArmyUnitClass Unit;
     public int Line;
-    public int Depth;
-    public ArmyCell(CellType type,int line,int depth) { Unit = null; Type = type;
+    public int Column;
+    public CellType Type;
+    public Squad(CellType type,int line,int column) {
+        Unit = null; 
+        Type = type;
         Line = line;
-        Depth = depth;
+        Column = column;
+    }
+    public void ChangeType(CellType type)
+    {
+        Type = type;
+    }
+    public void ChangeUnit(ArmyUnitClass unit)
+    {
+        Unit = unit;
+        Type = CellType.Occupied;
     }
 }
 public class Hero : MonoBehaviour
 {
+    [Header("Characteristics")]
     public string heroName;
+    public List<GameObject> bannersList = new List<GameObject> { };
+    public List<Formation> ArmyFormation;
+    
+    [Header("HeroModifiers")]
     [SerializeField] private int modinit = 0;
     [SerializeField] private int modcoh = 0;
-    public List<GameObject> bannersList = new List<GameObject> { };
-    public struct Army { public int lineNumber; public int columnNumber; public ArmyUnitClass unit; }
-    public List<List<ArmyCell>> ArmyFormation;
-    public List<Formation> Test;
+    
+    [Header("Private variables")]
+    public int maxArmyWigth = 5;
+    public int maxArmyDepth = 3;
     private void Awake()
     {
-        ArmyFormation = new List<List<ArmyCell>>();
-        for (int column = 0; column < 3; column++)
+        ArmyFormation = new List<Formation>();
+        for (int line = 0; line < maxArmyDepth; line++)
         {
-            var tempList = new List<ArmyCell>();
-            for (int row = 0; row < 5; row++)
+            var formation = new List<Squad>();
+            for (int column = 0; column < maxArmyWigth; column++)
             {
-                tempList.Add(new ArmyCell(CellType.NotAvailable,column,row));
+                formation.Add(new Squad(CellType.NotAvailable,line,column));
             }
-            ArmyFormation.Add(tempList);
+            ArmyFormation.Add(new Formation(formation));
         }
-        ArmyFormation[0][2] = new ArmyCell(CellType.Available,0,2);
+        ArmyFormation[0].ArmyLine[2].ChangeType(CellType.Available);
     }
-    public void modifyHero(string n, int init, int coh) { heroName = n; modinit = init; modcoh = coh; }
+    public void AddUnitToFormation(Squad toCell, ArmyUnitClass unit)
+    {
+        if (toCell.Type == CellType.NotAvailable) {Debug.LogWarning($"{toCell} occupied");return;}
+        if (bannersList.Contains(unit.transform.parent.gameObject)) { Debug.LogWarning($"{unit.UnitName} not in the banner list");return;}
+        if (IsUnitInArmy(unit)) {Debug.LogWarning($"{unit.UnitName} already on the field");return;}
+
+        if (toCell.Type == CellType.Available)
+        {
+            toCell.ChangeUnit(unit);
+        }
+    }
+    public bool IsUnitInArmy(ArmyUnitClass unit)
+    {
+        bool answer=false;
+        foreach (var formation in ArmyFormation)
+        {
+            foreach (var line in formation.ArmyLine)
+            {
+                if (line.Unit == unit) answer = true;
+            }
+        }
+        return answer;
+    }
+
+    public void modifyHero(string n, int init, int coh) { heroName = n; modinit = init; modcoh = coh; ArmyFormation[0].ArmyLine[2].ChangeType(CellType.Available);
+        ArmyFormation[0].ArmyLine[3].ChangeType(CellType.Occupied);}
     public string Getinfo()
     {
         string info = $"{heroName}. There are {bannersList.Count} units under his command. His commanding skills improved army initiative by {modinit} and all unit cohesion by {modcoh}!";

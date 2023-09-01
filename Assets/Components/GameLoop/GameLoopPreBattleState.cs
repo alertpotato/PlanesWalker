@@ -10,7 +10,6 @@ public class GameLoopPreBattleState : StateBehaviour
     {
         Config.Battlefield.SetActive(true); 
     }
-
     public override void OnUpdate()
     {
         //ChangeState<GameLoopRewardState>();

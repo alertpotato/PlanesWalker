@@ -1,15 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(GameLoopSharedData))]
 public class GameLoopRewardState : StateBehaviour
 {
+    [Header("Components")]
     public GameLoopSharedData Config;
+    
+    [Header("Reward logic")]
     public int NumberOfRewards = 3;
     public int NumberOfChoices = 5;
     public int leftNumberOfRewards;
+    
+    [Header("Private variables")]
     [SerializeField] private bool isChosing;
     [SerializeField] private List<GameObject> RewardList;
     [SerializeField] private List<GameObject> CardList;
@@ -62,24 +66,8 @@ public class GameLoopRewardState : StateBehaviour
             CardList[i].transform.position = pos;
         }
     }
-
-    void OnClick(InputValue value)
-    {
-        Ray ray = Config.MainCamera.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, Mathf.Infinity, Config.UnitLayer))
-        {
-            Config.SelectedUnits.SelectEntity(hit.collider.gameObject);
-        }
-    }
-
-    private void OnAlternateClick(InputValue value)
-    {
-        Config.SelectedUnits.DeSelectEntity();
-    }
     public void AddRewardToHero()
     {
-        Debug.Log("AddRewardToHero");
         GameObject rewardUnit = Config.SelectedUnits.SelectedEntity.GetComponent<UnitCardMain>().RelatedUnit;
         Config.YourHero.GetComponent<Hero>().AddBannerList(rewardUnit);
         rewardUnit.transform.SetParent(Config.YourHero.transform);

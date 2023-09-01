@@ -5,7 +5,6 @@ using UnityEngine;
 public class SelectManager : ScriptableObject
 {
     public GameObject SelectedEntity;
-
     public void Start()
     {
         SelectedEntity = null;

@@ -31,3 +31,9 @@ MonoBehaviour:
   - UnitType: goblin_punks
     Card: {fileID: 122455890, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
     BattleIcon: {fileID: -1604203927, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+  - UnitType: available
+    Card: {fileID: 1046290716, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+    BattleIcon: {fileID: -1285038483, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+  - UnitType: notavailable
+    Card: {fileID: -713104645, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+    BattleIcon: {fileID: 1459736435, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}

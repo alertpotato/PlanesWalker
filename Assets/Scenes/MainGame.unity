@@ -495,6 +495,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1663674510673476571, guid: dda9303f3ae4d134081161b40e9542c7,
         type: 3}
+      propertyPath: armyCellSpacing
+      value: 1.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1663674510673476571, guid: dda9303f3ae4d134081161b40e9542c7,
+        type: 3}
       propertyPath: spriteAvailable
       value: 
       objectReference: {fileID: -1281776787, guid: f85e50b488a116447bd284acd3e1e0fc,

@@ -58,10 +58,15 @@ MonoBehaviour:
   UnitCard: {fileID: 5469837566480996917, guid: d12a8ca1ab4c2d04289b0ea6fc21720b,
     type: 3}
   listOfCommonUnits: {fileID: 11400000, guid: 4df28bdcbf64e5241a86717ac39ecdeb, type: 2}
-  listOfCommonObjects: {fileID: 11400000, guid: 581108407c6fb1c4bb9229ec66c349ba,
-    type: 2}
   Battlefield: {fileID: 0}
   SelectedUnits: {fileID: 11400000, guid: 70579ba0f3af99e42af3dbb17bc1ee46, type: 2}
+  MainCamera: {fileID: 0}
+  UnitLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  BattlefieldLayer:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!114 &6890867112935168127
 MonoBehaviour:
   m_ObjectHideFlags: 0

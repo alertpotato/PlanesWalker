@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1663674510673476568}
   - component: {fileID: 1663674510673476571}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Battlefield
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -44,7 +44,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e4745120a672bd4e907bfe956902bd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spriteUiList: []
-  ArmyFieldCell: {fileID: 4341033601640833503, guid: 9a7a7491cb85db945a33a506430810a8, type: 3}
+  ArmyFieldCell: {fileID: 4341033601640833503, guid: 9a7a7491cb85db945a33a506430810a8,
+    type: 3}
   YourHero: {fileID: 0}
   EnemyHero: {fileID: 0}
+  armyCellSpacing: 1
+  UnitSprites: {fileID: 11400000, guid: 1bdb3177e7c878344b2c38f9cbce4f4d, type: 2}

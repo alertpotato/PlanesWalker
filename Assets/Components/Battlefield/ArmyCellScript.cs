@@ -5,27 +5,17 @@ using UnityEngine;
 public class ArmyCellScript : MonoBehaviour
 {
     public SpriteRenderer spriteComponent;
-    [SerializeField] private List<Sprite> spritetList;
+    public BoxCollider CellCollider;
+    public float colliderThickness=0.1f;
+    public Squad CellSquad;
+
+    public void InicializeCell(Squad squad)
+    {
+        CellSquad = squad;
+    }
     public void ChangeSprite(Sprite newSprite)
     {
         spriteComponent.sprite = newSprite;
-    }
-    public void SetSpriteByName(string _spriteName)
-    {
-        spriteComponent.sprite = GetSpriteByName(_spriteName);
-    }
-    public Sprite GetSpriteByName(string _name)
-    {
-        int i = -1;
-        foreach (Sprite _sprite in spritetList)
-        {
-            i++;
-            if (_sprite.name == _name) { return _sprite; }
-        }
-        return spritetList[i];
-    }
-    private void OnMouseDown()
-    {
-        EventManager.StartCellChosen(this.gameObject);
+        CellCollider.size = new Vector3(spriteComponent.size.x, spriteComponent.size.y, colliderThickness);
     }
 }

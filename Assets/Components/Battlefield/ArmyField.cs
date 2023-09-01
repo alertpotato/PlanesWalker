@@ -2,39 +2,40 @@ using System.Collections.Generic;
 using UnityEngine;
 public class ArmyField : MonoBehaviour
 {
-    public Sprite spriteAvailable;
-    public Sprite spriteNotAvailable;
-    [SerializeField] public List<List<GameObject>> cellList = new List<List<GameObject>>();
+    [Header("Field Graphics")]
+    public List<List<GameObject>> cellList = new List<List<GameObject>>();
+    public float armyCellSpacing = 1.3f;
+    
+    [Header("Components")]
     public GameObject ArmyFieldCell;
     public Hero YourHero;
     public Hero EnemyHero;
-    
+    public UnitGraphic UnitSprites;
     private void Start()
     {
         transform.position = new Vector3(0, 0, 8);
     }
     private void Update()
     {
-        float step = spriteAvailable.rect.width*5f; 
-        float stepFromLeft = Screen.width / 2;
+        float stepFromLeft = (Screen.width / 2.5f);
         float stepFromTop = Screen.height * 0.9f;
-        int xcell = -1; int ycell = -1;
-        foreach (List<ArmyCell> armyCelllist in YourHero.ArmyFormation)
+        Vector3 ScreenPos = Camera.main.ScreenToWorldPoint(new Vector3(stepFromLeft,stepFromTop,transform.position.z));
+        foreach (Formation line in YourHero.ArmyFormation)
         {
-            xcell++; ycell = -1;
-            foreach (ArmyCell armyCell in armyCelllist)
+            foreach (Squad column in line.ArmyLine)
             {
-                ycell++;
-                cellList[xcell][ycell].transform.position = Camera.main.ScreenToWorldPoint(new Vector3(stepFromLeft - xcell * step, stepFromTop - ycell * step, transform.position.z));
-                if (armyCell.Type == CellType.NotAvailable)
+                cellList[column.Line][column.Column].transform.position = new Vector3(ScreenPos.x - column.Line * armyCellSpacing, ScreenPos.y - column.Column * armyCellSpacing, transform.position.z);
+                if (column.Type == CellType.NotAvailable)
                 {
-                    //cellList[xcell][ycell].GetComponent<ArmyCellScript>().ChangeSprite(listOfCommonObjects.GetSpriteByName("armyCellF", spriteUiList));
-                    cellList[xcell][ycell].GetComponent<ArmyCellScript>().ChangeSprite(spriteNotAvailable);
+                    cellList[column.Line][column.Column].GetComponent<ArmyCellScript>().ChangeSprite(UnitSprites.GetIconSpriteByName("notavailable"));
                 }
-                else if (armyCell.Type == CellType.Available)
+                else if (column.Type == CellType.Available)
                 {
-                    //cellList[xcell][ycell].GetComponent<ArmyCellScript>().ChangeSprite(listOfCommonObjects.GetSpriteByName("armyCellE", spriteUiList));
-                    cellList[xcell][ycell].GetComponent<ArmyCellScript>().ChangeSprite(spriteAvailable);
+                    cellList[column.Line][column.Column].GetComponent<ArmyCellScript>().ChangeSprite(UnitSprites.GetIconSpriteByName("available"));
+                }
+                else if (column.Type == CellType.Occupied)
+                {
+                    cellList[column.Line][column.Column].GetComponent<ArmyCellScript>().ChangeSprite(UnitSprites.GetIconSpriteByName(column.Unit.UnitName));
                 }
             }
         }
@@ -45,12 +46,14 @@ public class ArmyField : MonoBehaviour
         YourHero = yourHero;
         EnemyHero = enemyHero;
 
-        for (int column = 0; column < YourHero.ArmyFormation.Count; column++)
+        for (int line = 0; line < YourHero.ArmyFormation.Count; line++)
         {
             var tempList = new List<GameObject>();
-            for (int row = 0; row < YourHero.ArmyFormation[column].Count; row++)
+            for (int column = 0; column < YourHero.ArmyFormation[line].ArmyLine.Count; column++)
             {
                 GameObject cell = Instantiate(ArmyFieldCell,transform);
+                cell.GetComponent<ArmyCellScript>().InicializeCell(YourHero.ArmyFormation[line].ArmyLine[column]);
+                cell.name = $"Squad_{line}_{column}";
                 tempList.Add(cell);
             }
             cellList.Add(tempList);
