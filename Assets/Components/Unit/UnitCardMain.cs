@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class UnitCardMain : MonoBehaviour
@@ -16,39 +17,52 @@ public class UnitCardMain : MonoBehaviour
     [Header("Private variables")]
     public bool IsSelected = false;
     [SerializeField] private Vector2 cardSpriteSize;
-    [SerializeField] private float _cardMoveMultiplier;
-    [SerializeField] private float _cardRotateMultiplier;
+    [SerializeField] private float _cardMoveMultiplier = 3;
+    [SerializeField] private float cardRotateMultiplier = 10;
     float _approach;
-    [SerializeField] private Vector3 _startCardPos;
+    [SerializeField] private Vector3 startCardPos;
     [SerializeField] private Vector2 _startCardSize;
-    [SerializeField] private Color _startCardColor = new Color(0.529f, 0.529f, 0.529f, 255.000f);
     [SerializeField] private Color _newCardColor = new Color(1, 1, 1, 1);
     [SerializeField] private Vector3 _cardMoveDirection = new Vector3(0, 0, -0.1f);
     [SerializeField] private bool isMouseOff = true;
-    private void Awake()
-    {
-        cardSprite.color = _startCardColor;
-    }
+    [SerializeField] private LayerMask CardLayer;
     private void Start()
     {
         _startCardSize = cardSprite.size*2;
-        _startCardPos = transform.position;
-        _cardMoveMultiplier = 3;
-        _cardRotateMultiplier = 10;
-        _approach = 0.1f * (MainCamera.transform.position.z - _startCardPos.z);
+        //_approach = 0.1f * (MainCamera.transform.position.z - _startCardPos.z);
+    }
+    public void SetUnitParameters(GameObject unit,Vector3 pos, bool isInArmy)
+    {
+        RelatedUnit = unit;
+        ArmyUnitClass RelatedUnitClass = RelatedUnit.GetComponent<ArmyUnitClass>();
+        SetSpriteByName(RelatedUnitClass.UnitName);
+        cardSpriteSize = cardSprite.size;
+        cardCollider.size = new Vector3(cardSprite.size.x, cardSprite.size.y, 0.1f);
+        //_cardText.GetComponent<UnitCardText>().ChangeText(RelatedUnitClass.DefaultUnitCharacteristics.Characteristics,RelatedUnitClass.CurrentUnitCharacteristics, RelatedUnitClass.unitUpgrades);
+        transform.position = pos;
+        startCardPos = pos;
+        StatText.SetStatText(RelatedUnitClass.DefaultUnitCharacteristics.Characteristics,RelatedUnitClass.CurrentUnitCharacteristics, RelatedUnitClass.unitUpgrades);
     }
     private void Update()
     {
-        float _detlaTime = Time.deltaTime * 30;
+        float detlaTime = Time.deltaTime * 30;
         if (!isMouseOff)
         {
-            float _approach = 0.1f * (MainCamera.transform.position.z - _startCardPos.z);
-            Vector3 startMousePos = GetRaycastHit().point;
-            float relativeXToMouse = (transform.position.x - startMousePos.x) / (cardSpriteSize.x / 2);
-            float relativeYToMouse = (transform.position.y - startMousePos.y) / (cardSpriteSize.y / 2);
+            //float _approach = 0.1f * (MainCamera.transform.position.z - _startCardPos.z);
+            Ray ray = MainCamera.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            Vector3 startMousePos;
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity, CardLayer))
+            { startMousePos = hit.point;}
+            else return;
+            float relativeXToMouse = -(transform.position.x - startMousePos.x) / (cardSpriteSize.x / 2);
+            float relativeYToMouse = -(transform.position.y - startMousePos.y) / (cardSpriteSize.y / 2);
             float relativeToMouse = (Mathf.Abs(relativeXToMouse) + Mathf.Abs(relativeYToMouse)) / 2; 
             Vector3 asd = new Vector3(15 * relativeXToMouse, 15 * relativeYToMouse, 0);
-            transform.SetPositionAndRotation(transform.position, Quaternion.FromToRotation(transform.position,new Vector3(startMousePos.x, startMousePos.y, transform.position.z)));
+            Vector3 newPosition = startCardPos;
+            //      if (IsSelected) newPosition = new Vector3(startCardPos.x, startCardPos.y, startCardPos.z - 1);
+            
+            transform.SetPositionAndRotation(newPosition, Quaternion.FromToRotation(newPosition,new Vector3(startMousePos.x, startMousePos.y, transform.position.z)));
             //if (transform.position.z > transform.position.z+_approach)
             //{
             //    transform.position = transform.position + _cardMoveDirection * _detlaTime * _cardMoveMultiplier;
@@ -61,9 +75,9 @@ public class UnitCardMain : MonoBehaviour
         }
         else
         {
-            if (transform.localRotation.x != 0 && transform.localRotation.y != 0 && transform.localRotation.z != 0)
+            if (transform.rotation.eulerAngles.x != 0 || transform.rotation.eulerAngles.y != 0 || transform.rotation.eulerAngles.z != 0)
             {
-                transform.Rotate(new Vector3(-transform.localRotation.x * _detlaTime * _cardRotateMultiplier, -transform.localRotation.y * _detlaTime * _cardRotateMultiplier, -transform.localRotation.z * _detlaTime * _cardRotateMultiplier * 2));
+                transform.Rotate(new Vector3(-transform.localRotation.x * detlaTime * cardRotateMultiplier, -transform.localRotation.y * detlaTime * cardRotateMultiplier, -transform.localRotation.z * detlaTime * cardRotateMultiplier * 2));
                 //if (transform.position.z < -2)
                 //{
                 //    transform.position = transform.position - _cardMoveDirection * _detlaTime * _cardMoveMultiplier;
@@ -74,34 +88,21 @@ public class UnitCardMain : MonoBehaviour
             }
         }
     }
-    public void SetUnitParameters(GameObject unit,Vector3 _pos, bool isInArmy)
-    {
-        RelatedUnit = unit;
-        ArmyUnitClass RelatedUnitClass = RelatedUnit.GetComponent<ArmyUnitClass>();
-        SetSpriteByName(RelatedUnitClass.UnitName);
-        cardSpriteSize = cardSprite.size;
-        cardCollider.size = new Vector3(cardSprite.size.x, cardSprite.size.y, 0.1f);
-        //_cardText.GetComponent<UnitCardText>().ChangeText(RelatedUnitClass.DefaultUnitCharacteristics.Characteristics,RelatedUnitClass.CurrentUnitCharacteristics, RelatedUnitClass.unitUpgrades);
-        transform.position = _pos;
-        transform.localPosition = _pos;
-        StatText.SetStatText(RelatedUnitClass.DefaultUnitCharacteristics.Characteristics,RelatedUnitClass.CurrentUnitCharacteristics, RelatedUnitClass.unitUpgrades);
-    }
     public void OnMouseEnterCollider()
     {
         isMouseOff = false;
         cardSprite.color = _newCardColor;
-        cardSprite.size *= 1.5f;
-        cardSprite.transform.position = new Vector3(_startCardPos.x, _startCardPos.y, _startCardPos.z + _approach);
-        cardCollider.size = new Vector3(cardSprite.size.x, cardSprite.size.y, 0.1f);
+        //cardSprite.size *= 1.5f;
+        //cardSprite.transform.position = new Vector3(_startCardPos.x, _startCardPos.y, _startCardPos.z ); //+ _approach
+        //cardCollider.size = new Vector3(cardSprite.size.x, cardSprite.size.y, 0.1f);
         //_cardText.GetComponent<UnitCardText>().UnHideText();
     }
     public void OnMouseExitCollider()
     {
         isMouseOff = true;
-        cardSprite.color = _startCardColor;
-        cardSprite.size = _startCardSize;
-        transform.position = _startCardPos;
-        cardCollider.size = new Vector3(cardSprite.size.x, cardSprite.size.y, 0.1f);
+        //cardSprite.size = _startCardSize;
+        //transform.position = _startCardPos;
+        //cardCollider.size = new Vector3(cardSprite.size.x, cardSprite.size.y, 0.1f);
         //_cardText.GetComponent<UnitCardText>().HideText();
     }
     public GameObject GetCardUnit()

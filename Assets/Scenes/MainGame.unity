@@ -685,6 +685,11 @@ PrefabInstance:
       propertyPath: UnitLayer.m_Bits
       value: 1024
       objectReference: {fileID: 0}
+    - target: {fileID: 6890867112935168127, guid: 209b1dbe8bb4b9e419fe52801832e1e5,
+        type: 3}
+      propertyPath: NumberOfRewards
+      value: 5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

@@ -246,27 +246,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68de7562fc19ba94aa91f0eb91b348ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RelatedUnit: {fileID: 0}
-  _cardCollider: {fileID: 5840976933664540386}
-  _cardSprite: {fileID: -7084989040479825014}
-  _cardText: {fileID: 6433123188917488122, guid: 6732326b3f87cbf48a8ac99e86d9358f,
-    type: 3}
-  UnitSprites: {fileID: 11400000, guid: 1bdb3177e7c878344b2c38f9cbce4f4d, type: 2}
   MainCamera: {fileID: 6450949687648586987, guid: 67a471b6e2d3689459c6fdc8e075de8b,
     type: 3}
-  _cardSpriteSize: {x: 0, y: 0}
-  _cardMoveMultiplier: 0
-  _cardRotateMultiplier: 10
-  _startCardPos: {x: 0, y: 0, z: 0}
+  UnitSprites: {fileID: 11400000, guid: 1bdb3177e7c878344b2c38f9cbce4f4d, type: 2}
+  StatText: {fileID: 5187746022030547015}
+  cardCollider: {fileID: 5840976933664540386}
+  cardSprite: {fileID: -7084989040479825014}
+  RelatedUnit: {fileID: 0}
+  UIElements: {fileID: 8550548685698137305}
+  IsSelected: 0
+  cardSpriteSize: {x: 0, y: 0}
+  _cardMoveMultiplier: 3
+  cardRotateMultiplier: 10
+  startCardPos: {x: 0, y: 0, z: 0}
   _startCardSize: {x: 0, y: 0}
-  _startCardColor: {r: 0.529, g: 0.529, b: 0.529, a: 255}
   _newCardColor: {r: 1, g: 1, b: 1, a: 1}
   _cardMoveDirection: {x: 0, y: 0, z: -0.1}
   isMouseOff: 1
-  IsSelected: 0
-  SelectingManager: {fileID: 11400000, guid: 70579ba0f3af99e42af3dbb17bc1ee46, type: 2}
-  UIElements: {fileID: 8550548685698137305}
-  StatText: {fileID: 5187746022030547015}
+  CardLayer:
+    serializedVersion: 2
+    m_Bits: 1024
 --- !u!114 &5187746022030547015
 MonoBehaviour:
   m_ObjectHideFlags: 0

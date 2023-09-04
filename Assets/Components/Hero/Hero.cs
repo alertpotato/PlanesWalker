@@ -7,17 +7,36 @@ public enum CellType { Available, NotAvailable, Occupied };
 [Serializable]
 public class Formation
 {
+    public List<Squad> ArmyLine;
     public Formation(List<Squad> army)
     {
         ArmyLine = army;
     }
-
-    public List<Squad> ArmyLine;
+    public void ChangeType(CellType type,int squadIndex)
+    {
+        var squad = ArmyLine[squadIndex];
+        squad.Type = type;
+        ArmyLine[squadIndex] = squad;
+    }
+    public void ChangeUnit(GameObject unit,int squadIndex)
+    {
+        var squad = ArmyLine[squadIndex];
+        squad.Type = CellType.Occupied;
+        squad.Unit = unit;
+        ArmyLine[squadIndex] = squad;
+    }
+    public void RemoveUnit(CellType type,int squadIndex)
+    {
+        var squad = ArmyLine[squadIndex];
+        squad.Type = type;
+        squad.Unit = null;
+        ArmyLine[squadIndex] = squad;
+    }
 }
 [Serializable]
 public struct Squad
 {
-    public ArmyUnitClass Unit;
+    public GameObject Unit;
     public int Line;
     public int Column;
     public CellType Type;
@@ -26,15 +45,6 @@ public struct Squad
         Type = type;
         Line = line;
         Column = column;
-    }
-    public void ChangeType(CellType type)
-    {
-        Type = type;
-    }
-    public void ChangeUnit(ArmyUnitClass unit)
-    {
-        Unit = unit;
-        Type = CellType.Occupied;
     }
 }
 public class Hero : MonoBehaviour
@@ -51,6 +61,7 @@ public class Hero : MonoBehaviour
     [Header("Private variables")]
     public int maxArmyWigth = 5;
     public int maxArmyDepth = 3;
+    public int[] startingFieldPosition= new int[2] { 0, 2 };
     private void Awake()
     {
         ArmyFormation = new List<Formation>();
@@ -63,20 +74,89 @@ public class Hero : MonoBehaviour
             }
             ArmyFormation.Add(new Formation(formation));
         }
-        ArmyFormation[0].ArmyLine[2].ChangeType(CellType.Available);
+        ArmyFormation[0].ChangeType(CellType.Available, 2);
     }
-    public void AddUnitToFormation(Squad toCell, ArmyUnitClass unit)
+    public bool AddUnitToFormation((int,int) banner, GameObject unit)
     {
-        if (toCell.Type == CellType.NotAvailable) {Debug.LogWarning($"{toCell} occupied");return;}
-        if (bannersList.Contains(unit.transform.parent.gameObject)) { Debug.LogWarning($"{unit.UnitName} not in the banner list");return;}
-        if (IsUnitInArmy(unit)) {Debug.LogWarning($"{unit.UnitName} already on the field");return;}
-
+        bool answer = false;
+        Squad toCell = ArmyFormation[banner.Item1].ArmyLine[banner.Item2];
+        if (toCell.Type == CellType.NotAvailable) {Debug.LogWarning($"{toCell} not available");return answer;}
+        if (!bannersList.Contains(unit)) { Debug.LogWarning($"{unit.name} not in the banner list");return answer;}
+        if (IsUnitInArmy(unit)) {Debug.LogWarning($"{unit.name} already on the field");return answer;}
         if (toCell.Type == CellType.Available)
         {
-            toCell.ChangeUnit(unit);
+            ArmyFormation[banner.Item1].ChangeUnit(unit,banner.Item2);
+            verifyField();
+            answer = true;
+        }
+        return answer;
+    }
+    public void RemoveUnitFromFormation((int,int) banner)
+    {
+        Squad toCell = ArmyFormation[banner.Item1].ArmyLine[banner.Item2];
+        if (toCell.Type == CellType.Occupied)
+        {
+            ArmyFormation[banner.Item1].RemoveUnit(CellType.Available,banner.Item2);
+            verifyField();
         }
     }
-    public bool IsUnitInArmy(ArmyUnitClass unit)
+    public void RemoveAllFormations()
+    {
+        for (int line = 0;  line < ArmyFormation.Count;  line++)
+        {
+            for (int column = 0; column < ArmyFormation[line].ArmyLine.Count; column++)
+            {
+                if (ArmyFormation[line].ArmyLine[column].Type==CellType.Occupied) ArmyFormation[line].RemoveUnit(CellType.Available,column);
+            }
+        }
+        verifyField();
+    }
+    public void verifyField()
+    {
+        var cycle = new List<int[]>
+        {
+            new int[2] { 0, 1 }, new int[2] { 0, -1 }, new int[2] { 1, 0 }, new int[2] { -1, 0 }
+        };
+        List<int[]> cellsToAvailable = new List<int[]>();
+        List<int[]> cellsToNotAvailable = new List<int[]>(); 
+        List<int[]> cellsToRemove = new List<int[]>(); 
+        // TODO to FOR and indexes
+        foreach (Formation line in ArmyFormation)
+        {
+            foreach (Squad column in line.ArmyLine)
+            {
+                bool neigbour = false;
+                foreach (var couple in cycle)
+                {
+                    int newline = Mathf.Clamp(column.Line + couple[0], 0, maxArmyDepth - 1);
+                    int newcolumn = Mathf.Clamp(column.Column + couple[1], 0, maxArmyWigth - 1);
+                    if (ArmyFormation[newline].ArmyLine[newcolumn].Type == CellType.Occupied) {neigbour = true;}
+                    //Debug.Log($"{column.Line}_{column.Column} checking {newline}_{newcolumn} it is {neigbour.ToString()}");
+                }
+                if (neigbour && column.Type==CellType.NotAvailable) cellsToAvailable.Add(new int[2] { column.Line, column.Column });
+                else if (!neigbour && column.Type==CellType.Available && (column.Line,column.Column)!=(startingFieldPosition[0],startingFieldPosition[1])) cellsToNotAvailable.Add(new int[2] { column.Line, column.Column });
+                else if (!neigbour && column.Type==CellType.Occupied && (column.Line,column.Column)!=(startingFieldPosition[0],startingFieldPosition[1])) cellsToRemove.Add(new int[2] { column.Line, column.Column });
+            }
+        }
+        foreach (var cell in cellsToAvailable)
+        {
+            ArmyFormation[cell[0]].ChangeType(CellType.Available, cell[1]);
+            //Debug.Log($"{cell[0]}_{cell[1]} now Available");
+        }
+        foreach (var cell in cellsToNotAvailable)
+        {
+            ArmyFormation[cell[0]].ChangeType(CellType.NotAvailable, cell[1]);
+            //Debug.Log($"{cell[0]}_{cell[1]} now NotAvailable");
+        }
+        foreach (var cell in cellsToRemove)
+        {
+            ArmyFormation[cell[0]].RemoveUnit(CellType.NotAvailable, cell[1]);
+            //Debug.Log($"{cell[0]}_{cell[1]} now unit removed and NotAvailable");
+            verifyField();
+        }
+    }
+
+    public bool IsUnitInArmy(GameObject unit)
     {
         bool answer=false;
         foreach (var formation in ArmyFormation)
@@ -88,14 +168,37 @@ public class Hero : MonoBehaviour
         }
         return answer;
     }
-
-    public void modifyHero(string n, int init, int coh) { heroName = n; modinit = init; modcoh = coh; ArmyFormation[0].ArmyLine[2].ChangeType(CellType.Available);
-        ArmyFormation[0].ArmyLine[3].ChangeType(CellType.Occupied);}
-    public string Getinfo()
+    private List<Squad> PossibleSquads()
     {
-        string info = $"{heroName}. There are {bannersList.Count} units under his command. His commanding skills improved army initiative by {modinit} and all unit cohesion by {modcoh}!";
-        return info;
+        List<Squad> possibleSquads = new List<Squad>();
+        foreach (Formation line in ArmyFormation)
+        {
+            foreach (Squad column in line.ArmyLine)
+            {
+                if (column.Type==CellType.Available) possibleSquads.Add(column);
+            }
+        }
+        return possibleSquads;
     }
+    public void RandomUnitAllocating(Hero opposingHero)
+    {
+        List<GameObject> avalaibleUnits = new List<GameObject>();
+        foreach (var unit in bannersList)
+        {
+            if (!IsUnitInArmy(unit)) avalaibleUnits.Add(unit);
+        }
+        List<Squad> availableSquads = PossibleSquads();
+        availableSquads = availableSquads.OrderBy(x=>x.Column).ToList();
+        Debug.Log($"{avalaibleUnits.Count} {availableSquads.Count}");
+        if (avalaibleUnits.Count > 0)
+        {
+            AddUnitToFormation((availableSquads[0].Line, availableSquads[0].Column), avalaibleUnits[0]);
+            Debug.Log($"{avalaibleUnits[0].GetComponent<ArmyUnitClass>().UnitName} {availableSquads[0].Line} {availableSquads[0].Column}");
+        }
+    }
+
+//------------------------------------
+    public void modifyHero(string n, int init, int coh) { heroName = n; modinit = init; modcoh = coh; }
     public int GetArmyTotalHp()
     {
         int totalHP = 0;
@@ -110,30 +213,5 @@ public class Hero : MonoBehaviour
         bannersList.Add(unit);
         unit.GetComponent<ArmyUnitClass>().ApplyHeroModifyers(modinit, modcoh);
         unit.transform.SetParent(transform);
-    }
-    public int GetMaxInitiative()
-    {
-        int MaxInit = bannersList[0].GetComponent<ArmyUnitClass>().GetUnitCharacteristics().Item1.Initiative;
-        for (int i = 0; i < bannersList.Count; i++)
-        {
-            if (MaxInit < bannersList[i].GetComponent<ArmyUnitClass>().GetUnitCharacteristics().Item1.Initiative) { MaxInit = bannersList[i].GetComponent<ArmyUnitClass>().GetUnitCharacteristics().Item1.Initiative; }
-        }
-        return MaxInit;
-    }
-    public int GetMinInitiative()
-    {
-        int MinInit = bannersList[0].GetComponent<ArmyUnitClass>().GetUnitCharacteristics().Item1.Initiative;
-        for (int i = 0; i < bannersList.Count; i++)
-        {
-            if (MinInit > bannersList[i].GetComponent<ArmyUnitClass>().GetUnitCharacteristics().Item1.Initiative) { MinInit = bannersList[i].GetComponent<ArmyUnitClass>().GetUnitCharacteristics().Item1.Initiative; }
-        }
-        return MinInit;
-    }
-    public string GetBannerList()
-    {
-        string asd = ""; int i = 1;
-        foreach (GameObject banner in bannersList)
-        { asd = $"{asd} {i} {banner.GetComponent<ArmyUnitClass>().UnitName}"; i++; }
-        return asd;
     }
 }

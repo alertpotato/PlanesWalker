@@ -9,9 +9,9 @@ public class ArmyDeck : MonoBehaviour
     public GameObject yourDeckSpace;
     public GameObject enemyDeckSpace;
     [SerializeField]private GameObject UnitCard;
-    public void GetArmyHero(Hero _hero)
+    public void GetArmyHero(Hero hero)
     {
-        if (armyHero == null) { armyHero = _hero; }
+        if (armyHero == null) { armyHero = hero; }
     }
     private void Start()
     {
@@ -29,18 +29,18 @@ public class ArmyDeck : MonoBehaviour
     }
     private void ShowCards()
     {
-        var _armyListSorted = CreateSortList();
+        var armyListSorted = CreateSortList();
         float stepX = 0; float stepY = 0; float stepZ = 0;
         string prevCardName = "";
 
         for (int i = 0; i < armyHero.bannersList.Count; i++)
         {
-            if (_armyListSorted[i].GetComponent<ArmyUnitClass>().UnitName != prevCardName) { stepY += 150; stepX = 0; stepZ = 0; }
-            else { stepX += 70; stepZ = 0.1f; }
+            if (armyListSorted[i].GetComponent<ArmyUnitClass>().UnitName != prevCardName) { stepY += 250; stepX = 0; stepZ = 0; }
+            else { stepX += 120; stepZ = 0.1f; }
             var a = Camera.main.ScreenToWorldPoint(new Vector3( (Screen.width / 20) + stepX, Screen.height - stepY, 8 + stepZ));
             _cards.Add(Instantiate(UnitCard));
-            _cards[i].GetComponent<UnitCardMain>().SetUnitParameters(_armyListSorted[i], a,true);
-            prevCardName = _armyListSorted[i].GetComponent<ArmyUnitClass>().UnitName;
+            _cards[i].GetComponent<UnitCardMain>().SetUnitParameters(armyListSorted[i], a,true);
+            prevCardName = armyListSorted[i].GetComponent<ArmyUnitClass>().UnitName;
         }
     }
     private void WipeCards()

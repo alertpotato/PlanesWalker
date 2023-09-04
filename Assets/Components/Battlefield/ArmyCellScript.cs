@@ -7,11 +7,17 @@ public class ArmyCellScript : MonoBehaviour
     public SpriteRenderer spriteComponent;
     public BoxCollider CellCollider;
     public float colliderThickness=0.1f;
-    public Squad CellSquad;
+    public int formationLine;
+    public int formationColumn;
 
-    public void InicializeCell(Squad squad)
+    public void InicializeCell(int line, int column)
     {
-        CellSquad = squad;
+        formationLine = line;
+        formationColumn = column;
+    }
+    public (int,int) GetSquad()
+    {
+        return (formationLine,formationColumn);
     }
     public void ChangeSprite(Sprite newSprite)
     {
