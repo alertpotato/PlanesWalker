@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 /// <summary>
 /// Все дебафы хранят накладывающие объекты со ссылкой на получателя
@@ -38,10 +39,10 @@ public class ArmyUnitClass : MonoBehaviour
     public struct UnitStats { public int startinitiative; public int currentinitiative; public int startcohesion; public int currentcohesion; public int startarmour; public int currentarmour; }
     public BaseUnitCharacteristics DefaultUnitCharacteristics;
     public UnitCharacteristics CurrentUnitCharacteristics;
-    public NumberOfUnits numberofunits; public ArmyUnitHealth armyunithealth; public UnitDamage unitdamage; public UnitStats unitstats; 
-    public int[] battletarget = new int[] { 0, 0 };
+    public NumberOfUnits numberofunits; public ArmyUnitHealth armyunithealth; public UnitDamage unitdamage; public UnitStats unitstats;
     public UnitUpgrades unitUpgrades;
-    public Race UnitRace;
+    public List<UnitAbility> Abilities;
+    public Race unitRace;
     public string UnitName;
     string unitnameprefix;
     bool isranged = false;
@@ -53,7 +54,8 @@ public class ArmyUnitClass : MonoBehaviour
     {
         DefaultUnitCharacteristics = BaseLineCharacteristics.UnitList.Find(x => x.UnitType.Equals(unitName));
         UnitName = unitName;
-        UnitRace = unitRace;
+        unitRace = unitRace;
+        Abilities = DefaultUnitCharacteristics.UnitAbilities;
         unitUpgrades = upgrades;
         UpdateUnitCharacteristics(upgrades);
     }

@@ -15,12 +15,25 @@ public struct UnitWeightsOfChars
         Cost=cost;Modifier=modifier;Weight=characteristicWeight;
     }
 }
+
+[Serializable]
+public class Abilities
+{
+    public List<UnitAbility> UnitAbilities = new List<UnitAbility>();
+    public bool AddAbility(UnitAbility newAbility)
+    {
+        UnitAbilities.Add(newAbility);
+        return true;
+    }
+}
 [System.Serializable]
 public class BaseUnitCharacteristics
 {
     public string UnitType;
     public Race UnitRace;
     public UnitCharacteristics Characteristics;
+    //public Abilities UnitAbilities = new Abilities();
+    public List<UnitAbility> UnitAbilities = new List<UnitAbility>();
     public UnitWeightsOfChars NumberOfUnitsUpgrade;
     public UnitWeightsOfChars HealthUpgrade;
     public UnitWeightsOfChars DamageUpgrade;
@@ -46,6 +59,7 @@ public class BaseUnitCharacteristics
         UnitType = unitType;
         UnitRace = unitRace;
         Characteristics = uChar;
+        UnitAbilities.Add(new UnitBasicAttack());
         NumberOfUnitsUpgrade = listUnitWeightsOfChars[0];
         HealthUpgrade = listUnitWeightsOfChars[1];
         DamageUpgrade = listUnitWeightsOfChars[2];
