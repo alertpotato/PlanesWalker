@@ -29,7 +29,7 @@ public class GameLoopSharedData : MonoBehaviour
         EvilHero.GetComponent<Hero>().modifyHero("Dark Lord", 1, 1);
         YourHero.name = YourHero.GetComponent<Hero>().heroName;
         EvilHero.name = EvilHero.GetComponent<Hero>().heroName;
-        Battlefield.GetComponent<ArmyField>().InicializeField(YourHero.GetComponent<Hero>(), EvilHero.GetComponent<Hero>());
+        Battlefield.GetComponent<Battlefield>().InicializeField(YourHero.GetComponent<Hero>(), EvilHero.GetComponent<Hero>());
         GameObject.Find("ArmyDeck").GetComponent<ArmyDeck>().GetArmyHero(YourHero.GetComponent<Hero>());
 
         AddEvilArmy(EvilHero.GetComponent<Hero>());
@@ -45,8 +45,13 @@ public class GameLoopSharedData : MonoBehaviour
         }
         if (Physics.Raycast(ray, out hit, Mathf.Infinity, BattlefieldLayer) & SelectedUnits.IsEntitySelected())
         {
-            if (YourHero.GetComponent<Hero>().AddUnitToFormation(hit.collider.gameObject.GetComponent<ArmyCellScript>().GetSquad(), SelectedUnits.SelectedEntity.GetComponent<UnitCardMain>().RelatedUnit))
-            EvilHero.GetComponent<Hero>().RandomUnitAllocating(YourHero.GetComponent<Hero>());
+            if (YourHero.GetComponent<Hero>()
+                .AddUnitToFormation(hit.collider.gameObject.GetComponent<ArmyCellScript>().GetSquad(),
+                    SelectedUnits.SelectedEntity.GetComponent<UnitCardMain>().RelatedUnit))
+            {
+                EvilHero.GetComponent<Hero>().RandomUnitAllocating(YourHero.GetComponent<Hero>());
+                Battlefield.GetComponent<BattlefieldLogic>().Order();
+            }
         }
     }
     private void OnAlternateClick(InputValue value)
@@ -58,6 +63,7 @@ public class GameLoopSharedData : MonoBehaviour
             //YourHero.GetComponent<Hero>().RemoveUnitFromFormation(hit.collider.gameObject.GetComponent<ArmyCellScript>().GetSquad());
             YourHero.GetComponent<Hero>().RemoveAllFormations();
             EvilHero.GetComponent<Hero>().RemoveAllFormations();
+            Battlefield.GetComponent<BattlefieldLogic>().Order();
         }
         else SelectedUnits.DeSelectEntity();
     }

@@ -17,7 +17,7 @@ public struct UnitWeightsOfChars
 }
 
 [Serializable]
-public class Abilities
+class Abilities
 {
     public List<UnitAbility> UnitAbilities = new List<UnitAbility>();
     public bool AddAbility(UnitAbility newAbility)

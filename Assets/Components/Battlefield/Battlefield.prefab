@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1663674510673476568}
   - component: {fileID: 1663674510673476571}
+  - component: {fileID: 8600925836298921990}
   m_Layer: 8
   m_Name: Battlefield
   m_TagString: Untagged
@@ -47,12 +48,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   armyCellSpacing: 1
-  ArmyFieldCell: {fileID: 4341033601640833503, guid: 9a7a7491cb85db945a33a506430810a8,
-    type: 3}
   YourHero: {fileID: 0}
   EnemyHero: {fileID: 0}
+  ArmyFieldCell: {fileID: 4341033601640833503, guid: 9a7a7491cb85db945a33a506430810a8,
+    type: 3}
   YourHeroField: {fileID: 2520110299317028004}
   EnemyHeroField: {fileID: 3138898791378623415}
+  UnitSprites: {fileID: 11400000, guid: 1bdb3177e7c878344b2c38f9cbce4f4d, type: 2}
+--- !u!114 &8600925836298921990
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1663674510673476570}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 133e1966ef7c9cd44944bb6e87b9aaeb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Battlefield: {fileID: 1663674510673476571}
+  AbilityUIBack: {fileID: 0}
+  AbilityUI: {fileID: 5308932836549026240, guid: cb62ce2c2fc4e98419ee7f45ec24826d,
+    type: 3}
+  AbilitiesUI: []
+  AbilityIcon: {fileID: -584253250, guid: 7b4840e67e6f06d4d9dfc2f2e63e8977, type: 3}
   UnitSprites: {fileID: 11400000, guid: 1bdb3177e7c878344b2c38f9cbce4f4d, type: 2}
 --- !u!1 &2520110299317028004
 GameObject:

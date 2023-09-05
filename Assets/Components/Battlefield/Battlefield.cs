@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-public class ArmyField : MonoBehaviour
+public class Battlefield : MonoBehaviour
 {
     [Header("Field Graphics")]
     public List<List<GameObject>> yourCellList = new List<List<GameObject>>();

@@ -189,11 +189,9 @@ public class Hero : MonoBehaviour
         }
         List<Squad> availableSquads = PossibleSquads();
         availableSquads = availableSquads.OrderBy(x=>x.Column).ToList();
-        Debug.Log($"{avalaibleUnits.Count} {availableSquads.Count}");
         if (avalaibleUnits.Count > 0)
         {
             AddUnitToFormation((availableSquads[0].Line, availableSquads[0].Column), avalaibleUnits[0]);
-            Debug.Log($"{avalaibleUnits[0].GetComponent<ArmyUnitClass>().UnitName} {availableSquads[0].Line} {availableSquads[0].Column}");
         }
     }
 

@@ -9,13 +9,13 @@ public class UnitBasicAttack : UnitAbility
         AbilityName = "Basic attack";
         Type = AbilityType.Main;
     }
-    public override (Hero,List<GameObject>,Hero,List<GameObject>) MainFunc(int[] pos,Hero yourHero,Hero opposingHero)
+    public override (Hero,List<GameObject>,Hero,List<GameObject>) MainFunc()
     {
-        if (pos[0] == 0) targets.Add(pos);
-        return (yourHero, new List<GameObject>(), opposingHero, new List<GameObject>());
+        //Unit
+        if (UnitPosition[0] == 0) targets.Add(UnitPosition);
+        return (YourHero, new List<GameObject>(), OpposingHero, new List<GameObject>());
     }
-
-    public override List<int[]> AbilityTargets(int[] pos, Hero yourHero, Hero opposingHero)
+    public override List<int[]> AbilityTargets()
     {
         return targets;
     }
