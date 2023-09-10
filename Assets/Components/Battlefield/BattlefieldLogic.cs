@@ -14,7 +14,6 @@ public class BattlefieldLogic : MonoBehaviour
     public List<GameObject> AbilitiesUI;
     public Sprite AbilityIcon;
     public UnitGraphic UnitSprites;
-        
 
     public void Order()
     {
@@ -38,18 +37,20 @@ public class BattlefieldLogic : MonoBehaviour
         int index = 0;
         foreach (var ability in AbilitiesOrder)
         {
+            if (!ability.IsActive) continue;
             float YYY = YY * index;
             var newUI = Instantiate(AbilityUI,AbilityUIParent.transform);
             newUI.transform.localPosition = new Vector3(0,YYY,0);
             AbilitiesUI.Add(newUI);
-            ability.MainFunc();
-            newUI.GetComponent<AbilityOrderUI>().SetIcons(AbilityIcon,UnitSprites.GetIconSpriteByName(ability.Unit.GetComponent<ArmyUnitClass>().UnitName),
-                UnitSprites.GetIconSpriteByName(ability.OpposingHero.ArmyFormation[ability.targets[0][0]].ArmyLine[ability.targets[0][1]].Unit.GetComponent<ArmyUnitClass>().UnitName));
+            newUI.GetComponent<AbilityOrderUI>().SetIcons(
+                AbilityIcon,
+                UnitSprites.GetIconSpriteByName(ability.UnitSquad.Unit.GetComponent<ArmyUnitClass>().UnitName),
+                UnitSprites.GetIconSpriteByName(ability.OpposingHero.ArmyFormation[ability.targets[0][0]].ArmyLine[ability.targets[0][1]].Unit.GetComponent<ArmyUnitClass>().UnitName)
+                );
             index++;
         }
-        //AbilityUIBack.rect.Set(AbilityUIBack.rect.x,AbilityUIBack.rect.y,1,114+114*AbilitiesOrder.Count);
         AbilityUIBack.sizeDelta = new Vector2(AbilityUIBack.rect.width,114*AbilitiesOrder.Count);
-        Debug.Log(answer);
+        //Debug.Log(answer);
     }
     private void DestroyUI()
     {
@@ -69,8 +70,7 @@ public class BattlefieldLogic : MonoBehaviour
                 if (unitSquad.Type == CellType.Occupied)
                 {
                     onFieldUnits.Add(unitSquad);
-                    unitSquad.Unit.GetComponent<ArmyUnitClass>().Abilities[0].InitAbility(
-                        new int[2] { unitSquad.Line, unitSquad.Column }, unitSquad.Unit, unitHero, opposingHero);
+                    unitSquad.Unit.GetComponent<ArmyUnitClass>().Abilities[0].MainFunc(opposingHero);
                 }
             }
         }

@@ -88,6 +88,10 @@ public class Hero : MonoBehaviour
             ArmyFormation[banner.Item1].ChangeUnit(unit,banner.Item2);
             verifyField();
             answer = true;
+            foreach (var ability in unit.GetComponent<ArmyUnitClass>().Abilities)
+            {
+                ability.InitAbility(toCell,this);
+            }
         }
         return answer;
     }
