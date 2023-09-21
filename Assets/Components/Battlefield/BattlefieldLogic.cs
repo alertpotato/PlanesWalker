@@ -8,7 +8,7 @@ public class BattlefieldLogic : MonoBehaviour
 {
     public Battlefield Battlefield;
     public List<UnitAbility> AbilitiesOrder;
-    public  RectTransform AbilityUIBack;
+    public RectTransform AbilityUIBack;
     public GameObject AbilityUI;
     public GameObject AbilityUIParent;
     public List<GameObject> AbilitiesUI;
@@ -32,11 +32,13 @@ public class BattlefieldLogic : MonoBehaviour
             answer = $"{answer} -> {squad.Unit.gameObject.name}[{squad.Unit.GetComponent<ArmyUnitClass>().CurrentUnitCharacteristics.Initiative}]";
             AbilitiesOrder.Add(squad.Unit.GetComponent<ArmyUnitClass>().Abilities[0]);
         }
+        Debug.Log(answer);
         // -------------GRAPHIC
         float YY = -60;
         int index = 0;
         foreach (var ability in AbilitiesOrder)
         {
+            //Debug.Log($"{ability.UnitSquad.Unit.name} {ability.IsActive.ToString()}");
             if (!ability.IsActive) continue;
             float YYY = YY * index;
             var newUI = Instantiate(AbilityUI,AbilityUIParent.transform);
@@ -49,8 +51,7 @@ public class BattlefieldLogic : MonoBehaviour
                 );
             index++;
         }
-        AbilityUIBack.sizeDelta = new Vector2(AbilityUIBack.rect.width,114*AbilitiesOrder.Count);
-        //Debug.Log(answer);
+        AbilityUIBack.sizeDelta = new Vector2(AbilityUIBack.rect.width,114*index);
     }
     private void DestroyUI()
     {
@@ -69,6 +70,7 @@ public class BattlefieldLogic : MonoBehaviour
                 Squad unitSquad = unitHero.ArmyFormation[line].ArmyLine[column];
                 if (unitSquad.Type == CellType.Occupied)
                 {
+                    //Debug.Log($"Added unit {line}_{column} {unitSquad.Unit.name}");
                     onFieldUnits.Add(unitSquad);
                     unitSquad.Unit.GetComponent<ArmyUnitClass>().Abilities[0].MainFunc(opposingHero);
                 }

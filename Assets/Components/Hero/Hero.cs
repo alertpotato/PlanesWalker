@@ -90,7 +90,7 @@ public class Hero : MonoBehaviour
             answer = true;
             foreach (var ability in unit.GetComponent<ArmyUnitClass>().Abilities)
             {
-                ability.InitAbility(toCell,this);
+                ability.InitAbility(ArmyFormation[banner.Item1].ArmyLine[banner.Item2],this);
             }
         }
         return answer;
@@ -201,15 +201,6 @@ public class Hero : MonoBehaviour
 
 //------------------------------------
     public void modifyHero(string n, int init, int coh) { heroName = n; modinit = init; modcoh = coh; }
-    public int GetArmyTotalHp()
-    {
-        int totalHP = 0;
-        for (int i = 0; i != bannersList.Count; i++)
-        {
-            totalHP = totalHP + bannersList[i].GetComponent<ArmyUnitClass>().GetUnitHP();
-        }
-        return totalHP;
-    }
     public void AddBannerList(GameObject unit)
     {
         bannersList.Add(unit);
