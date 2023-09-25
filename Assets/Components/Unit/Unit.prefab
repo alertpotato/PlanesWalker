@@ -24,13 +24,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 918958474132185176}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7602336477716146438
 MonoBehaviour:
@@ -44,16 +44,55 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0203ba4d96f60b245be07a3f296d2266, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DefaultUnitCharacteristics:
+    UnitType: 
+    UnitRace: 0
+    Characteristics:
+      NumberOfUnits: 0
+      Health: 0
+      Damage: 0
+      Initiative: 0
+      Cohesion: 0
+      Armour: 0
+    NumberOfUnitsUpgrade:
+      Cost: 0
+      Modifier: 0
+      Weight: 0
+    HealthUpgrade:
+      Cost: 0
+      Modifier: 0
+      Weight: 0
+    DamageUpgrade:
+      Cost: 0
+      Modifier: 0
+      Weight: 0
+    InitiativeUpgrade:
+      Cost: 0
+      Modifier: 0
+      Weight: 0
+    CohesionUpgrade:
+      Cost: 0
+      Modifier: 0
+      Weight: 0
+    ArmourUpgrade:
+      Cost: 0
+      Modifier: 0
+      Weight: 0
+    UnitWeight: 0
   CurrentUnitCharacteristics:
-    ucunitname: 
-    ucnumberofunits: 0
-    ucunithealth: 0
-    ucunitdamage: 0
-    ucunitinitiative: 0
-    ucunitcohesion: 0
-    unitarmour: 0
-  BaseLineCharacteristics: {fileID: 11400000, guid: 4df28bdcbf64e5241a86717ac39ecdeb, type: 2}
-  battletarget: 
-  armytype: 
-  unitname: 
-  unitnameprefix: 
+    NumberOfUnits: 0
+    Health: 0
+    Damage: 0
+    Initiative: 0
+    Cohesion: 0
+    Armour: 0
+  currentSquadHealth: 0
+  unitUpgrades:
+    NumberOfUnits: 0
+    Health: 0
+    Damage: 0
+    Initiative: 0
+    Cohesion: 0
+    Armour: 0
+  UnitName: 
+  UnitFactory: {fileID: 11400000, guid: 4df28bdcbf64e5241a86717ac39ecdeb, type: 2}

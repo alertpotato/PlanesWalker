@@ -7,6 +7,7 @@ public class GameLoopRewardState : StateBehaviour
 {
     [Header("Components")]
     public GameLoopSharedData Config;
+    public GameObject SelectButton;
     
     [Header("Reward logic")]
     public int NumberOfRewards = 3;
@@ -17,11 +18,19 @@ public class GameLoopRewardState : StateBehaviour
     [SerializeField] private bool isChosing;
     [SerializeField] private List<GameObject> RewardList;
     [SerializeField] private List<GameObject> CardList;
+    
     public override void OnEnter()
     {
         leftNumberOfRewards = NumberOfRewards;
         isChosing = false;
+        SelectButton.SetActive(true);
     }
+
+    public override void OnExit()
+    {
+        SelectButton.SetActive(false);
+    }
+
     private void CreateUnits()
     {
         RewardList.Clear();

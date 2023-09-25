@@ -21,17 +21,17 @@ public class UnitBasicAttack : UnitAbility
         {
             targets.Add(unitPosition);
             IsActive = true;
+            
+            var yourUnit = UnitSquad.Unit.GetComponent<ArmyUnitClass>();
+            var enemyUnit = OpposingHero.ArmyFormation[unitPosition[0]].ArmyLine[unitPosition[1]].Unit.GetComponent<ArmyUnitClass>();
+            var yourUnitDamage = yourUnit.CurrentUnitCharacteristics.Damage;
+            var yourUnitAllDamage = yourUnit.CurrentUnitCharacteristics.NumberOfUnits * yourUnitDamage;
+            var enemyUnitDamage = enemyUnit.CurrentUnitCharacteristics.Damage;
+            var enemyUnitAllDamage = enemyUnit.CurrentUnitCharacteristics.NumberOfUnits * enemyUnitDamage;
+            TakeDamage(enemyUnit,yourUnitAllDamage,yourUnitDamage,UnitSquad.Unit.name,false);
+            TakeDamage(yourUnit,enemyUnitAllDamage,enemyUnitDamage,enemyUnit.UnitName,false);
             Debug.Log($"{UnitSquad.Unit.name}({unitPosition[0]} {unitPosition[1]}) attack {OpposingHero.ArmyFormation[unitPosition[0]].ArmyLine[unitPosition[1]].Unit.name}");
         }
-
-        var yourUnit = UnitSquad.Unit.GetComponent<ArmyUnitClass>();
-        var enemyUnit = OpposingHero.ArmyFormation[unitPosition[0]].ArmyLine[unitPosition[1]].Unit.GetComponent<ArmyUnitClass>();
-        var yourUnitDamage = yourUnit.CurrentUnitCharacteristics.Damage;
-        var yourUnitAllDamage = yourUnit.CurrentUnitCharacteristics.NumberOfUnits * yourUnitDamage;
-        var enemyUnitDamage = enemyUnit.CurrentUnitCharacteristics.Damage;
-        var enemyUnitAllDamage = enemyUnit.CurrentUnitCharacteristics.NumberOfUnits * enemyUnitDamage;
-        TakeDamage(enemyUnit,yourUnitAllDamage,yourUnitDamage,UnitSquad.Unit.name,false);
-        TakeDamage(yourUnit,enemyUnitAllDamage,enemyUnitDamage,enemyUnit.UnitName,false);
         return (YourHero, new List<GameObject>(), OpposingHero, new List<GameObject>());
     }
     public override List<int[]> AbilityTargets()
@@ -54,14 +54,13 @@ public class UnitBasicAttack : UnitAbility
         double decmaxhealth = unit.CurrentUnitCharacteristics.NumberOfUnits * unit.CurrentUnitCharacteristics.Health;    //Максимально возможное хп отряда
         int incdamage = incsquaddmg;
         // Precalculation
-        double decsquadhealth = Mathf.Clamp(unit.currentsquadhealth - incdamage,0,unit.currentsquadhealth);    //Реальное хп после получения урона
+        double decsquadhealth = Mathf.Clamp(unit.currentSquadHealth - incdamage,0,unit.currentSquadHealth);    //Реальное хп после получения урона
         //Пока отключаем демедж по собранности
         //if (incunitdmg >= unit.CurrentUnitCharacteristics.Health * 2) { cohdamage = (int)Math.Log(incunitdmg / unit.CurrentUnitCharacteristics.Health, 2); }
         //else if (unit.CurrentUnitCharacteristics.Health >= incunitdmg * 2) { cohdamage = -(int)Math.Log(unit.CurrentUnitCharacteristics.Health / incunitdmg, 2); };
         double truecohesion = Mathf.Clamp(unit.CurrentUnitCharacteristics.Cohesion - cohdamage,-10,10);     //Записали сплоченность
         if (unit.CurrentUnitCharacteristics.Cohesion >= 0 && truecohesion < 0) { additionallog = " The ranks wavered"; };
         double decincdamage = decmaxhealth - decsquadhealth;    //Реально полученный урон учитывая макс хп
-        
         
         if (incdamage <= 0) { Debug.LogWarning("Damage 0"); } //Проверяем что входящий урон не 0 и не меньше 0, чтобы не пересчитывать количество отряда при резкой смене сплоченности(и не ломать игру).
         else
@@ -83,7 +82,7 @@ public class UnitBasicAttack : UnitAbility
             
             if (newnumberof > decsquadhealth)
             {
-                additionallog = additionallog + $" {unit.CurrentUnitCharacteristics.NumberOfUnits - decsquadhealth} units withstand before the death's door!"; newnumberof = unit.currentsquadhealth;
+                additionallog = additionallog + $" {unit.CurrentUnitCharacteristics.NumberOfUnits - decsquadhealth} units withstand before the death's door!"; newnumberof = unit.currentSquadHealth;
                 //Console.WriteLine($"if numberof > squadhealth mxhp:{decmaxhealth} sqdhp:{squadhealth} coh:{truecohesion} num:{numberof}"); //Дебаг
             }
             
@@ -98,12 +97,16 @@ public class UnitBasicAttack : UnitAbility
 
             if (applyDamage)
             {
-                unit.currentsquadhealth = (int)decsquadhealth; //Обновили текущее хп отряда
+                unit.currentSquadHealth = (int)decsquadhealth; //Обновили текущее хп отряда
                 if ((int)newnumberof < unit.CurrentUnitCharacteristics.NumberOfUnits) unit.CurrentUnitCharacteristics.NumberOfUnits = (int)newnumberof;
-                if (decsquadhealth <= 0) { unit.CurrentUnitCharacteristics.NumberOfUnits = 0; }//Если хп после получения урона < ноля закончить бой
+                if (decsquadhealth <= 0)
+                {
+                    unit.CurrentUnitCharacteristics.NumberOfUnits = 0;
+                    YourHero.RemoveUnitFromFormation((UnitSquad.Line, UnitSquad.Column));
+                }
+                
             }
         }
-        
         string battlelog = $"The {unit.UnitName} c:{truecohesion} squad taken {incdamage} damage from {enemyunitname}. There are {newnumberof}/{startnumberof} with {decsquadhealth} hp.";
         Debug.Log(battlelog + additionallog);
     }

@@ -14,6 +14,7 @@ public class Battlefield : MonoBehaviour
     public GameObject YourHeroField;
     public GameObject EnemyHeroField;
     public UnitGraphic UnitSprites;
+    
     private void Start()
     {
         transform.position = new Vector3(0, 0, 8.5f);

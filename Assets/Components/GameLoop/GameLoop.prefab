@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 6890867112935168127}
   - component: {fileID: 5879750598252854110}
   - component: {fileID: 4306738705462158818}
+  - component: {fileID: 2815738805219112865}
   m_Layer: 0
   m_Name: GameLoop
   m_TagString: Untagged
@@ -47,9 +48,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48afc27ba12b0904f9f0eb83d1538661, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cards: []
-  _cardsEnemy: []
-  _newArmyList: []
+  MainCamera: {fileID: 0}
+  SelectedUnits: {fileID: 11400000, guid: 70579ba0f3af99e42af3dbb17bc1ee46, type: 2}
+  Battlefield: {fileID: 0}
+  listOfCommonUnits: {fileID: 11400000, guid: 4df28bdcbf64e5241a86717ac39ecdeb, type: 2}
   YourHero: {fileID: 4566354792725591614, guid: 2132259902ea23648a531edf4119b785,
     type: 3}
   EvilHero: {fileID: 4566354792725591614, guid: 2132259902ea23648a531edf4119b785,
@@ -57,10 +59,6 @@ MonoBehaviour:
   Unit: {fileID: 918958474132185176, guid: bf59c730e343e07429aca668f5e86307, type: 3}
   UnitCard: {fileID: 5469837566480996917, guid: d12a8ca1ab4c2d04289b0ea6fc21720b,
     type: 3}
-  listOfCommonUnits: {fileID: 11400000, guid: 4df28bdcbf64e5241a86717ac39ecdeb, type: 2}
-  Battlefield: {fileID: 0}
-  SelectedUnits: {fileID: 11400000, guid: 70579ba0f3af99e42af3dbb17bc1ee46, type: 2}
-  MainCamera: {fileID: 0}
   UnitLayer:
     serializedVersion: 2
     m_Bits: 0
@@ -80,6 +78,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Config: {fileID: 6543516443291923443}
+  SelectButton: {fileID: 0}
   NumberOfRewards: 3
   NumberOfChoices: 5
   leftNumberOfRewards: 0
@@ -99,6 +98,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Config: {fileID: 6543516443291923443}
+  StartBattleButton: {fileID: 0}
 --- !u!114 &4306738705462158818
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -112,3 +112,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _currentState: {fileID: 6890867112935168127}
+--- !u!114 &2815738805219112865
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 770874861129112245}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9235e190bc6244b4bdf954e0df64ca2d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Config: {fileID: 6543516443291923443}
