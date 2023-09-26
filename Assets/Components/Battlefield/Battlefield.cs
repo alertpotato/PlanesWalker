@@ -53,6 +53,7 @@ public class Battlefield : MonoBehaviour
     {
         YourHero = yourHero;
         EnemyHero = enemyHero;
+        //TODO make field completely reset
         InicializeHeroField(YourHero,YourHeroField,yourCellList);
         InicializeHeroField(EnemyHero,EnemyHeroField,enemyCellList);
     }

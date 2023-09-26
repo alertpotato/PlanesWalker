@@ -841,6 +841,12 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1283869081 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7948110065983982545, guid: 58d4af11c1f6bd744a6a6eed80455dba,
+    type: 3}
+  m_PrefabInstance: {fileID: 1775228858}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1423137888
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1065,6 +1071,11 @@ PrefabInstance:
       propertyPath: StartBattleButton
       value: 
       objectReference: {fileID: 1423137890}
+    - target: {fileID: 6543516443291923443, guid: 209b1dbe8bb4b9e419fe52801832e1e5,
+        type: 3}
+      propertyPath: ArmyDeck
+      value: 
+      objectReference: {fileID: 1283869081}
     - target: {fileID: 6543516443291923443, guid: 209b1dbe8bb4b9e419fe52801832e1e5,
         type: 3}
       propertyPath: MainCamera

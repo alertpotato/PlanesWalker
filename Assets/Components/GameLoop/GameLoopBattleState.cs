@@ -8,6 +8,7 @@ public class GameLoopBattleState : StateBehaviour
     public GameLoopSharedData Config;
     public override void OnEnter()
     {
+        Debug.Log("Entered Battle!");
     }
     public override void OnExit()
     {
@@ -16,4 +17,5 @@ public class GameLoopBattleState : StateBehaviour
     public override void OnUpdate()
     {
     }
+
 }

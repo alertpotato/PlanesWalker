@@ -6,15 +6,6 @@
             "id": "431cb510-520d-4ecf-b79e-519cc427f497",
             "actions": [
                 {
-                    "name": "Chose army",
-                    "type": "Button",
-                    "id": "d247c228-25a3-4e54-a2e3-59ef0a50e2cd",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "Show army",
                     "type": "Button",
                     "id": "920f0bf7-259b-4371-9433-85d1706edcdd",
@@ -45,19 +36,8 @@
             "bindings": [
                 {
                     "name": "",
-                    "id": "a10c7e2c-be82-46a1-991c-b9e5873033d9",
-                    "path": "<Keyboard>/q",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Chose army",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "7109b97c-a073-472b-9256-5c26892e471b",
-                    "path": "<Keyboard>/w",
+                    "path": "<Keyboard>/q",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

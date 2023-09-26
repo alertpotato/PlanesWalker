@@ -13,9 +13,14 @@ public class ArmyDeck : MonoBehaviour
     {
         if (armyHero == null) { armyHero = hero; }
     }
-    private void Start()
+
+    private void Awake()
     {
         _cards = new List<GameObject>();
+    }
+
+    private void Start()
+    {
         yourDeckSpace.transform.localPosition = Camera.main.ScreenToWorldPoint(new Vector3((Screen.width / 10), Screen.height/2, 10));
         yourDeckSpace.SetActive(false);
         enemyDeckSpace.transform.localPosition = Camera.main.ScreenToWorldPoint(new Vector3((Screen.width / 10)*9, Screen.height/2, 10));
@@ -54,12 +59,9 @@ public class ArmyDeck : MonoBehaviour
             _cards.Clear();
         }
     }
-    private void Update()
+    public void UpdateDeck()
     {
-        if (Input.GetKeyDown("q") )
-        {
-            if (yourDeckSpace.activeSelf == true) { WipeCards(); yourDeckSpace.SetActive(false); enemyDeckSpace.SetActive(false); }
-            else { yourDeckSpace.SetActive(true);enemyDeckSpace.SetActive(true); ShowCards(); }
-        }
+        if (yourDeckSpace.activeSelf == true) { WipeCards(); yourDeckSpace.SetActive(false); enemyDeckSpace.SetActive(false); }
+        else { yourDeckSpace.SetActive(true);enemyDeckSpace.SetActive(true); ShowCards(); }
     }
 }

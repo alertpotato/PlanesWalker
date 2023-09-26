@@ -8,6 +8,7 @@ public class GameLoopSharedData : MonoBehaviour
     public Camera MainCamera;
     public SelectManager SelectedUnits;
     public GameObject Battlefield;
+    public GameObject ArmyDeck;
     public ListOfCommonUnits listOfCommonUnits;
     public GameObject YourHero;
     public GameObject EvilHero;
@@ -22,7 +23,6 @@ public class GameLoopSharedData : MonoBehaviour
         EvilHero = Instantiate(EvilHero);
         Battlefield.SetActive(false);
     }
-    
     private void Start()
     {
         YourHero.GetComponent<Hero>().modifyHero("Chosen one", 1, 1);
@@ -30,8 +30,7 @@ public class GameLoopSharedData : MonoBehaviour
         YourHero.name = YourHero.GetComponent<Hero>().heroName;
         EvilHero.name = EvilHero.GetComponent<Hero>().heroName;
         Battlefield.GetComponent<Battlefield>().InicializeField(YourHero.GetComponent<Hero>(), EvilHero.GetComponent<Hero>());
-        GameObject.Find("ArmyDeck").GetComponent<ArmyDeck>().GetArmyHero(YourHero.GetComponent<Hero>());
-
+        ArmyDeck.GetComponent<ArmyDeck>().GetArmyHero(YourHero.GetComponent<Hero>());
         AddEvilArmy(EvilHero.GetComponent<Hero>());
     }
     void OnClick(InputValue value)
@@ -41,7 +40,6 @@ public class GameLoopSharedData : MonoBehaviour
         if (Physics.Raycast(ray, out hit, Mathf.Infinity, UnitLayer))
         {
             SelectedUnits.SelectEntity(hit.collider.gameObject);
-            //Debug.Log($"unit hit {hit.collider.gameObject.name}");
         }
         if (Physics.Raycast(ray, out hit, Mathf.Infinity, BattlefieldLayer) & SelectedUnits.IsEntitySelected())
         {
@@ -84,5 +82,4 @@ public class GameLoopSharedData : MonoBehaviour
             _hero.AddBannerList(newEvilUnit);
         }
     }
-
 }

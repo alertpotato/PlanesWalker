@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(GameLoopSharedData))]
 public class GameLoopPreBattleState : StateBehaviour
@@ -23,5 +24,10 @@ public class GameLoopPreBattleState : StateBehaviour
     public void StartBattle()
     {
         ChangeState<GameLoopBattleState>();
+    }
+    void OnShowarmy(InputValue value)
+    {
+        Debug.Log("Hello Q");
+        Config.ArmyDeck.GetComponent<ArmyDeck>().UpdateDeck();
     }
 }
