@@ -14,6 +14,7 @@ public class Battlefield : MonoBehaviour
     public GameObject YourHeroField;
     public GameObject EnemyHeroField;
     public UnitGraphic UnitSprites;
+    public BattlefieldLogic logic;
     
     private void Start()
     {
@@ -23,6 +24,28 @@ public class Battlefield : MonoBehaviour
     {
         UpdateHeroField(YourHero,yourCellList,-1,0.45f);
         UpdateHeroField(EnemyHero,enemyCellList,1,0.55f);
+        
+        foreach (var ability in logic.AbilitiesOrder)
+        {
+            List<List<GameObject>> cellList;
+            Debug.Log("asd");
+            if (ability.YourHero == YourHero)
+            {
+                cellList = enemyCellList;
+                foreach (var target in ability.AbilityTargets())
+                {
+                    cellList[target[0]][target[1]].GetComponent<ArmyCellScript>().GetAttackedFromLeft();
+                }
+            }
+            else
+            {
+                cellList = yourCellList;
+                foreach (var target in ability.AbilityTargets())
+                {
+                    cellList[target[0]][target[1]].GetComponent<ArmyCellScript>().GetAttackedFromRight();
+                }
+            }
+        }
     }
     private void UpdateHeroField(Hero hero,List<List<GameObject>> cellList,float sine,float xMulti)
     {
@@ -34,17 +57,20 @@ public class Battlefield : MonoBehaviour
             foreach (Squad column in line.ArmyLine)
             {
                 cellList[column.Line][column.Column].transform.position = new Vector3(ScreenPos.x + sine * column.Line * armyCellSpacing, ScreenPos.y - column.Column * armyCellSpacing, transform.position.z);
+                var cellArmy = cellList[column.Line][column.Column].GetComponent<ArmyCellScript>();
                 if (column.Type == CellType.NotAvailable)
                 {
-                    cellList[column.Line][column.Column].GetComponent<ArmyCellScript>().ChangeSprite(UnitSprites.GetIconSpriteByName("notavailable"));
+                    cellArmy.ChangeSprite(UnitSprites.GetIconSpriteByName("notavailable"));
+                    cellArmy.ClearAttack();
                 }
                 else if (column.Type == CellType.Available)
                 {
-                    cellList[column.Line][column.Column].GetComponent<ArmyCellScript>().ChangeSprite(UnitSprites.GetIconSpriteByName("available"));
+                    cellArmy.ChangeSprite(UnitSprites.GetIconSpriteByName("available"));
+                    cellArmy.ClearAttack();
                 }
                 else if (column.Type == CellType.Occupied)
                 {
-                    cellList[column.Line][column.Column].GetComponent<ArmyCellScript>().ChangeSprite(UnitSprites.GetIconSpriteByName(column.Unit.GetComponent<ArmyUnitClass>().UnitName));
+                    cellArmy.ChangeSprite(UnitSprites.GetIconSpriteByName(column.Unit.GetComponent<ArmyUnitClass>().UnitName));
                 }
             }
         }

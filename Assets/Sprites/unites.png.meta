@@ -432,6 +432,48 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: ui_attack_right
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 875
+        width: 5
+        height: 66
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c152175eca61e88419415c1541032cc7
+      internalID: -753987447
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_attack_left
+      rect:
+        serializedVersion: 2
+        x: 517
+        y: 875
+        width: 5
+        height: 66
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ab62f695b196e60449b88d2542e1b9ae
+      internalID: 1641438441
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -459,6 +501,8 @@ TextureImporter:
       ogre_icon: 74608049
       trained_warrior_card: 641852959
       trained_warrior_icon: 2120849509
+      ui_attack_left: 1641438441
+      ui_attack_right: -753987447
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -55,6 +55,7 @@ MonoBehaviour:
   YourHeroField: {fileID: 2520110299317028004}
   EnemyHeroField: {fileID: 3138898791378623415}
   UnitSprites: {fileID: 11400000, guid: 1bdb3177e7c878344b2c38f9cbce4f4d, type: 2}
+  logic: {fileID: 8600925836298921990}
 --- !u!114 &8600925836298921990
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -71,6 +72,7 @@ MonoBehaviour:
   AbilityUIBack: {fileID: 0}
   AbilityUI: {fileID: 5308932836549026240, guid: cb62ce2c2fc4e98419ee7f45ec24826d,
     type: 3}
+  AbilityUIParent: {fileID: 0}
   AbilitiesUI: []
   AbilityIcon: {fileID: -584253250, guid: 7b4840e67e6f06d4d9dfc2f2e63e8977, type: 3}
   UnitSprites: {fileID: 11400000, guid: 1bdb3177e7c878344b2c38f9cbce4f4d, type: 2}
