@@ -28,7 +28,6 @@ public class Battlefield : MonoBehaviour
         foreach (var ability in logic.AbilitiesOrder)
         {
             List<List<GameObject>> cellList;
-            Debug.Log("asd");
             if (ability.YourHero == YourHero)
             {
                 cellList = enemyCellList;

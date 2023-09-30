@@ -4,12 +4,13 @@ using UnityEngine;
 [System.Serializable]
 public class UnitBasicAttack : UnitAbility
 {
+    public static Abilities UniqueType = Abilities.BasicAttack;
     public UnitBasicAttack()
     {
         AbilityName = "Basic attack";
         Type = AbilityType.Main;
     }
-    public override (Hero,List<GameObject>,Hero,List<GameObject>) MainFunc(Hero opposingHero)
+    public override (Hero,List<GameObject>,Hero,List<GameObject>) MainFunc(Hero opposingHero,bool applyDamage)
     {
         OpposingHero = opposingHero;
         IsActive = false; 
@@ -28,9 +29,9 @@ public class UnitBasicAttack : UnitAbility
             var yourUnitAllDamage = yourUnit.CurrentUnitCharacteristics.NumberOfUnits * yourUnitDamage;
             var enemyUnitDamage = enemyUnit.CurrentUnitCharacteristics.Damage;
             var enemyUnitAllDamage = enemyUnit.CurrentUnitCharacteristics.NumberOfUnits * enemyUnitDamage;
-            TakeDamage(enemyUnit,yourUnitAllDamage,yourUnitDamage,UnitSquad.Unit.name,false);
-            TakeDamage(yourUnit,enemyUnitAllDamage,enemyUnitDamage,enemyUnit.UnitName,false);
-            Debug.Log($"{UnitSquad.Unit.name}({unitPosition[0]} {unitPosition[1]}) attack {OpposingHero.ArmyFormation[unitPosition[0]].ArmyLine[unitPosition[1]].Unit.name}");
+            TakeDamage(OpposingHero,enemyUnit,yourUnitAllDamage,yourUnitDamage,UnitSquad.Unit.name,applyDamage);
+            TakeDamage(YourHero,yourUnit,enemyUnitAllDamage,enemyUnitDamage,enemyUnit.UnitName,applyDamage);
+            //Debug.Log($"{UnitSquad.Unit.name}({unitPosition[0]} {unitPosition[1]}) attack {OpposingHero.ArmyFormation[unitPosition[0]].ArmyLine[unitPosition[1]].Unit.name}");
         }
         return (YourHero, new List<GameObject>(), OpposingHero, new List<GameObject>());
     }
@@ -38,11 +39,11 @@ public class UnitBasicAttack : UnitAbility
     {
         foreach (var target in targets)
         {
-            Debug.Log($"{UnitSquad.Unit.name}({target[0]} {target[1]}) attacks {OpposingHero.ArmyFormation[target[0]].ArmyLine[target[1]].Unit.name}");
+            //Debug.Log($"{UnitSquad.Unit.name}({target[0]} {target[1]}) attacks {OpposingHero.ArmyFormation[target[0]].ArmyLine[target[1]].Unit.name}");
         }
         return targets;
     }
-    public void TakeDamage(ArmyUnitClass unit,int incsquaddmg, int incunitdmg, string enemyunitname, bool applyDamage)
+    public void TakeDamage(Hero unitHero,ArmyUnitClass unit,int incsquaddmg, int incunitdmg, string enemyunitname, bool applyDamage)
     {
         // Local Variables
         int cohdamage = 0; 
@@ -104,7 +105,11 @@ public class UnitBasicAttack : UnitAbility
                     unit.CurrentUnitCharacteristics.NumberOfUnits = 0;
                     YourHero.RemoveUnitFromFormation((UnitSquad.Line, UnitSquad.Column));
                 }
-                
+
+                if ((int)decsquadhealth <= 0)
+                {
+                    unitHero.RemoveUnitFromFormation((UnitSquad.Line,UnitSquad.Column));
+                }
             }
         }
         string battlelog = $"The {unit.UnitName} c:{truecohesion} squad taken {incdamage} damage from {enemyunitname}. There are {newnumberof}/{startnumberof} with {decsquadhealth} hp.";

@@ -15,6 +15,14 @@ public class BattlefieldLogic : MonoBehaviour
     public Sprite AbilityIcon;
     public UnitGraphic UnitSprites;
 
+    public void ApplyAbilities()
+    {
+        foreach (var ability in AbilitiesOrder)
+        {
+            ability.MainFunc(ability.OpposingHero, true);
+        }
+    }
+
     public void Order()
     {
         DestroyUI();
@@ -72,7 +80,7 @@ public class BattlefieldLogic : MonoBehaviour
                 {
                     //Debug.Log($"Added unit {line}_{column} {unitSquad.Unit.name}");
                     onFieldUnits.Add(unitSquad);
-                    unitSquad.Unit.GetComponent<ArmyUnitClass>().Abilities[0].MainFunc(opposingHero);
+                    unitSquad.Unit.GetComponent<ArmyUnitClass>().Abilities[0].MainFunc(opposingHero,false);
                 }
             }
         }

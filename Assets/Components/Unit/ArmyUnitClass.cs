@@ -62,7 +62,6 @@ public class ArmyUnitClass : MonoBehaviour
     public List<UnitBuff> Buffs;
     public string UnitName;
     public ListOfCommonUnits UnitFactory;
-
     public void InitializeUnit(string unitName, Race unitRace, UnitUpgrades upgrades)
     {
         DefaultUnitCharacteristics = UnitFactory.UnitList.Find(x => x.UnitType.Equals(unitName));
@@ -70,8 +69,19 @@ public class ArmyUnitClass : MonoBehaviour
         unitRace = unitRace;
         currentSquadHealth = DefaultUnitCharacteristics.Characteristics.NumberOfUnits *
                              DefaultUnitCharacteristics.Characteristics.Health;
-        //TODO Заплатка!!!
         List<UnitAbility> UnitAbilities = new List<UnitAbility>();
+        foreach (var ability in DefaultUnitCharacteristics.UnitAbilities)
+        {
+            switch (ability)
+            {
+                case global::Abilities.BasicAttack:
+                    UnitAbilities.Add(new UnitBasicAttack()); break;
+                case global::Abilities.Defend: UnitAbilities.Add(new UnitBasicAttack());
+                    break;
+                default: throw new Exception($"Ability '{ability.ToString()}' is not in handler!!!");
+            }
+        }
+        
         UnitAbilities.Add(new UnitBasicAttack());
         Abilities = UnitAbilities;
         //Abilities = DefaultUnitCharacteristics.UnitAbilities;

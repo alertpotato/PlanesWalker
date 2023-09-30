@@ -17,6 +17,7 @@ public class GameLoopSharedData : MonoBehaviour
 
     public LayerMask UnitLayer;
     public LayerMask BattlefieldLayer;
+    public int CurrentRound = 0;
     private void Awake()
     {
         YourHero = Instantiate(YourHero);

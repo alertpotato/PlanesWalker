@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -16,16 +17,6 @@ public struct UnitWeightsOfChars
     }
 }
 
-[Serializable]
-class Abilities
-{
-    public List<UnitAbility> UnitAbilities = new List<UnitAbility>();
-    public bool AddAbility(UnitAbility newAbility)
-    {
-        UnitAbilities.Add(newAbility);
-        return true;
-    }
-}
 [System.Serializable]
 public class BaseUnitCharacteristics
 {
@@ -33,7 +24,7 @@ public class BaseUnitCharacteristics
     public Race UnitRace;
     public UnitCharacteristics Characteristics;
     //public Abilities UnitAbilities = new Abilities();
-    public List<UnitAbility> UnitAbilities = new List<UnitAbility>();
+    public List<Abilities> UnitAbilities = new List<Abilities>();
     public UnitWeightsOfChars NumberOfUnitsUpgrade;
     public UnitWeightsOfChars HealthUpgrade;
     public UnitWeightsOfChars DamageUpgrade;
@@ -59,7 +50,7 @@ public class BaseUnitCharacteristics
         UnitType = unitType;
         UnitRace = unitRace;
         Characteristics = uChar;
-        UnitAbilities.Add(new UnitBasicAttack());
+        UnitAbilities.Add(Abilities.BasicAttack);
         NumberOfUnitsUpgrade = listUnitWeightsOfChars[0];
         HealthUpgrade = listUnitWeightsOfChars[1];
         DamageUpgrade = listUnitWeightsOfChars[2];

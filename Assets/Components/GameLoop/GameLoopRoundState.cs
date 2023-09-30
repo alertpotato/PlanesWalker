@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(GameLoopSharedData))]
-public class GameLoopBattleState : StateBehaviour
+public class GameLoopRoundState : StateBehaviour
 {
     public GameLoopSharedData Config;
     public override void OnEnter()
     {
-        Debug.Log("Entered Battle!");
+        Config.CurrentRound += 1;
+        Debug.Log($"Entered round {Config.CurrentRound}!");
+        var Logic = Config.Battlefield.GetComponent<BattlefieldLogic>();
+        Logic.ApplyAbilities();
     }
     public override void OnExit()
     {
@@ -16,6 +19,7 @@ public class GameLoopBattleState : StateBehaviour
     }
     public override void OnUpdate()
     {
+        
     }
 
 }

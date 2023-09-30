@@ -10,6 +10,7 @@ public class GameLoopPreBattleState : StateBehaviour
     public GameObject StartBattleButton;
     public override void OnEnter()
     {
+        Config.CurrentRound = 0;
         Config.Battlefield.SetActive(true);
         StartBattleButton.SetActive(true);
     }
@@ -23,10 +24,11 @@ public class GameLoopPreBattleState : StateBehaviour
     }
     public void StartBattle()
     {
-        ChangeState<GameLoopBattleState>();
+        ChangeState<GameLoopRoundState>();
     }
     void OnShowarmy(InputValue value)
     {
+        if (!IsActive()) return;
         Debug.Log("Hello Q");
         Config.ArmyDeck.GetComponent<ArmyDeck>().UpdateDeck();
     }

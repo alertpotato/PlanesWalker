@@ -20,6 +20,11 @@ public class StateBehaviour : MonoBehaviour
         Machine.ChangeState<T>();
     }
 
+    public bool IsActive()
+    {
+        return Machine.CurrentState == this;
+    }
+
     virtual public void OnEnter() { }
     virtual public void OnExit() { }
     virtual public void OnUpdate() { }
