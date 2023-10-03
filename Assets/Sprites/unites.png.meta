@@ -474,6 +474,27 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: hex
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 812
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0c00a693d21ae6a46bc59e9d3f3e60cd
+      internalID: 85168960
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -493,6 +514,7 @@ TextureImporter:
       goblin_punks_icon: -1604203927
       goblin_rogue_card: -1070660373
       goblin_rogue_icon: 9055929
+      hex: 85168960
       local_militia_card: 736160649
       local_militia_icon: -945918270
       notavailable_card: -713104645

@@ -1,7 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable]
+public enum CellType { Available, NotAvailable, Occupied };
 public class ArmyCellScript : MonoBehaviour
 {
     public SpriteRenderer spriteComponent;
