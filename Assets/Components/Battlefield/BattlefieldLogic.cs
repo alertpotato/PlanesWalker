@@ -52,11 +52,11 @@ public class BattlefieldLogic : MonoBehaviour
             var newUI = Instantiate(AbilityUI,AbilityUIParent.transform);
             newUI.transform.localPosition = new Vector3(0,YYY,0);
             AbilitiesUI.Add(newUI);
-            newUI.GetComponent<AbilityOrderUI>().SetIcons(
-                AbilityIcon,
-                UnitSprites.GetIconSpriteByName(ability.UnitSquad.Unit.GetComponent<ArmyUnitClass>().UnitName),
-                UnitSprites.GetIconSpriteByName(ability.OpposingHero.ArmyFormation[ability.targets[0][0]].ArmyLine[ability.targets[0][1]].Unit.GetComponent<ArmyUnitClass>().UnitName)
-                );
+            // TODO REDO newUI.GetComponent<AbilityOrderUI>().SetIcons(
+            //    AbilityIcon,
+            //    UnitSprites.GetIconSpriteByName(ability.UnitSquad.Unit.GetComponent<ArmyUnitClass>().UnitName),
+            //     UnitSprites.GetIconSpriteByName(ability.OpposingHero.ArmyFormation[ability.targets[0][0]].ArmyLine[ability.targets[0][1]].Unit.GetComponent<ArmyUnitClass>().UnitName)
+            //    );
             index++;
         }
         AbilityUIBack.sizeDelta = new Vector2(AbilityUIBack.rect.width,114*index);
