@@ -30,7 +30,6 @@ public class BattlefieldLogic : MonoBehaviour
         AbilitiesOrder = new List<UnitAbility>();
         List<Squad> onFieldUnits = new List<Squad>();
         onFieldUnits.AddRange(InitAbilities(Battlefield.YourHero, Battlefield.EnemyHero));
-        onFieldUnits.AddRange(InitAbilities(Battlefield.EnemyHero,Battlefield.YourHero));
         var sortedUnits = from squad in onFieldUnits
             orderby squad.Unit.GetComponent<ArmyUnitClass>().CurrentUnitCharacteristics.Initiative descending
             select squad;
@@ -68,14 +67,17 @@ public class BattlefieldLogic : MonoBehaviour
             Destroy(ui);
         }
     }
-    public List<Squad> InitAbilities(Hero unitHero,Hero opposingHero)
+    public List<Squad> InitAbilities(Hero unitHero,Hero enemyHero)
     {
         List<Squad> onFieldUnits = new List<Squad>();
-        for (int line = 0;  line < unitHero.ArmyFormation.Count;  line++)
+        for (int column = 0;  column < Battlefield.Field.Count;  column++)
         {
-            for (int column = 0; column < unitHero.ArmyFormation[line].ArmyLine.Count; column++)
+            for (int line = 0; line < Battlefield.Field[column].Row.Count; line++)
             {
-                Squad unitSquad = unitHero.ArmyFormation[line].ArmyLine[column];
+                Squad unitSquad = Battlefield.Field[column].Row[line];
+                Hero opposingHero;
+                if (unitHero == unitSquad.Unit.GetComponent<ArmyUnitClass>().UnitHero) opposingHero = enemyHero;
+                else opposingHero = unitHero;
                 if (unitSquad.Type == CellType.Occupied)
                 {
                     //Debug.Log($"Added unit {line}_{column} {unitSquad.Unit.name}");

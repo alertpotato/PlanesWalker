@@ -15,16 +15,21 @@ public class UnitBasicAttack : UnitAbility
         OpposingHero = opposingHero;
         IsActive = false; 
         targets.Clear();
-        int[] unitPosition = new int[2] { UnitSquad.Line,UnitSquad.Column};
         //Debug.Log($"{UnitSquad.Unit.name} {unitPosition[0]}_{unitPosition[1]} enm:{OpposingHero.ArmyFormation[unitPosition[0]].ArmyLine[unitPosition[1]].Type.ToString()}");
-        if (unitPosition[0] == 0 && OpposingHero.ArmyFormation[unitPosition[0]].ArmyLine[unitPosition[1]].Type ==
-            CellType.Occupied)
+        foreach (var hex in Field.HexCycle)
         {
-            targets.Add(unitPosition);
-            IsActive = true;
-            
+            var newPos = new Vector2Int(Mathf.Clamp(UnitSquad.FieldPosition.x + hex.x,0,Field.fieldColumns-1),Mathf.Clamp(UnitSquad.FieldPosition.y + hex.y,0,Field.fieldRows-1));
+            if (newPos != UnitSquad.FieldPosition && Field.Field[newPos.x].Row[newPos.y].Type == CellType.Occupied)
+            {
+                targets.Add(newPos);
+                IsActive = true;
+                break;
+            }
+        }
+        if (IsActive)
+        {
             var yourUnit = UnitSquad.Unit.GetComponent<ArmyUnitClass>();
-            var enemyUnit = OpposingHero.ArmyFormation[unitPosition[0]].ArmyLine[unitPosition[1]].Unit.GetComponent<ArmyUnitClass>();
+            var enemyUnit = Field.Field[targets[0].x].Row[targets[0].y].Unit.GetComponent<ArmyUnitClass>();
             var yourUnitDamage = yourUnit.CurrentUnitCharacteristics.Damage;
             var yourUnitAllDamage = yourUnit.CurrentUnitCharacteristics.NumberOfUnits * yourUnitDamage;
             var enemyUnitDamage = enemyUnit.CurrentUnitCharacteristics.Damage;
@@ -35,7 +40,7 @@ public class UnitBasicAttack : UnitAbility
         }
         return (YourHero, new List<GameObject>(), OpposingHero, new List<GameObject>());
     }
-    public override List<int[]> AbilityTargets()
+    public override List<Vector2Int> AbilityTargets()
     {
         foreach (var target in targets)
         {
@@ -103,12 +108,12 @@ public class UnitBasicAttack : UnitAbility
                 if (decsquadhealth <= 0)
                 {
                     unit.CurrentUnitCharacteristics.NumberOfUnits = 0;
-                    YourHero.RemoveUnitFromFormation((UnitSquad.Line, UnitSquad.Column));
+                    Field.RemoveUnitFromFormation(UnitSquad.FieldPosition);
                 }
 
                 if ((int)decsquadhealth <= 0)
                 {
-                    unitHero.RemoveUnitFromFormation((UnitSquad.Line,UnitSquad.Column));
+                    Field.RemoveUnitFromFormation(UnitSquad.FieldPosition);
                 }
             }
         }

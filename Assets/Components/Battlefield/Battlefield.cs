@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UnityEditor;
+
 [Serializable] public struct Squad
 {
     public GameObject Unit;
@@ -45,31 +46,35 @@ using UnityEditor;
 public class Battlefield : MonoBehaviour
 {
     [Header("Field Graphics")]
-    public List<List<GameObject>> yourCellList = new List<List<GameObject>>();
-    public List<List<GameObject>> enemyCellList = new List<List<GameObject>>();
+
     public float armyCellSpacing = 1.3f;
     public List<List<GameObject>> hexList = new List<List<GameObject>>();
     public float hexSize = 1;
-    public float fieldColumns = 9;
-    public float fieldRows = 6;
+    public int fieldColumns = 9;
+    public int fieldRows = 6;
     public List<FieldRow> Field;
     
     [Header("Components")]
     public Hero YourHero;
     public Hero EnemyHero;
     public GameObject ArmyFieldCell;
-    public GameObject YourHeroField;
-    public GameObject EnemyHeroField;
     public UnitGraphic UnitSprites;
     public BattlefieldLogic logic;
+    
+    public List<Vector2Int> HexCycle;
 
     private void Awake()
     {
         Field = new List<FieldRow>();
+        HexCycle = new List<Vector2Int>
+        {
+            new Vector2Int( 0,-1),new Vector2Int( 1,-1), new Vector2Int( 1,0), new Vector2Int( 0,1),new Vector2Int( -1,1), new Vector2Int( -1,0)
+        };
     }
     private void Start()
     {
         transform.position = new Vector3(0, 0, 8.5f);
+        InicializeHexField(fieldColumns, fieldRows);
     }
     public void InicializeHexField(int fieldColumnsLocal, int fieldRowsLocal)
     {
@@ -108,26 +113,6 @@ public class Battlefield : MonoBehaviour
 
     private void Update()
     {
-        foreach (var ability in logic.AbilitiesOrder)
-        {
-            List<List<GameObject>> cellList;
-            if (ability.YourHero == YourHero)
-            {
-                cellList = enemyCellList;
-                foreach (var target in ability.AbilityTargets())
-                {
-                    cellList[target[0]][target[1]].GetComponent<ArmyCellScript>().GetAttackedFromLeft();
-                }
-            }
-            else
-            {
-                cellList = yourCellList;
-                foreach (var target in ability.AbilityTargets())
-                {
-                    cellList[target[0]][target[1]].GetComponent<ArmyCellScript>().GetAttackedFromRight();
-                }
-            }
-        }
     }
     private void UpdateField()
     {
@@ -155,7 +140,7 @@ public class Battlefield : MonoBehaviour
             }
         }
     }
-    public bool AddUnitToField((int,int) banner, GameObject unit, Hero hero)
+    public bool AddUnitToField((int,int) banner, GameObject unit)
     {
         bool answer = false;
         Squad toCell = Field[banner.Item1].Row[banner.Item2];
@@ -168,17 +153,17 @@ public class Battlefield : MonoBehaviour
             answer = true;
             foreach (var ability in unit.GetComponent<ArmyUnitClass>().Abilities)
             {
-                ability.InitAbility(Field[banner.Item1].Row[banner.Item2],hero);
+                ability.InitAbility(Field[banner.Item1].Row[banner.Item2],unit.GetComponent<ArmyUnitClass>().UnitHero,this);
             }
         }
         return answer;
     }
-    public void RemoveUnitFromFormation((int,int) banner)
+    public void RemoveUnitFromFormation(Vector2Int pos)
     {
-        Squad toCell = Field[banner.Item1].Row[banner.Item2];
+        Squad toCell = Field[pos.x].Row[pos.y];
         if (toCell.Type == CellType.Occupied)
         {
-            Field[banner.Item1].RemoveUnit(CellType.Available,banner.Item2);
+            Field[pos.x].RemoveUnit(CellType.Available,pos.y);
             verifyField();
         }
     }
@@ -195,10 +180,6 @@ public class Battlefield : MonoBehaviour
     }
     public void verifyField()
     {
-        var cycle = new List<int[]>
-        {
-            new int[2] { 0, -1 },new int[2] { +1, -1 }, new int[2] { 1, 0 }, new int[2] { 0, 1 },new int[2] { -1, 1 }, new int[2] { -1, 0 }
-        };
         List<int[]> cellsToAvailable = new List<int[]>();
         List<int[]> cellsToNotAvailable = new List<int[]>(); 
         List<int[]> cellsToRemove = new List<int[]>(); 
@@ -209,10 +190,10 @@ public class Battlefield : MonoBehaviour
             {
                 Vector2Int startingFieldPosition = new Vector2Int(-1, -1); // TODO start pos of hero????
                 bool neigbour = false;
-                foreach (var couple in cycle)
+                foreach (var couple in HexCycle)
                 {
-                    int newline = Mathf.Clamp(row.FieldPosition.x + couple[0], 0, 999);
-                    int newcolumn = Mathf.Clamp(row.FieldPosition.y + couple[1], 0, 999);
+                    int newline = Mathf.Clamp(row.FieldPosition.x + couple.x, 0, 999);
+                    int newcolumn = Mathf.Clamp(row.FieldPosition.y + couple.y, 0, 999);
                     if (Field[newline].Row[newcolumn].Type == CellType.Occupied) {neigbour = true;}
                     //Debug.Log($"{column.Line}_{column.Column} checking {newline}_{newcolumn} it is {neigbour.ToString()}");
                 }
@@ -274,7 +255,7 @@ public class Battlefield : MonoBehaviour
         availableSquads = availableSquads.OrderBy(x=>x.FieldPosition.x).ToList();
         if (avalaibleUnits.Count > 0)
         {
-            AddUnitToField((availableSquads[0].FieldPosition.x, availableSquads[0].FieldPosition.y), avalaibleUnits[0],opposingHero);
+            AddUnitToField((availableSquads[0].FieldPosition.x, availableSquads[0].FieldPosition.y), avalaibleUnits[0]);
         }
     }
 

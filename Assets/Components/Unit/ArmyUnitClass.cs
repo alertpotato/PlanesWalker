@@ -62,6 +62,7 @@ public class ArmyUnitClass : MonoBehaviour
     public List<UnitBuff> Buffs;
     public string UnitName;
     public ListOfCommonUnits UnitFactory;
+    public Hero UnitHero;
     public void InitializeUnit(string unitName, Race unitRace, UnitUpgrades upgrades)
     {
         DefaultUnitCharacteristics = UnitFactory.UnitList.Find(x => x.UnitType.Equals(unitName));
@@ -94,6 +95,12 @@ public class ArmyUnitClass : MonoBehaviour
     {
         CurrentUnitCharacteristics = new UnitCharacteristics(DefaultUnitCharacteristics,upgrades,buffs);
     }
-    public void ApplyHeroModifyers(int hminitiative, int hmcohesion) { CurrentUnitCharacteristics.Initiative = CurrentUnitCharacteristics.Initiative + hminitiative; CurrentUnitCharacteristics.Cohesion = CurrentUnitCharacteristics.Cohesion + hmcohesion; }
+
+    public void ApplyHeroModifyers(int hminitiative, int hmcohesion, Hero hero)
+    {
+        CurrentUnitCharacteristics.Initiative = CurrentUnitCharacteristics.Initiative + hminitiative;
+        CurrentUnitCharacteristics.Cohesion = CurrentUnitCharacteristics.Cohesion + hmcohesion;
+        UnitHero = hero;
+    }
     
 }
