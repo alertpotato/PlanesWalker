@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
-[System.Serializable] 
+[System.Serializable]
 public enum Race { Human, Goblin };
 [System.Serializable]
 public struct UnitWeightsOfChars
@@ -32,7 +32,8 @@ public class BaseUnitCharacteristics
     public UnitWeightsOfChars CohesionUpgrade;
     public UnitWeightsOfChars ArmourUpgrade;
     public int UnitWeight;
-    public BaseUnitCharacteristics(string unitType,Race unitRace,UnitCharacteristics uChar, int unitWeight,UnitWeightsOfChars numberOfUnitsUpgrade,UnitWeightsOfChars healthUpgrade,UnitWeightsOfChars damageUpgrade,UnitWeightsOfChars initiativeUpgrade,UnitWeightsOfChars cohesionUpgrade,UnitWeightsOfChars armourUpgrade)
+    public int[] UnitSupplyReq = new int[4]; // food, weapons, money, wisdom
+    public BaseUnitCharacteristics(string unitType,Race unitRace,UnitCharacteristics uChar, int unitWeight,UnitWeightsOfChars numberOfUnitsUpgrade,UnitWeightsOfChars healthUpgrade,UnitWeightsOfChars damageUpgrade,UnitWeightsOfChars initiativeUpgrade,UnitWeightsOfChars cohesionUpgrade,UnitWeightsOfChars armourUpgrade, int[] unitSupplyReq)
     {
         UnitType = unitType;
         UnitRace = unitRace;
@@ -44,8 +45,9 @@ public class BaseUnitCharacteristics
         CohesionUpgrade = cohesionUpgrade;
         ArmourUpgrade = armourUpgrade;
         UnitWeight = unitWeight;
+        UnitSupplyReq = unitSupplyReq;
     }
-    public BaseUnitCharacteristics(string unitType,Race unitRace,UnitCharacteristics uChar,List<UnitWeightsOfChars> listUnitWeightsOfChars, int unitWeight)
+    public BaseUnitCharacteristics(string unitType,Race unitRace,UnitCharacteristics uChar,List<UnitWeightsOfChars> listUnitWeightsOfChars, int unitWeight, int[] unitSupplyReq)
     {
         UnitType = unitType;
         UnitRace = unitRace;
@@ -58,6 +60,7 @@ public class BaseUnitCharacteristics
         CohesionUpgrade = listUnitWeightsOfChars[4];
         ArmourUpgrade = listUnitWeightsOfChars[5];
         UnitWeight = unitWeight;
+        UnitSupplyReq = unitSupplyReq;
     }
     public BaseUnitCharacteristics(BaseUnitCharacteristics serializableUnitClassItems)
     {
@@ -71,6 +74,7 @@ public class BaseUnitCharacteristics
         CohesionUpgrade = serializableUnitClassItems.CohesionUpgrade;
         ArmourUpgrade = serializableUnitClassItems.ArmourUpgrade;
         UnitWeight = serializableUnitClassItems.UnitWeight;
+        UnitSupplyReq = serializableUnitClassItems.UnitSupplyReq;
     }
 }
 
@@ -177,7 +181,8 @@ public class ListOfCommonUnits : ScriptableObject
             new UnitWeightsOfChars(1, 1, 5),
             new UnitWeightsOfChars(5, 1, 2)
         };
-        UnitList.Add(new BaseUnitCharacteristics("local_militia",Race.Human,p_lmilita_b,p_militia_stats,10) );
+        int[] p_lmilita_s = {1,0,0,1};
+        UnitList.Add(new BaseUnitCharacteristics("local_militia",Race.Human,p_lmilita_b,p_militia_stats,10,p_lmilita_s ));
 
         var p_dthieves_b = new UnitCharacteristics(7, 5, 5, 2, -2, 0);
         List<UnitWeightsOfChars> p_dthieves_b_stats = new List<UnitWeightsOfChars>
@@ -189,7 +194,8 @@ public class ListOfCommonUnits : ScriptableObject
             new UnitWeightsOfChars(1, 1, 5),
             new UnitWeightsOfChars(5, 1, 2)
         };
-        UnitList.Add(new BaseUnitCharacteristics("dirty_thieves",Race.Human,p_dthieves_b,p_dthieves_b_stats,8) );
+        int[] p_dthieves_s = {1,0,1,0};
+        UnitList.Add(new BaseUnitCharacteristics("dirty_thieves",Race.Human,p_dthieves_b,p_dthieves_b_stats,8,p_dthieves_s) );
 
         var p_twarriors_b = new UnitCharacteristics(5, 8, 5, 0, 2, 0);
         List<UnitWeightsOfChars> p_twarriors_b_stats = new List<UnitWeightsOfChars>
@@ -201,8 +207,22 @@ public class ListOfCommonUnits : ScriptableObject
             new UnitWeightsOfChars(1, 2, 5),
             new UnitWeightsOfChars(3, 1, 6)
         };
-        UnitList.Add(new BaseUnitCharacteristics("trained_warriors",Race.Human,p_twarriors_b,p_twarriors_b_stats,6) );
-
+        int[] p_twarriors_s = {1,1,0,0};
+        UnitList.Add(new BaseUnitCharacteristics("trained_warriors",Race.Human,p_twarriors_b,p_twarriors_b_stats,6,p_twarriors_s) );
+        
+        var p_spearman_b = new UnitCharacteristics(7, 6, 3, 1, 3, 0);
+        List<UnitWeightsOfChars> p_spearman_b_stats = new List<UnitWeightsOfChars>
+        {
+            new UnitWeightsOfChars(1, 2, 7),
+            new UnitWeightsOfChars(1, 2, 12),
+            new UnitWeightsOfChars(2, 1, 10),
+            new UnitWeightsOfChars(1, 1, 9),
+            new UnitWeightsOfChars(1, 2, 4),
+            new UnitWeightsOfChars(4, 1, 3)
+        };
+        int[] p_spearman_s = {1,1,0,0};
+        UnitList.Add(new BaseUnitCharacteristics("spearman",Race.Human,p_spearman_b,p_spearman_b_stats,7,p_spearman_s) );
+        
         var e_ogre_b = new UnitCharacteristics(1, 40, 15, 0, -3, 2);
         List<UnitWeightsOfChars> p_ogre_b_stats = new List<UnitWeightsOfChars>
         {
@@ -213,7 +233,8 @@ public class ListOfCommonUnits : ScriptableObject
             new UnitWeightsOfChars(1, 2, 4),
             new UnitWeightsOfChars(2, 1, 4)
         };
-        UnitList.Add(new BaseUnitCharacteristics("ogre",Race.Goblin,e_ogre_b,p_ogre_b_stats,6) );
+        int[] e_ogre_s = {2,0,0,1};
+        UnitList.Add(new BaseUnitCharacteristics("ogre",Race.Goblin,e_ogre_b,p_ogre_b_stats,6,e_ogre_s) );
 
         var e_rgoblin_b = new UnitCharacteristics(12, 3, 3, 2, -1, 0);
         List<UnitWeightsOfChars> p_rgoblin_b_stats = new List<UnitWeightsOfChars>
@@ -225,7 +246,8 @@ public class ListOfCommonUnits : ScriptableObject
             new UnitWeightsOfChars(1, 1, 8),
             new UnitWeightsOfChars(5, 1, 2)
         };
-        UnitList.Add(new BaseUnitCharacteristics("goblin_rogue",Race.Goblin,e_rgoblin_b,p_rgoblin_b_stats,8) );
+        int[] e_rgoblin_s = {0,1,1,0};
+        UnitList.Add(new BaseUnitCharacteristics("goblin_rogue",Race.Goblin,e_rgoblin_b,p_rgoblin_b_stats,8,e_rgoblin_s) );
 
         var e_pgoblin_b = new UnitCharacteristics(24, 2, 1, -1, -3, 0);
         List<UnitWeightsOfChars> p_pgoblin_b_stats = new List<UnitWeightsOfChars>
@@ -237,6 +259,7 @@ public class ListOfCommonUnits : ScriptableObject
             new UnitWeightsOfChars(2, 2, 5),
             new UnitWeightsOfChars(5, 1, 2)
         };
-        UnitList.Add(new BaseUnitCharacteristics("goblin_punks",Race.Goblin,e_pgoblin_b,p_pgoblin_b_stats,10) );
+        int[] e_pgoblin_s = {1,1,0,0};
+        UnitList.Add(new BaseUnitCharacteristics("goblin_punks",Race.Goblin,e_pgoblin_b,p_pgoblin_b_stats,10,e_pgoblin_s) );
     }
 }
