@@ -45,10 +45,13 @@ public class UnitCardMain : MonoBehaviour
     }
     private void Update()
     {
+        if (IsSelected) transform.position = new Vector3(startCardPos.x, startCardPos.y, startCardPos.z * 0.9f);
+        else transform.position = startCardPos;
+        
         float detlaTime = Time.deltaTime * 30;
         if (!isMouseOff)
         {
-            //float _approach = 0.1f * (MainCamera.transform.position.z - _startCardPos.z);
+            //float _approach = 0.1f * (MainCamera.transform.position.z - startCardPos.z);
             Ray ray = MainCamera.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             Vector3 startMousePos;
@@ -59,7 +62,8 @@ public class UnitCardMain : MonoBehaviour
             float relativeYToMouse = -(transform.position.y - startMousePos.y) / (cardSpriteSize.y / 2);
             float relativeToMouse = (Mathf.Abs(relativeXToMouse) + Mathf.Abs(relativeYToMouse)) / 2; 
             Vector3 asd = new Vector3(15 * relativeXToMouse, 15 * relativeYToMouse, 0);
-            Vector3 newPosition = startCardPos;
+            Vector3 newPosition = transform.position;
+
             //      if (IsSelected) newPosition = new Vector3(startCardPos.x, startCardPos.y, startCardPos.z - 1);
             
             transform.SetPositionAndRotation(newPosition, Quaternion.FromToRotation(newPosition,new Vector3(startMousePos.x, startMousePos.y, transform.position.z)));
@@ -128,6 +132,7 @@ public class UnitCardMain : MonoBehaviour
     {
         cardSprite.sprite = UnitSprites.GetCardSpriteByName(spriteName);
     }
+    
     public void selectCard()
     {
         IsSelected = true;

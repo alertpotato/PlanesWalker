@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 public class GameLoopSharedData : MonoBehaviour
@@ -18,6 +19,7 @@ public class GameLoopSharedData : MonoBehaviour
     public LayerMask UnitLayer;
     public LayerMask BattlefieldLayer;
     public int CurrentRound = 0;
+    public GameObject RewardParent;
     private void Awake()
     {
         YourHero = Instantiate(YourHero);
@@ -69,7 +71,7 @@ public class GameLoopSharedData : MonoBehaviour
     public GameObject InstantiateRandomUnit(Race unitRace)
     {
         var newUnitCharacteristics = listOfCommonUnits.GetRandomUnit(unitRace);
-        GameObject newUnit = Instantiate(Unit);
+        GameObject newUnit = Instantiate(Unit,RewardParent.transform);
         ArmyUnitClass unitClass = newUnit.GetComponent<ArmyUnitClass>();
         unitClass.InitializeUnit(newUnitCharacteristics.Item1,newUnitCharacteristics.Item2,newUnitCharacteristics.Item3);
         newUnit.name = $"{unitClass.UnitName}_{newUnit.GetInstanceID()}";

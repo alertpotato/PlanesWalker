@@ -11,7 +11,7 @@ public class GameLoopRewardState : StateBehaviour
     
     [Header("Reward logic")]
     public int NumberOfRewards = 3;
-    public int NumberOfChoices = 5;
+    public int NumberOfCardsToChoose = 5;
     public int leftNumberOfRewards;
     
     [Header("Private variables")]
@@ -34,24 +34,34 @@ public class GameLoopRewardState : StateBehaviour
     private void CreateUnits()
     {
         RewardList.Clear();
-        for (int i=0; i<NumberOfChoices; i++)
+        for (int i=0; i<NumberOfCardsToChoose; i++)
         {
             var newUnit = Config.InstantiateRandomUnit(Race.Human);
             RewardList.Add(newUnit);
         }
-        CreateCards(RewardList.Count);
+        CreateCards();
     }
-    private void CreateCards(int rewards)
+    private void CreateCards()
     {
-        for (int i = 0; i < rewards; i++)
+        int i = 0;
+        var rewards = RewardList.Count;
+        foreach (GameObject unit in RewardList)
         {
-            var currUnit = RewardList[i];
             var pos = Camera.main.ScreenToWorldPoint(new Vector3((Screen.width / (rewards + 2)) * (i + 1), Screen.height/2, 8));
             GameObject newCard = Instantiate(Config.UnitCard);
-            newCard.name = $"{currUnit.name}_Card";
-            newCard.transform.SetParent(currUnit.transform);
-            newCard.GetComponent<UnitCardMain>().SetUnitParameters(currUnit, pos,false);
+            newCard.name = $"{unit.name}_Card";
+            newCard.transform.SetParent(unit.transform);
+            newCard.GetComponent<UnitCardMain>().SetUnitParameters(unit, pos,false);
             CardList.Add(newCard);
+            i += 1;
+        }
+        i = 0;
+        foreach (GameObject unit in RewardList)
+        {
+            var pos = Camera.main.ScreenToWorldPoint(new Vector3((Screen.width / (rewards + 2)) * (i + 1),
+                Screen.height / 2, 8));
+            unit.transform.position = pos;
+            i += 1;
         }
     }
     public override void OnUpdate()
@@ -66,13 +76,6 @@ public class GameLoopRewardState : StateBehaviour
         if (isChosing==false & leftNumberOfRewards == 0)
         {
             ChangeState<GameLoopPreBattleState>();
-        }
-
-        for (int i = 0; i < CardList.Count; i++)
-        {
-            var pos = Camera.main.ScreenToWorldPoint(new Vector3((Screen.width / (CardList.Count + 2)) * (i + 1),
-                Screen.height / 2, 8));
-            CardList[i].transform.position = pos;
         }
     }
     public void AddRewardToHero()

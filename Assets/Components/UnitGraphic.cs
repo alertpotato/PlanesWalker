@@ -22,10 +22,28 @@ public class UnitGraphic : ScriptableObject
     
     public Sprite GetCardSpriteByName(string name)
     {
-        return UnitGraphics.Find(x => x.UnitType == name).Card;
+        Sprite card;
+        if (UnitGraphics.Exists(x => x.UnitType == name))
+        {
+            card = UnitGraphics.Find(x => x.UnitType == name).Card;
+        }
+        else
+        {
+            card = UnitGraphics.Find(x => x.UnitType == "notavailable").Card;
+        }
+        return card;
     }
     public Sprite GetIconSpriteByName(string name)
     {
-        return UnitGraphics.Find(x => x.UnitType == name).BattleIcon;
+        Sprite icon ;
+        if (UnitGraphics.Exists(x => x.UnitType == name))
+        {
+            icon = UnitGraphics.Find(x => x.UnitType == name).BattleIcon;
+        }
+        else
+        {
+            icon = UnitGraphics.Find(x => x.UnitType == "notavailable").BattleIcon;
+        }
+        return icon;
     }
 }
