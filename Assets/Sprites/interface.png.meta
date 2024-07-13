@@ -159,6 +159,48 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: button_battle
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 318
+        width: 84
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 898206fd086803640a75511fd1a511dd
+      internalID: -1888006139
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: buttle_round
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 291
+        width: 84
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 51e1d8c3e5d1dff43ad55d223df88eeb
+      internalID: -292192525
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -170,6 +212,8 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
+      buttle_round: -292192525
+      button_battle: -1888006139
       button_select: -96665308
       selection_box: 1427784927
       stats_panel: 740316760

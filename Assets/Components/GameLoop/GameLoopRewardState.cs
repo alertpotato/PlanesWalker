@@ -24,6 +24,7 @@ public class GameLoopRewardState : StateBehaviour
         leftNumberOfRewards = NumberOfRewards;
         isChosing = false;
         SelectButton.SetActive(true);
+        Config.UpdateHelpText("Chosing rewards","Choose cards that would be added to your collection");
     }
 
     public override void OnExit()

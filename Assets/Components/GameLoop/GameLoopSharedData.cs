@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -15,7 +16,9 @@ public class GameLoopSharedData : MonoBehaviour
     public GameObject EvilHero;
     public GameObject Unit;
     public GameObject UnitCard;
-
+    public TextMeshProUGUI HeadText;
+    public TextMeshProUGUI BottomText;
+    
     public LayerMask UnitLayer;
     public LayerMask BattlefieldLayer;
     public int CurrentRound = 0;
@@ -84,5 +87,11 @@ public class GameLoopSharedData : MonoBehaviour
             GameObject newEvilUnit = InstantiateRandomUnit(Race.Goblin);
             _hero.AddBannerList(newEvilUnit);
         }
+    }
+
+    public void UpdateHelpText(string headText, string bottomText)
+    {
+        HeadText.text = headText;
+        BottomText.text = bottomText;
     }
 }
