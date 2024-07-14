@@ -71,7 +71,7 @@ TextureImporter:
     buildTarget: DefaultTexturePlatform
     maxTextureSize: 2048
     resizeAlgorithm: 1
-    textureFormat: -1
+    textureFormat: 4
     textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
@@ -168,7 +168,7 @@ TextureImporter:
         width: 84
         height: 27
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -189,7 +189,7 @@ TextureImporter:
         width: 84
         height: 27
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -197,6 +197,48 @@ TextureImporter:
       bones: []
       spriteID: 51e1d8c3e5d1dff43ad55d223df88eeb
       internalID: -292192525
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: supply_panel
+      rect:
+        serializedVersion: 2
+        x: 84
+        y: 352
+        width: 74
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bcd605461a4656c4babb2dd084628a6e
+      internalID: 1516716753
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_supply
+      rect:
+        serializedVersion: 2
+        x: 84
+        y: 381
+        width: 101
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6dcbe9cc532a88542aa10d8c68cb406a
+      internalID: 1859216495
       vertices: []
       indices: 
       edges: []
@@ -215,9 +257,11 @@ TextureImporter:
       buttle_round: -292192525
       button_battle: -1888006139
       button_select: -96665308
+      player_supply: 1859216495
       selection_box: 1427784927
       stats_panel: 740316760
       stats_panel_2: -247531200
+      supply_panel: 1516716753
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

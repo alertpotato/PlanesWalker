@@ -9,6 +9,7 @@ public class UnitCardMain : MonoBehaviour
     public Camera MainCamera;
     public UnitGraphic UnitSprites;
     public UnitCardStatPanel StatText;
+    public UnitCardSupplyPanel SupplyText;
     public BoxCollider cardCollider;
     public SpriteRenderer cardSprite;
     public GameObject RelatedUnit;
@@ -42,6 +43,7 @@ public class UnitCardMain : MonoBehaviour
         transform.position = pos;
         startCardPos = pos;
         StatText.SetStatText(RelatedUnitClass.DefaultUnitCharacteristics.Characteristics,RelatedUnitClass.CurrentUnitCharacteristics, RelatedUnitClass.unitUpgrades);
+        SupplyText.SetSupplyText(RelatedUnitClass.DefaultUnitCharacteristics.UnitSupplyReq);
     }
     private void Update()
     {
