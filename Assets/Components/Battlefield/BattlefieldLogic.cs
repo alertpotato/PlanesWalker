@@ -40,7 +40,7 @@ public class BattlefieldLogic : MonoBehaviour
             answer = $"{answer} -> {squad.Unit.gameObject.name}[{squad.Unit.GetComponent<ArmyUnitClass>().CurrentUnitCharacteristics.Initiative}]";
             AbilitiesOrder.Add(squad.Unit.GetComponent<ArmyUnitClass>().Abilities[0]);
         }
-        Debug.Log(answer);
+        //Debug.Log(answer);
         // -------------GRAPHIC
         float YY = -60;
         int index = 0;

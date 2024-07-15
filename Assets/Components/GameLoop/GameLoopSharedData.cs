@@ -23,12 +23,11 @@ public class GameLoopSharedData : MonoBehaviour
     public LayerMask BattlefieldLayer;
     public int CurrentRound = 0;
     public GameObject RewardParent;
+    public FormationField PlayerFormation;
 
     public GameLoopPreBattleState PreBattleState;
     private void Awake()
     {
-        YourHero = Instantiate(YourHero);
-        EvilHero = Instantiate(EvilHero);
         Battlefield.SetActive(false);
     }
     private void Start()
@@ -37,6 +36,7 @@ public class GameLoopSharedData : MonoBehaviour
         EvilHero.GetComponent<Hero>().modifyHero("Dark Lord", 1, 1);
         YourHero.name = YourHero.GetComponent<Hero>().heroName;
         EvilHero.name = EvilHero.GetComponent<Hero>().heroName;
+        PlayerFormation.InitializeField(YourHero.GetComponent<Hero>());
         Battlefield.GetComponent<Battlefield>().InicializeField(YourHero.GetComponent<Hero>(), EvilHero.GetComponent<Hero>());
         ArmyDeck.GetComponent<ArmyDeck>().GetArmyHero(YourHero.GetComponent<Hero>());
         AddEvilArmy(EvilHero.GetComponent<Hero>());
@@ -57,9 +57,14 @@ public class GameLoopSharedData : MonoBehaviour
                 if (YourHero.GetComponent<Hero>()
                     .AddUnitToFormation(hit.collider.gameObject.GetComponent<ArmyCellScript>().GetSquad(),
                         SelectedUnits.SelectedEntity.GetComponent<UnitCardMain>().RelatedUnit))
+                    
                 {
                     EvilHero.GetComponent<Hero>().RandomUnitAllocating(YourHero.GetComponent<Hero>());
                     Battlefield.GetComponent<BattlefieldLogic>().Order();
+                    //TODO NEW
+                    var sq = hit.collider.gameObject.GetComponent<ArmyCellScript>().GetSquad();
+
+                    PlayerFormation.AddUnitToFormation(sq, SelectedUnits.SelectedEntity.GetComponent<UnitCardMain>().RelatedUnit);
                 }
             }
         }

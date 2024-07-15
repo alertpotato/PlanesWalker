@@ -11,15 +11,25 @@ public class ArmyCellScript : MonoBehaviour
     public int formationColumn;
     public GameObject ui_attack_right;
     public GameObject ui_attack_left;
-
+    public Company Company;
+    
     public void InicializeCell(int line, int column)
     {
         formationLine = line;
         formationColumn = column;
     }
+    public void InitializeCell(Company company)
+    {
+        Company = company;
+    }
     public (int,int) GetSquad()
     {
         return (formationLine,formationColumn);
+        //return (Company.Banner);
+    }
+    public (int,int) GetCompanyBanner()
+    {
+        return (Company.Banner);
     }
     public void ChangeSprite(Sprite newSprite)
     {

@@ -1,10 +1,13 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 public class Battlefield : MonoBehaviour
 {
     [Header("Field Graphics")]
     public List<List<GameObject>> yourCellList = new List<List<GameObject>>();
     public List<List<GameObject>> enemyCellList = new List<List<GameObject>>();
+    public List<GameObject> playerFieldList = new List<GameObject>();
+    public List<GameObject> enemyFieldList = new List<GameObject>();
     public float armyCellSpacing = 1.3f;
     
     [Header("Components")]
@@ -102,4 +105,23 @@ public class Battlefield : MonoBehaviour
         }
     }
 
+    private void InitializeField(FormationField formation,GameObject parent, List<GameObject> cellList)
+    {
+        cellList.Clear();
+        for (int line = 0; line < formation.Formation.Count; line++)
+        {
+            for (int column = 0; column < formation.Formation[line].Line.Count; column++)
+            {
+                Company company = formation.GetCompany((line, column));
+                GameObject cell = Instantiate(ArmyFieldCell,parent.transform);
+                cell.GetComponent<ArmyCellScript>().InitializeCell(company);
+                cell.name = $"{company.Unit.GetComponent<ArmyUnitClass>().UnitName}_{line}_{column}";
+                cellList.Add(cell);
+                if (company.Type == CompanyType.NotAvailable)
+                {
+                    cell.SetActive(false);
+                }
+            }
+        }
+    }
 }

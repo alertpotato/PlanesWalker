@@ -16,6 +16,8 @@ public class GameLoopPreBattleState : StateBehaviour
         Config.UpdateHelpText("Pre battle state","Q to look at owned cards, left click on any field piece to reset.");
         
         ///Init field
+        var newField = new List<(int,int)>() { (0,1), (0,2), (0,3), (1,2) };
+        Config.PlayerFormation.RebuildField(newField);
         /// Draw field
     }
     public override void OnExit()
