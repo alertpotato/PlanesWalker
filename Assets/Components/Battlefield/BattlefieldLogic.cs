@@ -7,14 +7,14 @@ using UnityEngine;
 public class BattlefieldLogic : MonoBehaviour
 {
     public Battlefield Battlefield;
-    public List<UnitAbility> AbilitiesOrder;
+    public List<UnitAbility> AbilitiesOrder = new List<UnitAbility>();
     public RectTransform AbilityUIBack;
     public GameObject AbilityUI;
     public GameObject AbilityUIParent;
     public List<GameObject> AbilitiesUI;
     public Sprite AbilityIcon;
     public UnitGraphic UnitSprites;
-
+    
     public void ApplyAbilities()
     {
         foreach (var ability in AbilitiesOrder)
@@ -27,7 +27,7 @@ public class BattlefieldLogic : MonoBehaviour
     {
         DestroyUI();
         AbilitiesUI = new List<GameObject>();
-        AbilitiesOrder = new List<UnitAbility>();
+        AbilitiesOrder.Clear();
         List<Squad> onFieldUnits = new List<Squad>();
         onFieldUnits.AddRange(InitAbilities(Battlefield.YourHero, Battlefield.EnemyHero));
         onFieldUnits.AddRange(InitAbilities(Battlefield.EnemyHero,Battlefield.YourHero));

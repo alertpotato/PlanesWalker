@@ -18,11 +18,13 @@ public class GameLoopSharedData : MonoBehaviour
     public GameObject UnitCard;
     public TextMeshProUGUI HeadText;
     public TextMeshProUGUI BottomText;
-    
+    public StateMachine StateManager;
     public LayerMask UnitLayer;
     public LayerMask BattlefieldLayer;
     public int CurrentRound = 0;
     public GameObject RewardParent;
+
+    public GameLoopPreBattleState PreBattleState;
     private void Awake()
     {
         YourHero = Instantiate(YourHero);
@@ -47,27 +49,34 @@ public class GameLoopSharedData : MonoBehaviour
         {
             SelectedUnits.SelectEntity(hit.collider.gameObject);
         }
-        if (Physics.Raycast(ray, out hit, Mathf.Infinity, BattlefieldLayer) & SelectedUnits.IsEntitySelected())
+
+        if (StateManager.CurrentState.Equals(PreBattleState))
         {
-            if (YourHero.GetComponent<Hero>()
-                .AddUnitToFormation(hit.collider.gameObject.GetComponent<ArmyCellScript>().GetSquad(),
-                    SelectedUnits.SelectedEntity.GetComponent<UnitCardMain>().RelatedUnit))
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity, BattlefieldLayer) & SelectedUnits.IsEntitySelected())
             {
-                EvilHero.GetComponent<Hero>().RandomUnitAllocating(YourHero.GetComponent<Hero>());
-                Battlefield.GetComponent<BattlefieldLogic>().Order();
+                if (YourHero.GetComponent<Hero>()
+                    .AddUnitToFormation(hit.collider.gameObject.GetComponent<ArmyCellScript>().GetSquad(),
+                        SelectedUnits.SelectedEntity.GetComponent<UnitCardMain>().RelatedUnit))
+                {
+                    EvilHero.GetComponent<Hero>().RandomUnitAllocating(YourHero.GetComponent<Hero>());
+                    Battlefield.GetComponent<BattlefieldLogic>().Order();
+                }
             }
         }
     }
     private void OnAlternateClick(InputValue value)
     {
-        Ray ray = MainCamera.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, Mathf.Infinity, BattlefieldLayer))
+        if (StateManager.CurrentState.Equals(PreBattleState))
         {
-            //YourHero.GetComponent<Hero>().RemoveUnitFromFormation(hit.collider.gameObject.GetComponent<ArmyCellScript>().GetSquad());
-            YourHero.GetComponent<Hero>().RemoveAllFormations();
-            EvilHero.GetComponent<Hero>().RemoveAllFormations();
-            Battlefield.GetComponent<BattlefieldLogic>().Order();
+            Ray ray = MainCamera.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity, BattlefieldLayer))
+            {
+                //YourHero.GetComponent<Hero>().RemoveUnitFromFormation(hit.collider.gameObject.GetComponent<ArmyCellScript>().GetSquad());
+                YourHero.GetComponent<Hero>().RemoveAllFormations();
+                EvilHero.GetComponent<Hero>().RemoveAllFormations();
+                Battlefield.GetComponent<BattlefieldLogic>().Order();
+            }
         }
         else SelectedUnits.DeSelectEntity();
     }

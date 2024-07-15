@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
+
 [Serializable]
 public enum CellType { Available, NotAvailable, Occupied };
 [Serializable]
@@ -49,10 +50,10 @@ public struct Squad
 }
 public class Hero : MonoBehaviour
 {
+    public List<Formation> ArmyFormation;
     [Header("Characteristics")]
     public string heroName;
     public List<GameObject> bannersList = new List<GameObject> { };
-    public List<Formation> ArmyFormation;
     
     [Header("HeroModifiers")]
     [SerializeField] private int modinit = 0;
@@ -75,6 +76,9 @@ public class Hero : MonoBehaviour
             ArmyFormation.Add(new Formation(formation));
         }
         ArmyFormation[0].ChangeType(CellType.Available, 2);
+        ArmyFormation[0].ChangeType(CellType.Available, 3);
+        ArmyFormation[0].ChangeType(CellType.Available, 1);
+        ArmyFormation[1].ChangeType(CellType.Available, 2);
     }
     public bool AddUnitToFormation((int,int) banner, GameObject unit)
     {
@@ -86,7 +90,7 @@ public class Hero : MonoBehaviour
         if (toCell.Type == CellType.Available)
         {
             ArmyFormation[banner.Item1].ChangeUnit(unit,banner.Item2);
-            verifyField();
+            //verifyField();
             answer = true;
             foreach (var ability in unit.GetComponent<ArmyUnitClass>().Abilities)
             {
@@ -101,7 +105,7 @@ public class Hero : MonoBehaviour
         if (toCell.Type == CellType.Occupied)
         {
             ArmyFormation[banner.Item1].RemoveUnit(CellType.Available,banner.Item2);
-            verifyField();
+            //verifyField();
         }
     }
     public void RemoveAllFormations()
@@ -113,7 +117,7 @@ public class Hero : MonoBehaviour
                 if (ArmyFormation[line].ArmyLine[column].Type==CellType.Occupied) ArmyFormation[line].RemoveUnit(CellType.Available,column);
             }
         }
-        verifyField();
+        //verifyField();
     }
     public void verifyField()
     {

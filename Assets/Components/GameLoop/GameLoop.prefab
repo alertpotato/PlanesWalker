@@ -61,6 +61,9 @@ MonoBehaviour:
   Unit: {fileID: 918958474132185176, guid: bf59c730e343e07429aca668f5e86307, type: 3}
   UnitCard: {fileID: 5469837566480996917, guid: d12a8ca1ab4c2d04289b0ea6fc21720b,
     type: 3}
+  HeadText: {fileID: 0}
+  BottomText: {fileID: 0}
+  StateManager: {fileID: 4306738705462158818}
   UnitLayer:
     serializedVersion: 2
     m_Bits: 0
@@ -69,6 +72,7 @@ MonoBehaviour:
     m_Bits: 256
   CurrentRound: 0
   RewardParent: {fileID: 7122453889681228223}
+  PreBattleState: {fileID: 5879750598252854110}
 --- !u!114 &6890867112935168127
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -84,7 +88,7 @@ MonoBehaviour:
   Config: {fileID: 6543516443291923443}
   SelectButton: {fileID: 0}
   NumberOfRewards: 3
-  NumberOfChoices: 5
+  NumberOfCardsToChoose: 5
   leftNumberOfRewards: 0
   isChosing: 0
   RewardList: []
@@ -129,6 +133,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Config: {fileID: 6543516443291923443}
+  StartRoundButton: {fileID: 0}
 --- !u!1 &7122453889681228223
 GameObject:
   m_ObjectHideFlags: 0

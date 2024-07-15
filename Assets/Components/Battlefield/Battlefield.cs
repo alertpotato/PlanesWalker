@@ -22,8 +22,8 @@ public class Battlefield : MonoBehaviour
     }
     private void Update()
     {
-        UpdateHeroField(YourHero,yourCellList,-1,0.45f);
-        UpdateHeroField(EnemyHero,enemyCellList,1,0.55f);
+        UpdateHeroField(YourHero,yourCellList,-1,0.55f);
+        UpdateHeroField(EnemyHero,enemyCellList,1,0.65f);
         
         foreach (var ability in logic.AbilitiesOrder)
         {
@@ -49,27 +49,27 @@ public class Battlefield : MonoBehaviour
     private void UpdateHeroField(Hero hero,List<List<GameObject>> cellList,float sine,float xMulti)
     {
         float stepFromLeft = (Screen.width * xMulti);
-        float stepFromTop = Screen.height * 0.9f;
+        float stepFromTop = Screen.height * 0.8f;
         Vector3 ScreenPos = Camera.main.ScreenToWorldPoint(new Vector3(stepFromLeft,stepFromTop,transform.position.z));
         foreach (Formation line in hero.ArmyFormation)
         {
             foreach (Squad column in line.ArmyLine)
             {
-                cellList[column.Line][column.Column].transform.position = new Vector3(ScreenPos.x + sine * column.Line * armyCellSpacing, ScreenPos.y - column.Column * armyCellSpacing, transform.position.z);
-                var cellArmy = cellList[column.Line][column.Column].GetComponent<ArmyCellScript>();
-                if (column.Type == CellType.NotAvailable)
+                if (column.Type != CellType.NotAvailable)
                 {
-                    cellArmy.ChangeSprite(UnitSprites.GetIconSpriteByName("notavailable"));
-                    cellArmy.ClearAttack();
-                }
-                else if (column.Type == CellType.Available)
-                {
-                    cellArmy.ChangeSprite(UnitSprites.GetIconSpriteByName("available"));
-                    cellArmy.ClearAttack();
-                }
-                else if (column.Type == CellType.Occupied)
-                {
-                    cellArmy.ChangeSprite(UnitSprites.GetIconSpriteByName(column.Unit.GetComponent<ArmyUnitClass>().UnitName));
+                    cellList[column.Line][column.Column].transform.position = new Vector3(ScreenPos.x + sine * column.Line * armyCellSpacing, ScreenPos.y - column.Column * armyCellSpacing, transform.position.z);
+                    var cellArmy = cellList[column.Line][column.Column].GetComponent<ArmyCellScript>();
+                    //cellArmy.ChangeSprite(UnitSprites.GetIconSpriteByName("notavailable"));
+                    //cellArmy.ClearAttack();
+                    if (column.Type == CellType.Available)
+                    {
+                        cellArmy.ChangeSprite(UnitSprites.GetIconSpriteByName("available"));
+                        cellArmy.ClearAttack();
+                    }
+                    else if (column.Type == CellType.Occupied)
+                    {
+                        cellArmy.ChangeSprite(UnitSprites.GetIconSpriteByName(column.Unit.GetComponent<ArmyUnitClass>().UnitName));
+                    }
                 }
             }
         }
@@ -93,6 +93,10 @@ public class Battlefield : MonoBehaviour
                 cell.GetComponent<ArmyCellScript>().InicializeCell(line,column);
                 cell.name = $"{hero.heroName}_{line}_{column}";
                 tempList.Add(cell);
+                if (hero.ArmyFormation[line].ArmyLine[column].Type == CellType.NotAvailable)
+                {
+                    cell.SetActive(false);
+                }
             }
             cellList.Add(tempList);
         }
