@@ -58,13 +58,13 @@ public class FormationField : ScriptableObject
     public List<FormationLine> Formation = new List<FormationLine>();
     public Hero FieldOwner;
 
-    [Header("Private variables")] public int maxArmyWigth = 5;
+    [Header("Private variables")] 
+    public int maxArmyWigth = 5;
     public int maxArmyDepth = 3;
     
     public Company GetCompany((int, int) banner)
     {
         var ASD = Formation.SelectMany(formationLine => formationLine.Line).Where(line => line.Banner == banner);
-        //Debug.Log(ASD.First() + " | " + ASD.First().Banner + " | " + banner);
         return ASD.First();
     }
 

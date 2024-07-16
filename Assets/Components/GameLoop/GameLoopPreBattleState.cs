@@ -14,17 +14,22 @@ public class GameLoopPreBattleState : StateBehaviour
         Config.Battlefield.SetActive(true);
         StartBattleButton.SetActive(true);
         Config.UpdateHelpText("Pre battle state","Q to look at owned cards, left click on any field piece to reset.");
-        
-        ///Init field
+        // Draw deck space
+        Config.ArmyDeck.GetComponent<ArmyDeck>().ShowCards();
+        // Init field
         var newField = new List<(int,int)>() { (0,1), (0,2), (0,3), (1,2) };
         Config.PlayerFormation.RebuildField(newField);
         Config.EnemyFormation.RebuildField(newField);
-        /// Draw field
+        // Draw field
         Config.Battlefield.GetComponent<Battlefield>().RebuildField(Config.PlayerFormation,Config.EnemyFormation);
+        //
+        Config.CreateRandomUnits(Config.EnemyHero.GetComponent<Hero>(),3,Race.Goblin);
     }
     public override void OnExit()
     {
         StartBattleButton.SetActive(false);
+        // Clean deck space
+        Config.ArmyDeck.GetComponent<ArmyDeck>().WipeCards();
     }
     public override void OnUpdate()
     {
@@ -34,10 +39,10 @@ public class GameLoopPreBattleState : StateBehaviour
     {
         ChangeState<GameLoopRoundState>();
     }
-    void OnShowarmy(InputValue value)
+    /*void OnShowarmy(InputValue value)
     {
         if (!IsActive()) return;
         Debug.Log("Hello Q");
         Config.ArmyDeck.GetComponent<ArmyDeck>().UpdateDeck();
-    }
+    }*/
 }

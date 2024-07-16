@@ -48,7 +48,7 @@ public class GameLoopRewardState : StateBehaviour
         var rewards = RewardList.Count;
         foreach (GameObject unit in RewardList)
         {
-            var pos = Camera.main.ScreenToWorldPoint(new Vector3((Screen.width / (rewards + 2)) * (i + 1), Screen.height/2, 8));
+            var pos = Camera.main.ScreenToWorldPoint(new Vector3((Screen.width / (rewards + 1)) * (i + 1), Screen.height/2, 8));
             GameObject newCard = Instantiate(Config.UnitCard);
             newCard.name = $"{unit.name}_Card";
             newCard.transform.SetParent(unit.transform);
@@ -59,7 +59,7 @@ public class GameLoopRewardState : StateBehaviour
         i = 0;
         foreach (GameObject unit in RewardList)
         {
-            var pos = Camera.main.ScreenToWorldPoint(new Vector3((Screen.width / (rewards + 2)) * (i + 1),
+            var pos = Camera.main.ScreenToWorldPoint(new Vector3((Screen.width / (rewards + 1)) * (i + 1),
                 Screen.height / 2, 8));
             unit.transform.position = pos;
             i += 1;

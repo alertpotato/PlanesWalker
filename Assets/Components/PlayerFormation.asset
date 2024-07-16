@@ -9,8 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: da2609d6fcb7eda43bd483d64f2c6cf1, type: 3}
-  m_Name: List Of Objects
+  m_Script: {fileID: 11500000, guid: 68d04f46801044cbbfc93a6255c1c73d, type: 3}
+  m_Name: PlayerFormation
   m_EditorClassIdentifier: 
-  spriteUiList: []
-  spriteUnitList: []
+  Formation: []
+  maxArmyWigth: 5
+  maxArmyDepth: 3

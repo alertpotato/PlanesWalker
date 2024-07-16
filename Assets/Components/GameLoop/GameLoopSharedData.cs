@@ -14,18 +14,21 @@ public class GameLoopSharedData : MonoBehaviour
     public ListOfCommonUnits listOfCommonUnits;
     public GameObject PlayerHero;
     public GameObject EnemyHero;
-    public GameObject Unit;
-    public GameObject UnitCard;
-    public TextMeshProUGUI HeadText;
-    public TextMeshProUGUI BottomText;
     public StateMachine StateManager;
-    public LayerMask UnitLayer;
-    public LayerMask BattlefieldLayer;
-    public int CurrentRound = 0;
     public GameObject RewardParent;
     public FormationField PlayerFormation;
     public FormationField EnemyFormation;
-
+    [Header("UI")]
+    public TextMeshProUGUI HeadText;
+    public TextMeshProUGUI BottomText;
+    [Header("Variables")]
+    public LayerMask UnitLayer;
+    public LayerMask BattlefieldLayer;
+    public int CurrentRound = 0;
+    [Header("Prefabs")]
+    public GameObject Unit;
+    public GameObject UnitCard;
+    [Header("States")]
     public GameLoopPreBattleState PreBattleState;
     private void Awake()
     {
@@ -33,15 +36,16 @@ public class GameLoopSharedData : MonoBehaviour
     }
     private void Start()
     {
-        PlayerHero.GetComponent<Hero>().modifyHero("Chosen one", 1, 1);
-        EnemyHero.GetComponent<Hero>().modifyHero("Dark Lord", 1, 1);
+        PlayerHero.GetComponent<Hero>().modifyHero("Planeswalker", 1, 1);
+        EnemyHero.GetComponent<Hero>().modifyHero("Antagonist", 1, 1);
+        
         //Init of Formation scriptable objects
         PlayerFormation.InitializeField(PlayerHero.GetComponent<Hero>());
         EnemyFormation.InitializeField(EnemyHero.GetComponent<Hero>());
         
         //Battlefield.GetComponent<Battlefield>().InicializeField(PlayerHero.GetComponent<Hero>(), EnemyHero.GetComponent<Hero>());
         ArmyDeck.GetComponent<ArmyDeck>().GetArmyHero(PlayerHero.GetComponent<Hero>());
-        AddEvilArmy(EnemyHero.GetComponent<Hero>());
+        
     }
     void OnClick(InputValue value)
     {
@@ -86,12 +90,12 @@ public class GameLoopSharedData : MonoBehaviour
         newUnit.name = $"{unitClass.UnitName}_{newUnit.GetInstanceID()}";
         return newUnit;
     }
-    private void AddEvilArmy(Hero _hero)
+    public void CreateRandomUnits(Hero unitOwner,int number, Race race)
     {
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < number; i++)
         {
-            GameObject newEvilUnit = InstantiateRandomUnit(Race.Goblin);
-            _hero.AddBannerList(newEvilUnit);
+            GameObject newEnemyUnit = InstantiateRandomUnit(race);
+            unitOwner.AddBannerList(newEnemyUnit);
         }
     }
 
