@@ -18,6 +18,7 @@ public class GameLoopSharedData : MonoBehaviour
     public GameObject RewardParent;
     public FormationField PlayerFormation;
     public FormationField EnemyFormation;
+    public PlayerData WorldData;
     [Header("UI")]
     public TextMeshProUGUI HeadText;
     public TextMeshProUGUI BottomText;

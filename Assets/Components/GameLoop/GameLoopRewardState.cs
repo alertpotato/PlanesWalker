@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using NUnit.Framework.Internal.Execution;
+using TMPro;
 using UnityEngine;
 
 [RequireComponent(typeof(GameLoopSharedData))]
@@ -8,7 +10,7 @@ public class GameLoopRewardState : StateBehaviour
     [Header("Components")]
     public GameLoopSharedData Config;
     public GameObject SelectButton;
-    
+    public TextMeshProUGUI SupplyText;
     [Header("Reward logic")]
     public int NumberOfRewards = 3;
     public int NumberOfCardsToChoose = 5;
@@ -25,6 +27,12 @@ public class GameLoopRewardState : StateBehaviour
         isChosing = false;
         SelectButton.SetActive(true);
         Config.UpdateHelpText("Chosing rewards","Choose cards that would be added to your collection");
+        
+        //TODO Make proper supply ui manager
+        Config.WorldData.AddSupply(0,1);
+        Config.WorldData.AddSupply(1,1);
+        Config.WorldData.AddSupply(2,1);
+        SupplyText.text = "1110";
     }
 
     public override void OnExit()

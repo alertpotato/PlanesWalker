@@ -65,7 +65,6 @@ public class Hero : MonoBehaviour
     public void AddBannerList(GameObject unit)
     {
         bannersList.Add(unit);
-        unit.GetComponent<ArmyUnitClass>().ApplyHeroModifyers(modinit, modcoh);
         unit.transform.SetParent(transform);
     }
 }

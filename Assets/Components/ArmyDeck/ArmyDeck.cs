@@ -37,8 +37,8 @@ public class ArmyDeck : MonoBehaviour
 
         for (int i = 0; i < armyHero.bannersList.Count; i++)
         {
-            if (armyListSorted[i].GetComponent<ArmyUnitClass>().UnitName != prevCardName) { stepY += 150; stepX = 0; stepZ = 0; }
-            else { stepX += 160; stepZ = 0.5f; }
+            if (armyListSorted[i].GetComponent<ArmyUnitClass>().UnitName != prevCardName) { stepY += 200; stepX = 0; stepZ -= 0.25f; }
+            else { stepX += 160; stepZ += 0f; }
             var a = Camera.main.ScreenToWorldPoint(new Vector3( (Screen.width / 20) + stepX, Screen.height - stepY, 8 + stepZ));
             _cards.Add(Instantiate(UnitCard));
             _cards[i].GetComponent<UnitCardMain>().SetUnitParameters(armyListSorted[i], a,true);

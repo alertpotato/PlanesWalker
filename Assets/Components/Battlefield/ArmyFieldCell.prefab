@@ -578,10 +578,16 @@ MonoBehaviour:
   spriteComponent: {fileID: 7095245257806370387}
   CellCollider: {fileID: 3974079063161792713}
   colliderThickness: 0.1
-  formationLine: 0
-  formationColumn: 0
+  UI: {fileID: 3884075722269831232}
   ui_attack_right: {fileID: 3397488120635621676}
   ui_attack_left: {fileID: 2060968030329573872}
+  Company:
+    Unit: {fileID: 0}
+    Type: 0
+    Field: {fileID: 0}
+  UnitHealthText: {fileID: 3215203650032540456}
+  UnitNumberText: {fileID: 1524535455090922642}
+  UnitPowerText: {fileID: 8067759311621636403}
 --- !u!212 &7095245257806370387
 SpriteRenderer:
   m_ObjectHideFlags: 0

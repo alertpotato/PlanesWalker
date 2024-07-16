@@ -7,8 +7,9 @@ public class Battlefield : MonoBehaviour
     public List<GameObject> playerFieldList = new List<GameObject>();
     public List<GameObject> enemyFieldList = new List<GameObject>();
     public float armyCellSpacing = 1.3f;
-    
-    [Header("Components")]
+
+    [Header("Components")] 
+    public Camera MainCamera;
     public GameObject ArmyFieldCell;
     public GameObject YourHeroField;
     public GameObject EnemyHeroField;
@@ -21,7 +22,7 @@ public class Battlefield : MonoBehaviour
     {
         transform.position = new Vector3(0, 0, 8.5f);
     }
-    private void Update()
+    public void UpdateField()
     {
         UpdateField(playerFieldList,-1,0.55f);
         UpdateField(enemyFieldList,1,0.65f);
@@ -60,7 +61,8 @@ public class Battlefield : MonoBehaviour
     {
         float stepFromLeft = (Screen.width * xMulti);
         float stepFromTop = Screen.height * 0.8f;
-        Vector3 ScreenPos = Camera.main.ScreenToWorldPoint(new Vector3(stepFromLeft,stepFromTop,transform.position.z));
+        var ScreenPos = Camera.main.ScreenToWorldPoint(new Vector3(stepFromLeft, stepFromTop, 8) );
+        
         foreach (GameObject cell in cellList)
         {
             var cellscript = cell.GetComponent<ArmyCellScript>();
@@ -73,10 +75,12 @@ public class Battlefield : MonoBehaviour
                 {
                     cellscript.ChangeSprite(UnitSprites.GetIconSpriteByName("available"));
                     cellscript.ClearAttack();
+                    cellscript.DisableCellText();
                 }
                 else if (cellscript.Company.Type == CompanyType.Occupied)
                 {
                     cellscript.ChangeSprite(UnitSprites.GetIconSpriteByName(cellscript.Company.Unit.GetComponent<ArmyUnitClass>().UnitName));
+                    cellscript.UpdateCellText();
                 }
             }
         }

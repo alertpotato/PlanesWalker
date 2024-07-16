@@ -19,7 +19,8 @@ public class GameLoopRoundState : StateBehaviour
         Config.UpdateHelpText("Battle started, Round "+Config.CurrentRound,"Defeat your enemies");
         var Logic = Config.Battlefield.GetComponent<BattlefieldLogic>();
         Logic.ApplyAbilities();
-
+        // Update field graphic
+        Config.Battlefield.GetComponent<Battlefield>().UpdateField();
     }
     public override void OnExit()
     {

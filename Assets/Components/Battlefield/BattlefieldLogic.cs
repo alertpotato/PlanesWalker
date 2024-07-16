@@ -64,6 +64,7 @@ public class BattlefieldLogic : MonoBehaviour
             index++;
         }
         AbilityUIBack.sizeDelta = new Vector2(AbilityUIBack.rect.width,114*index);
+        Battlefield.UpdateField();
     }
     private void DestroyUI()
     {

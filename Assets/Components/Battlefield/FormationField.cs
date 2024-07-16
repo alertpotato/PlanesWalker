@@ -89,6 +89,11 @@ public class FormationField : ScriptableObject
             Debug.LogWarning($"{unit.name} already on the field");
             return answer;
         }
+        if (unit.GetComponent<ArmyUnitClass>().SupplyMultiplier==0)
+        {
+            Debug.LogWarning($"{unit.name} does not have sufficient supplies!");
+            return answer;
+        }
 
         if (toComp.Type == CompanyType.Available)
         {

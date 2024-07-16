@@ -1,34 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.Serialization;
+
 /// <summary>
 /// Все дебафы хранят накладывающие объекты со ссылкой на получателя
 /// </summary>
 [System.Serializable]
-public struct UnitCharacteristics 
+public class UnitCharacteristics
 {
     public int NumberOfUnits; public int Health; public int Damage; public int Initiative; public int Cohesion; public int Armour;
     public UnitCharacteristics(int num, int h, int d, int init, int coh, int armour)
     {
         NumberOfUnits = num; Health = h; Damage = d; Initiative = init; ; Cohesion = coh; Armour = armour;
     }
-    public UnitCharacteristics(BaseUnitCharacteristics baseCharacteristics ,UnitUpgrades unitUpgrades, List<UnitBuff> buffs)
+    public UnitCharacteristics(BaseUnitCharacteristics baseCharacteristics ,UnitUpgrades unitUpgrades, int supplyMultiplier)
     {
-        NumberOfUnits = baseCharacteristics.Characteristics.NumberOfUnits + baseCharacteristics.NumberOfUnitsUpgrade.Modifier*unitUpgrades.NumberOfUnits;
+        //TODO figure out how to apply supplyMultiplier to different stats with different scaling options
+        NumberOfUnits = ( baseCharacteristics.Characteristics.NumberOfUnits + baseCharacteristics.NumberOfUnitsUpgrade.Modifier*unitUpgrades.NumberOfUnits ) * supplyMultiplier;
         Health = baseCharacteristics.Characteristics.Health + baseCharacteristics.HealthUpgrade.Modifier*unitUpgrades.Health;
         Damage = baseCharacteristics.Characteristics.Damage + baseCharacteristics.DamageUpgrade.Modifier*unitUpgrades.Damage;
         Initiative = baseCharacteristics.Characteristics.Initiative + baseCharacteristics.InitiativeUpgrade.Modifier*unitUpgrades.Initiative;
         Cohesion = baseCharacteristics.Characteristics.Cohesion + baseCharacteristics.CohesionUpgrade.Modifier*unitUpgrades.Cohesion;
         Armour = baseCharacteristics.Characteristics.Armour + baseCharacteristics.ArmourUpgrade.Modifier*unitUpgrades.Armour;
-        foreach (var buff in buffs)
-        {
-            NumberOfUnits = NumberOfUnits + buff.Buff.NumberOfUnits;
-            Health = Health + buff.Buff.Health;
-            Damage = Damage + buff.Buff.Damage;
-            Initiative = Initiative + buff.Buff.Initiative;
-            Cohesion = Cohesion + buff.Buff.Cohesion;
-            Armour = Armour + buff.Buff.Armour;
-        }
+        
     }
 }
 [System.Serializable]
@@ -54,23 +50,24 @@ public struct UnitBuff
 
 public class ArmyUnitClass : MonoBehaviour
 {
-    public BaseUnitCharacteristics DefaultUnitCharacteristics;
+    public BaseUnitCharacteristics FactoryCharacteristics;
+    public UnitCharacteristics BaseCharacteristics;
     public UnitCharacteristics CurrentUnitCharacteristics;
     public int currentSquadHealth;
+    public float currentUnitEffectiveness;
     public UnitUpgrades unitUpgrades;
     public List<UnitAbility> Abilities;
     public List<UnitBuff> Buffs;
     public string UnitName;
     public ListOfCommonUnits UnitFactory;
+    public int SupplyMultiplier;
     public void InitializeUnit(string unitName, Race unitRace, UnitUpgrades upgrades)
     {
-        DefaultUnitCharacteristics = UnitFactory.UnitList.Find(x => x.UnitType.Equals(unitName));
+        FactoryCharacteristics = UnitFactory.UnitList.Find(x => x.UnitType.Equals(unitName));
         UnitName = unitName;
         unitRace = unitRace;
-        currentSquadHealth = DefaultUnitCharacteristics.Characteristics.NumberOfUnits *
-                             DefaultUnitCharacteristics.Characteristics.Health;
         List<UnitAbility> UnitAbilities = new List<UnitAbility>();
-        foreach (var ability in DefaultUnitCharacteristics.UnitAbilities)
+        foreach (var ability in FactoryCharacteristics.UnitAbilities)
         {
             switch (ability)
             {
@@ -81,19 +78,69 @@ public class ArmyUnitClass : MonoBehaviour
                 default: throw new Exception($"Ability '{ability.ToString()}' is not in handler!!!");
             }
         }
-        
+        Buffs = new List<UnitBuff>();
         UnitAbilities.Add(new UnitBasicAttack());
         Abilities = UnitAbilities;
         //Abilities = DefaultUnitCharacteristics.UnitAbilities;
-        
+        SupplyMultiplier = 1;
         unitUpgrades = upgrades;
-        Buffs = new List<UnitBuff>();
-        UpdateUnitCharacteristics(upgrades,Buffs);
+        
+        RebuildCharacteristics();
     }
-    public void UpdateUnitCharacteristics(UnitUpgrades upgrades,List<UnitBuff> buffs)
+
+    public void UpdateSupply(int[] supply)
     {
-        CurrentUnitCharacteristics = new UnitCharacteristics(DefaultUnitCharacteristics,upgrades,buffs);
+        int newSupplyMultiplier = 999;
+        for (int i = 0;i<4;i++ )
+        {
+            if (FactoryCharacteristics.UnitSupplyReq[i]==0) continue;
+            var x = Mathf.CeilToInt(supply[i] / FactoryCharacteristics.UnitSupplyReq[i]);
+            Debug.Log(UnitName+" "+i+"+"+supply[0]+supply[1]+supply[2]+supply[3]+"|"+FactoryCharacteristics.UnitSupplyReq[0]+FactoryCharacteristics.UnitSupplyReq[1]+FactoryCharacteristics.UnitSupplyReq[2]+FactoryCharacteristics.UnitSupplyReq[3]+"|"+x);
+            x = Mathf.Clamp(x, 0, 999);
+            if (x < newSupplyMultiplier) newSupplyMultiplier = x;
+            Debug.Log(newSupplyMultiplier);
+        }
+        if (newSupplyMultiplier == 999) newSupplyMultiplier = 0;
+        
+        SupplyMultiplier = newSupplyMultiplier;
+        RebuildCharacteristics();
     }
-    public void ApplyHeroModifyers(int hminitiative, int hmcohesion) { CurrentUnitCharacteristics.Initiative = CurrentUnitCharacteristics.Initiative + hminitiative; CurrentUnitCharacteristics.Cohesion = CurrentUnitCharacteristics.Cohesion + hmcohesion; }
-    
+
+    public void CheckBuffs()
+    {
+        //Buffs.FindAll(Buffs => Buffs.BuffTurns).Where(BuffTurns > 0);
+ 
+    }
+    public void ReciveBuffs(List<UnitBuff> buffs)
+    {
+        Buffs.AddRange(buffs);
+    }
+
+    public void ApplyBuffs() // Reverting to baseline and then applying buffs
+    {
+        var bc = BaseCharacteristics;
+        var cur = CurrentUnitCharacteristics;
+        cur.Damage = bc.Damage;
+        cur.Initiative = bc.Initiative;
+        cur.Cohesion = bc.Cohesion;
+        cur.Armour = bc.Armour;
+        foreach (var buff in Buffs)
+        {
+            //TODO Figure out what to do with NumberOfUnits and Health Buffs
+            
+            //cur.NumberOfUnits = cur.NumberOfUnits + buff.Buff.NumberOfUnits;
+            //cur.Health = cur.Health + buff.Buff.Health;
+            cur.Damage = cur.Damage + buff.Buff.Damage;
+            cur.Initiative = cur.Initiative + buff.Buff.Initiative;
+            cur.Cohesion = cur.Cohesion + buff.Buff.Cohesion;
+            cur.Armour = cur.Armour + buff.Buff.Armour;
+        }
+    }
+    public void RebuildCharacteristics() // Revert to baseline
+    {
+        CurrentUnitCharacteristics = new UnitCharacteristics(FactoryCharacteristics,unitUpgrades, SupplyMultiplier);
+        BaseCharacteristics = new UnitCharacteristics(FactoryCharacteristics, unitUpgrades, Mathf.Clamp(SupplyMultiplier,1,999));
+        currentSquadHealth = CurrentUnitCharacteristics.NumberOfUnits *
+                             CurrentUnitCharacteristics.Health;
+    }
 }

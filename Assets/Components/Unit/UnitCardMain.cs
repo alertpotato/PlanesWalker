@@ -42,8 +42,8 @@ public class UnitCardMain : MonoBehaviour
         //_cardText.GetComponent<UnitCardText>().ChangeText(RelatedUnitClass.DefaultUnitCharacteristics.Characteristics,RelatedUnitClass.CurrentUnitCharacteristics, RelatedUnitClass.unitUpgrades);
         transform.position = pos;
         startCardPos = pos;
-        StatText.SetStatText(RelatedUnitClass.DefaultUnitCharacteristics.Characteristics,RelatedUnitClass.CurrentUnitCharacteristics, RelatedUnitClass.unitUpgrades);
-        SupplyText.SetSupplyText(RelatedUnitClass.DefaultUnitCharacteristics.UnitSupplyReq);
+        StatText.SetStatText(RelatedUnitClass.FactoryCharacteristics.Characteristics,RelatedUnitClass.CurrentUnitCharacteristics, RelatedUnitClass.unitUpgrades);
+        SupplyText.SetSupplyText(RelatedUnitClass.FactoryCharacteristics.UnitSupplyReq);
     }
     private void Update()
     {
