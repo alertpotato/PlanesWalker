@@ -1236,6 +1236,18 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 984943489}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &984943491 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3432497653788915997, guid: 2132259902ea23648a531edf4119b785,
+    type: 3}
+  m_PrefabInstance: {fileID: 984943489}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 984943490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fff908232fe290f459692cb63cf094ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1074458442
 GameObject:
   m_ObjectHideFlags: 0
@@ -1436,6 +1448,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Battlefield
       objectReference: {fileID: 0}
+    - target: {fileID: 1663674510673476571, guid: dda9303f3ae4d134081161b40e9542c7,
+        type: 3}
+      propertyPath: YourHero
+      value: 
+      objectReference: {fileID: 984943491}
+    - target: {fileID: 1663674510673476571, guid: dda9303f3ae4d134081161b40e9542c7,
+        type: 3}
+      propertyPath: EnemyHero
+      value: 
+      objectReference: {fileID: 1835854971}
     - target: {fileID: 1663674510673476571, guid: dda9303f3ae4d134081161b40e9542c7,
         type: 3}
       propertyPath: armyCellSpacing
@@ -1860,6 +1882,11 @@ PrefabInstance:
       objectReference: {fileID: 984943490}
     - target: {fileID: 6543516443291923443, guid: 209b1dbe8bb4b9e419fe52801832e1e5,
         type: 3}
+      propertyPath: EnemyHero
+      value: 
+      objectReference: {fileID: 1835854970}
+    - target: {fileID: 6543516443291923443, guid: 209b1dbe8bb4b9e419fe52801832e1e5,
+        type: 3}
       propertyPath: BottomText
       value: 
       objectReference: {fileID: 28455503}
@@ -1870,9 +1897,20 @@ PrefabInstance:
       objectReference: {fileID: 330585545}
     - target: {fileID: 6543516443291923443, guid: 209b1dbe8bb4b9e419fe52801832e1e5,
         type: 3}
+      propertyPath: PlayerHero
+      value: 
+      objectReference: {fileID: 984943490}
+    - target: {fileID: 6543516443291923443, guid: 209b1dbe8bb4b9e419fe52801832e1e5,
+        type: 3}
       propertyPath: Battlefield
       value: 
       objectReference: {fileID: 1083250984}
+    - target: {fileID: 6543516443291923443, guid: 209b1dbe8bb4b9e419fe52801832e1e5,
+        type: 3}
+      propertyPath: EnemyFormation
+      value: 
+      objectReference: {fileID: 11400000, guid: 59bfecec3c3dca649a50f271553023f1,
+        type: 2}
     - target: {fileID: 6543516443291923443, guid: 209b1dbe8bb4b9e419fe52801832e1e5,
         type: 3}
       propertyPath: PlayerFormation
@@ -2094,6 +2132,18 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1835854969}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1835854971 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3432497653788915997, guid: 2132259902ea23648a531edf4119b785,
+    type: 3}
+  m_PrefabInstance: {fileID: 1835854969}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1835854970}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fff908232fe290f459692cb63cf094ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &2051907280 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6890867112935168127, guid: 209b1dbe8bb4b9e419fe52801832e1e5,

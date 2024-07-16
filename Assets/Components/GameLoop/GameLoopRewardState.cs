@@ -82,8 +82,8 @@ public class GameLoopRewardState : StateBehaviour
     public void AddRewardToHero()
     {
         GameObject rewardUnit = Config.SelectedUnits.SelectedEntity.GetComponent<UnitCardMain>().RelatedUnit;
-        Config.YourHero.GetComponent<Hero>().AddBannerList(rewardUnit);
-        rewardUnit.transform.SetParent(Config.YourHero.transform);
+        Config.PlayerHero.GetComponent<Hero>().AddBannerList(rewardUnit);
+        rewardUnit.transform.SetParent(Config.PlayerHero.transform);
         RewardList.Remove(rewardUnit);
         foreach (var card in CardList)
         {

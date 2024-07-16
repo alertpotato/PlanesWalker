@@ -19,7 +19,7 @@ public class BattlefieldLogic : MonoBehaviour
     {
         foreach (var ability in AbilitiesOrder)
         {
-            ability.MainFunc(ability.OpposingHero, true);
+            ability.MainFunc(true);
         }
     }
 
@@ -28,17 +28,21 @@ public class BattlefieldLogic : MonoBehaviour
         DestroyUI();
         AbilitiesUI = new List<GameObject>();
         AbilitiesOrder.Clear();
-        List<Squad> onFieldUnits = new List<Squad>();
-        onFieldUnits.AddRange(InitAbilities(Battlefield.YourHero, Battlefield.EnemyHero));
-        onFieldUnits.AddRange(InitAbilities(Battlefield.EnemyHero,Battlefield.YourHero));
-        var sortedUnits = from squad in onFieldUnits
-            orderby squad.Unit.GetComponent<ArmyUnitClass>().CurrentUnitCharacteristics.Initiative descending
-            select squad;
+        List<Company> onFieldUnits = new List<Company>();
+
+        var onFieldPlayerCompanies = Battlefield.PlayerFormation.GetOnFieldcompanies();
+        var onFieldEnemyCompanies = Battlefield.EnemyFormation.GetOnFieldcompanies();
+
+        onFieldUnits.AddRange(onFieldPlayerCompanies);
+        onFieldUnits.AddRange(onFieldEnemyCompanies);
+        var sortedUnits = from comp in onFieldUnits
+            orderby comp.Unit.GetComponent<ArmyUnitClass>().CurrentUnitCharacteristics.Initiative descending
+            select comp;
         string answer = "";
-        foreach (var squad in sortedUnits)
+        foreach (var comp in sortedUnits)
         {
-            answer = $"{answer} -> {squad.Unit.gameObject.name}[{squad.Unit.GetComponent<ArmyUnitClass>().CurrentUnitCharacteristics.Initiative}]";
-            AbilitiesOrder.Add(squad.Unit.GetComponent<ArmyUnitClass>().Abilities[0]);
+            answer = $"{answer} -> {comp.Unit.gameObject.name}[{comp.Unit.GetComponent<ArmyUnitClass>().CurrentUnitCharacteristics.Initiative}]";
+            AbilitiesOrder.Add(comp.Unit.GetComponent<ArmyUnitClass>().Abilities[0]);
         }
         //Debug.Log(answer);
         // -------------GRAPHIC
@@ -54,8 +58,8 @@ public class BattlefieldLogic : MonoBehaviour
             AbilitiesUI.Add(newUI);
             newUI.GetComponent<AbilityOrderUI>().SetIcons(
                 AbilityIcon,
-                UnitSprites.GetIconSpriteByName(ability.UnitSquad.Unit.GetComponent<ArmyUnitClass>().UnitName),
-                UnitSprites.GetIconSpriteByName(ability.OpposingHero.ArmyFormation[ability.targets[0][0]].ArmyLine[ability.targets[0][1]].Unit.GetComponent<ArmyUnitClass>().UnitName)
+                UnitSprites.GetIconSpriteByName(ability.UnitCompany.Unit.GetComponent<ArmyUnitClass>().UnitName),
+                UnitSprites.GetIconSpriteByName(ability.OpposingField.Formation[ability.targets[0].Item1].Line[ability.targets[0].Item2].Unit.GetComponent<ArmyUnitClass>().UnitName)
                 );
             index++;
         }
@@ -67,23 +71,5 @@ public class BattlefieldLogic : MonoBehaviour
         {
             Destroy(ui);
         }
-    }
-    public List<Squad> InitAbilities(Hero unitHero,Hero opposingHero)
-    {
-        List<Squad> onFieldUnits = new List<Squad>();
-        for (int line = 0;  line < unitHero.ArmyFormation.Count;  line++)
-        {
-            for (int column = 0; column < unitHero.ArmyFormation[line].ArmyLine.Count; column++)
-            {
-                Squad unitSquad = unitHero.ArmyFormation[line].ArmyLine[column];
-                if (unitSquad.Type == CellType.Occupied)
-                {
-                    //Debug.Log($"Added unit {line}_{column} {unitSquad.Unit.name}");
-                    onFieldUnits.Add(unitSquad);
-                    unitSquad.Unit.GetComponent<ArmyUnitClass>().Abilities[0].MainFunc(opposingHero,false);
-                }
-            }
-        }
-        return onFieldUnits;
     }
 }

@@ -9,17 +9,18 @@ public enum Abilities { BasicAttack, Defend, Spell };
 public abstract class UnitAbility
 {
     public string AbilityName = "Default ability name";
-    public List<int[]> targets = new List<int[]>();
+    public List<(int,int)> targets = new List<(int,int)>();
     public AbilityType Type;
-    public Squad UnitSquad;
-    public Hero YourHero;
-    public Hero OpposingHero;
+    public Company UnitCompany;
+    public FormationField UnitField;
+    public FormationField OpposingField;
     public bool IsActive = false;
-    public abstract (Hero,List<GameObject>,Hero,List<GameObject>) MainFunc(Hero opposingHero, bool applyDamage);
-    public abstract List<int[]> AbilityTargets();
-    public void InitAbility(Squad squad, Hero unitHero)
+    public abstract (List<GameObject>,List<GameObject>) MainFunc(bool applyDamage);
+    public abstract List<(int,int)> AbilityTargets();
+    public void InitAbility(Company unitCompany, FormationField unitField,FormationField opposingField)
     {
-        UnitSquad = squad;
-        YourHero = unitHero;
+        UnitCompany = unitCompany;
+        UnitField = unitField;
+        OpposingField = opposingField;
     }
 }

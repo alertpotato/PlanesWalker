@@ -12,8 +12,8 @@ public class GameLoopSharedData : MonoBehaviour
     public GameObject Battlefield;
     public GameObject ArmyDeck;
     public ListOfCommonUnits listOfCommonUnits;
-    public GameObject YourHero;
-    public GameObject EvilHero;
+    public GameObject PlayerHero;
+    public GameObject EnemyHero;
     public GameObject Unit;
     public GameObject UnitCard;
     public TextMeshProUGUI HeadText;
@@ -24,6 +24,7 @@ public class GameLoopSharedData : MonoBehaviour
     public int CurrentRound = 0;
     public GameObject RewardParent;
     public FormationField PlayerFormation;
+    public FormationField EnemyFormation;
 
     public GameLoopPreBattleState PreBattleState;
     private void Awake()
@@ -32,14 +33,15 @@ public class GameLoopSharedData : MonoBehaviour
     }
     private void Start()
     {
-        YourHero.GetComponent<Hero>().modifyHero("Chosen one", 1, 1);
-        EvilHero.GetComponent<Hero>().modifyHero("Dark Lord", 1, 1);
-        YourHero.name = YourHero.GetComponent<Hero>().heroName;
-        EvilHero.name = EvilHero.GetComponent<Hero>().heroName;
-        PlayerFormation.InitializeField(YourHero.GetComponent<Hero>());
-        Battlefield.GetComponent<Battlefield>().InicializeField(YourHero.GetComponent<Hero>(), EvilHero.GetComponent<Hero>());
-        ArmyDeck.GetComponent<ArmyDeck>().GetArmyHero(YourHero.GetComponent<Hero>());
-        AddEvilArmy(EvilHero.GetComponent<Hero>());
+        PlayerHero.GetComponent<Hero>().modifyHero("Chosen one", 1, 1);
+        EnemyHero.GetComponent<Hero>().modifyHero("Dark Lord", 1, 1);
+        //Init of Formation scriptable objects
+        PlayerFormation.InitializeField(PlayerHero.GetComponent<Hero>());
+        EnemyFormation.InitializeField(EnemyHero.GetComponent<Hero>());
+        
+        //Battlefield.GetComponent<Battlefield>().InicializeField(PlayerHero.GetComponent<Hero>(), EnemyHero.GetComponent<Hero>());
+        ArmyDeck.GetComponent<ArmyDeck>().GetArmyHero(PlayerHero.GetComponent<Hero>());
+        AddEvilArmy(EnemyHero.GetComponent<Hero>());
     }
     void OnClick(InputValue value)
     {
@@ -49,22 +51,14 @@ public class GameLoopSharedData : MonoBehaviour
         {
             SelectedUnits.SelectEntity(hit.collider.gameObject);
         }
-
         if (StateManager.CurrentState.Equals(PreBattleState))
         {
             if (Physics.Raycast(ray, out hit, Mathf.Infinity, BattlefieldLayer) & SelectedUnits.IsEntitySelected())
             {
-                if (YourHero.GetComponent<Hero>()
-                    .AddUnitToFormation(hit.collider.gameObject.GetComponent<ArmyCellScript>().GetSquad(),
-                        SelectedUnits.SelectedEntity.GetComponent<UnitCardMain>().RelatedUnit))
-                    
+                if (PlayerFormation.AddUnitToFormation(hit.collider.gameObject.GetComponent<ArmyCellScript>().GetCompanyBanner(),
+                        SelectedUnits.SelectedEntity.GetComponent<UnitCardMain>().RelatedUnit,EnemyFormation))
                 {
-                    EvilHero.GetComponent<Hero>().RandomUnitAllocating(YourHero.GetComponent<Hero>());
                     Battlefield.GetComponent<BattlefieldLogic>().Order();
-                    //TODO NEW
-                    var sq = hit.collider.gameObject.GetComponent<ArmyCellScript>().GetSquad();
-
-                    PlayerFormation.AddUnitToFormation(sq, SelectedUnits.SelectedEntity.GetComponent<UnitCardMain>().RelatedUnit);
                 }
             }
         }
@@ -77,9 +71,7 @@ public class GameLoopSharedData : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit, Mathf.Infinity, BattlefieldLayer))
             {
-                //YourHero.GetComponent<Hero>().RemoveUnitFromFormation(hit.collider.gameObject.GetComponent<ArmyCellScript>().GetSquad());
-                YourHero.GetComponent<Hero>().RemoveAllFormations();
-                EvilHero.GetComponent<Hero>().RemoveAllFormations();
+                PlayerFormation.ClearField();
                 Battlefield.GetComponent<BattlefieldLogic>().Order();
             }
         }

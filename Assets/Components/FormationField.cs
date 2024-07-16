@@ -38,15 +38,17 @@ public class FormationLine
     }
 }
 [Serializable]
-public struct Company
+public class Company
 {
     public GameObject Unit;
     public (int, int) Banner;
     public CompanyType Type;
-    public Company(CompanyType type,(int,int) banner) {
+    public FormationField Field;
+    public Company(CompanyType type,(int,int) banner,FormationField field) {
         Unit = null; 
         Type = type;
         Banner = banner;
+        Field = field;
     }
 }
 //----------------------------------------------------
@@ -62,10 +64,11 @@ public class FormationField : ScriptableObject
     public Company GetCompany((int, int) banner)
     {
         var ASD = Formation.SelectMany(formationLine => formationLine.Line).Where(line => line.Banner == banner);
+        //Debug.Log(ASD.First() + " | " + ASD.First().Banner + " | " + banner);
         return ASD.First();
     }
 
-    public bool AddUnitToFormation((int, int) banner, GameObject unit)
+    public bool AddUnitToFormation((int, int) banner, GameObject unit,FormationField opposingFormation)
     {
         bool answer = false;
         Company toComp = Formation[banner.Item1].Line[banner.Item2];
@@ -93,12 +96,11 @@ public class FormationField : ScriptableObject
             answer = true;
             foreach (var ability in unit.GetComponent<ArmyUnitClass>().Abilities)
             {
-                //TODO change abilities later
-                //ability.InitAbility(ArmyFormation[banner.Item1].ArmyLine[banner.Item2],this);
+                ability.InitAbility(toComp,this,opposingFormation);
             }
         }
-
         return answer;
+        
     }
 
     public void RebuildField(List<(int, int)> avaliablePlaces) // Clearing field making all companys in avaliablePlaces
@@ -116,6 +118,20 @@ public class FormationField : ScriptableObject
         }
     }
 
+    public void ClearField()
+    {
+        for (int line = 0; line < maxArmyDepth; line++)
+        {
+            for (int column = 0; column < maxArmyWigth; column++)
+            {
+                if (Formation[line].Line[column].Type==CompanyType.Occupied)
+                {
+                    Formation[line].RemoveUnit(CompanyType.Available, column);
+                }
+            }
+        }
+    }
+
     public void InitializeField(Hero owner) // Creating field for first time with maxArmyDepth and maxArmyWigth
     {
         Formation.Clear();
@@ -124,7 +140,7 @@ public class FormationField : ScriptableObject
             var formation = new List<Company>();
             for (int column = 0; column < maxArmyWigth; column++)
             {
-                formation.Add(new Company(CompanyType.Available, (line, column)));
+                formation.Add(new Company(CompanyType.Available, (line, column),this));
             }
 
             Formation.Add(new FormationLine(formation));
@@ -133,6 +149,18 @@ public class FormationField : ScriptableObject
         FieldOwner = owner;
     }
 
+    public List<Company> GetOnFieldcompanies()
+    {
+        List<Company> compList = new List<Company>();
+        foreach (var formation in Formation)
+        {
+            foreach (var company in formation.Line)
+            {
+                if (company.Type == CompanyType.Occupied) compList.Add(company);
+            }
+        }
+        return compList;
+    }
     private bool IsCompanyOnField(GameObject unit) //Checks if unit already assigned to any company(field cell)
     {
         bool answer = false;

@@ -10,32 +10,30 @@ public class UnitBasicAttack : UnitAbility
         AbilityName = "Basic attack";
         Type = AbilityType.Main;
     }
-    public override (Hero,List<GameObject>,Hero,List<GameObject>) MainFunc(Hero opposingHero,bool applyDamage)
+    public override (List<GameObject>,List<GameObject>) MainFunc(bool applyDamage)
     {
-        OpposingHero = opposingHero;
-        IsActive = false; 
+        IsActive = false;
         targets.Clear();
-        int[] unitPosition = new int[2] { UnitSquad.Line,UnitSquad.Column};
-        //Debug.Log($"{UnitSquad.Unit.name} {unitPosition[0]}_{unitPosition[1]} enm:{OpposingHero.ArmyFormation[unitPosition[0]].ArmyLine[unitPosition[1]].Type.ToString()}");
-        if (unitPosition[0] == 0 && OpposingHero.ArmyFormation[unitPosition[0]].ArmyLine[unitPosition[1]].Type ==
-            CellType.Occupied)
+        (int,int) unitPosition = UnitCompany.Banner;
+        var opposingUnit = OpposingField.Formation[unitPosition.Item1].Line[unitPosition.Item2];
+        if (unitPosition.Item1 == 0 && opposingUnit.Type == CompanyType.Occupied)
         {
             targets.Add(unitPosition);
             IsActive = true;
             
-            var yourUnit = UnitSquad.Unit.GetComponent<ArmyUnitClass>();
-            var enemyUnit = OpposingHero.ArmyFormation[unitPosition[0]].ArmyLine[unitPosition[1]].Unit.GetComponent<ArmyUnitClass>();
+            var yourUnit = UnitCompany.Unit.GetComponent<ArmyUnitClass>();
+            var enemyUnit = opposingUnit.Unit.GetComponent<ArmyUnitClass>();
             var yourUnitDamage = yourUnit.CurrentUnitCharacteristics.Damage;
             var yourUnitAllDamage = yourUnit.CurrentUnitCharacteristics.NumberOfUnits * yourUnitDamage;
             var enemyUnitDamage = enemyUnit.CurrentUnitCharacteristics.Damage;
             var enemyUnitAllDamage = enemyUnit.CurrentUnitCharacteristics.NumberOfUnits * enemyUnitDamage;
-            TakeDamage(OpposingHero,enemyUnit,yourUnitAllDamage,yourUnitDamage,UnitSquad.Unit.name,applyDamage);
-            TakeDamage(YourHero,yourUnit,enemyUnitAllDamage,enemyUnitDamage,enemyUnit.UnitName,applyDamage);
+            TakeDamage(enemyUnit,yourUnitAllDamage,yourUnitDamage,yourUnit.name,applyDamage);
+            TakeDamage(yourUnit,enemyUnitAllDamage,enemyUnitDamage,enemyUnit.UnitName,applyDamage);
             //Debug.Log($"{UnitSquad.Unit.name}({unitPosition[0]} {unitPosition[1]}) attack {OpposingHero.ArmyFormation[unitPosition[0]].ArmyLine[unitPosition[1]].Unit.name}");
         }
-        return (YourHero, new List<GameObject>(), OpposingHero, new List<GameObject>());
+        return ( new List<GameObject>(), new List<GameObject>());
     }
-    public override List<int[]> AbilityTargets()
+    public override List<(int,int)> AbilityTargets()
     {
         foreach (var target in targets)
         {
@@ -43,7 +41,7 @@ public class UnitBasicAttack : UnitAbility
         }
         return targets;
     }
-    public void TakeDamage(Hero unitHero,ArmyUnitClass unit,int incsquaddmg, int incunitdmg, string enemyunitname, bool applyDamage)
+    public void TakeDamage(ArmyUnitClass unit,int incsquaddmg, int incunitdmg, string enemyunitname, bool applyDamage)
     {
         // Local Variables
         int cohdamage = 0; 
@@ -103,12 +101,6 @@ public class UnitBasicAttack : UnitAbility
                 if (decsquadhealth <= 0)
                 {
                     unit.CurrentUnitCharacteristics.NumberOfUnits = 0;
-                    YourHero.RemoveUnitFromFormation((UnitSquad.Line, UnitSquad.Column));
-                }
-
-                if ((int)decsquadhealth <= 0)
-                {
-                    unitHero.RemoveUnitFromFormation((UnitSquad.Line,UnitSquad.Column));
                 }
             }
         }

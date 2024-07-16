@@ -92,10 +92,7 @@ public class Hero : MonoBehaviour
             ArmyFormation[banner.Item1].ChangeUnit(unit,banner.Item2);
             //verifyField();
             answer = true;
-            foreach (var ability in unit.GetComponent<ArmyUnitClass>().Abilities)
-            {
-                ability.InitAbility(ArmyFormation[banner.Item1].ArmyLine[banner.Item2],this);
-            }
+            
         }
         return answer;
     }

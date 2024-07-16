@@ -18,7 +18,9 @@ public class GameLoopPreBattleState : StateBehaviour
         ///Init field
         var newField = new List<(int,int)>() { (0,1), (0,2), (0,3), (1,2) };
         Config.PlayerFormation.RebuildField(newField);
+        Config.EnemyFormation.RebuildField(newField);
         /// Draw field
+        Config.Battlefield.GetComponent<Battlefield>().RebuildField(Config.PlayerFormation,Config.EnemyFormation);
     }
     public override void OnExit()
     {
