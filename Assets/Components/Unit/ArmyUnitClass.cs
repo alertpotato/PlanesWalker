@@ -83,6 +83,7 @@ public class ArmyUnitClass : MonoBehaviour
         Abilities = UnitAbilities;
         //Abilities = DefaultUnitCharacteristics.UnitAbilities;
         SupplyMultiplier = 1;
+        currentUnitEffectiveness = 1;
         unitUpgrades = upgrades;
         
         RebuildCharacteristics();

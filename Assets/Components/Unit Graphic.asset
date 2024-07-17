@@ -13,24 +13,39 @@ MonoBehaviour:
   m_Name: Unit Graphic
   m_EditorClassIdentifier: 
   UnitGraphics:
-  - UnitType: local_militia
-    Card: {fileID: 736160649, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
-    BattleIcon: {fileID: -945918270, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
-  - UnitType: dirty_thieves
-    Card: {fileID: -276429951, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
-    BattleIcon: {fileID: 77825956, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
-  - UnitType: trained_warriors
+  - UnitType: militia
     Card: {fileID: 641852959, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
     BattleIcon: {fileID: 2120849509, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+  - UnitType: spearman
+    Card: {fileID: 1217069307, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+    BattleIcon: {fileID: 2081352197, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+  - UnitType: archer
+    Card: {fileID: 467646558, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+    BattleIcon: {fileID: 1882734544, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+  - UnitType: road_bandit
+    Card: {fileID: 1836601006, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+    BattleIcon: {fileID: 1026871330, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+  - UnitType: mercenaries
+    Card: {fileID: 372065898, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+    BattleIcon: {fileID: -480950132, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+  - UnitType: hobelar
+    Card: {fileID: -1590823680, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+    BattleIcon: {fileID: -882399599, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+  - UnitType: hedge_knight
+    Card: {fileID: -152462308, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+    BattleIcon: {fileID: 63150407, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
   - UnitType: ogre
     Card: {fileID: 827792109, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
     BattleIcon: {fileID: 74608049, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
-  - UnitType: goblin_rogue
-    Card: {fileID: -1070660373, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
-    BattleIcon: {fileID: 9055929, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
-  - UnitType: goblin_punks
+  - UnitType: goblin_militia
     Card: {fileID: 122455890, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
     BattleIcon: {fileID: -1604203927, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+  - UnitType: goblin_spearman
+    Card: {fileID: -1070660373, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+    BattleIcon: {fileID: 9055929, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+  - UnitType: goblin_skiermisher
+    Card: {fileID: 193465111, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+    BattleIcon: {fileID: 1678730303, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
   - UnitType: available
     Card: {fileID: 1046290716, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
     BattleIcon: {fileID: -1285038483, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}

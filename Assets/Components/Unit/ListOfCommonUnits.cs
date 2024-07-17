@@ -171,95 +171,148 @@ public class ListOfCommonUnits : ScriptableObject
     {
         // LOOK INTO SAVE LOAD ?
         UnitList.Clear();
-        var p_lmilita_b = new UnitCharacteristics(14, 3, 2, -1, -1, 0);
+        var p_lmilita_b = new UnitCharacteristics(4, 8, 3, 0, 1, 0);
         List<UnitWeightsOfChars> p_militia_stats = new List<UnitWeightsOfChars>
         {
-            new UnitWeightsOfChars(1, 4, 12),
-            new UnitWeightsOfChars(2, 1, 10),
+            new UnitWeightsOfChars(1, 2, 12),
+            new UnitWeightsOfChars(1, 2, 10),
             new UnitWeightsOfChars(2, 1, 8),
             new UnitWeightsOfChars(2, 1, 3),
-            new UnitWeightsOfChars(1, 1, 5),
+            new UnitWeightsOfChars(1, 1, 4),
             new UnitWeightsOfChars(5, 1, 2)
         };
-        int[] p_lmilita_s = {1,0,0,1};
-        UnitList.Add(new BaseUnitCharacteristics("local_militia",Race.Human,p_lmilita_b,p_militia_stats,10,p_lmilita_s ));
-
-        var p_dthieves_b = new UnitCharacteristics(7, 5, 5, 2, -2, 0);
-        List<UnitWeightsOfChars> p_dthieves_b_stats = new List<UnitWeightsOfChars>
-        {
-            new UnitWeightsOfChars(2, 4, 7),
-            new UnitWeightsOfChars(1, 1, 10),
-            new UnitWeightsOfChars(1, 2, 10),
-            new UnitWeightsOfChars(1, 1, 12),
-            new UnitWeightsOfChars(1, 1, 5),
-            new UnitWeightsOfChars(5, 1, 2)
-        };
-        int[] p_dthieves_s = {1,0,1,0};
-        UnitList.Add(new BaseUnitCharacteristics("dirty_thieves",Race.Human,p_dthieves_b,p_dthieves_b_stats,8,p_dthieves_s) );
-
-        var p_twarriors_b = new UnitCharacteristics(5, 8, 5, 0, 2, 0);
-        List<UnitWeightsOfChars> p_twarriors_b_stats = new List<UnitWeightsOfChars>
-        {
-            new UnitWeightsOfChars(1, 2, 7),
-            new UnitWeightsOfChars(1, 2, 12),
-            new UnitWeightsOfChars(2, 2, 10),
-            new UnitWeightsOfChars(1, 1, 9),
-            new UnitWeightsOfChars(1, 2, 5),
-            new UnitWeightsOfChars(3, 1, 6)
-        };
-        int[] p_twarriors_s = {1,1,0,0};
-        UnitList.Add(new BaseUnitCharacteristics("trained_warriors",Race.Human,p_twarriors_b,p_twarriors_b_stats,6,p_twarriors_s) );
+        int[] p_lmilita_s = {0,1,0,0};
+        UnitList.Add(new BaseUnitCharacteristics("militia",Race.Human,p_lmilita_b,p_militia_stats,9,p_lmilita_s ));
         
-        var p_spearman_b = new UnitCharacteristics(7, 6, 3, 1, 3, 0);
+        var p_spearman_b = new UnitCharacteristics(5, 10, 3, 1, 2, 0);
         List<UnitWeightsOfChars> p_spearman_b_stats = new List<UnitWeightsOfChars>
         {
-            new UnitWeightsOfChars(1, 2, 7),
+            new UnitWeightsOfChars(1, 2, 8),
             new UnitWeightsOfChars(1, 2, 12),
             new UnitWeightsOfChars(2, 1, 10),
-            new UnitWeightsOfChars(1, 1, 9),
-            new UnitWeightsOfChars(1, 2, 4),
+            new UnitWeightsOfChars(2, 1, 6),
+            new UnitWeightsOfChars(2, 2, 6),
             new UnitWeightsOfChars(4, 1, 3)
         };
         int[] p_spearman_s = {1,1,0,0};
-        UnitList.Add(new BaseUnitCharacteristics("spearman",Race.Human,p_spearman_b,p_spearman_b_stats,7,p_spearman_s) );
+        UnitList.Add(new BaseUnitCharacteristics("spearman",Race.Human,p_spearman_b,p_spearman_b_stats,10,p_spearman_s) );
         
-        var e_ogre_b = new UnitCharacteristics(1, 40, 15, 0, -3, 2);
+        var p_archer_b = new UnitCharacteristics(4, 7, 3, 1, 2, 0);
+        List<UnitWeightsOfChars> p_archer_b_stats = new List<UnitWeightsOfChars>
+        {
+            new UnitWeightsOfChars(1, 1, 9),
+            new UnitWeightsOfChars(1, 1, 8),
+            new UnitWeightsOfChars(2, 1, 12),
+            new UnitWeightsOfChars(2, 1, 9),
+            new UnitWeightsOfChars(1, 1, 8),
+            new UnitWeightsOfChars(5, 1, 2)
+        };
+        int[] p_archer_s = {2,0,0,0};
+        UnitList.Add(new BaseUnitCharacteristics("archer",Race.Human,p_archer_b,p_archer_b_stats,8,p_archer_s) );
+        
+        var p_road_bandit_b = new UnitCharacteristics(5, 8, 2, 2, -1, 0);
+        List<UnitWeightsOfChars> p_road_bandit_b_stats = new List<UnitWeightsOfChars>
+        {
+            new UnitWeightsOfChars(2, 3, 7),
+            new UnitWeightsOfChars(1, 1, 10),
+            new UnitWeightsOfChars(1, 1, 10),
+            new UnitWeightsOfChars(1, 1, 12),
+            new UnitWeightsOfChars(2, 1, 7),
+            new UnitWeightsOfChars(5, 1, 2)
+        };
+        int[] p_road_bandit_b_s = {0,0,1,0};
+        UnitList.Add(new BaseUnitCharacteristics("road_bandit",Race.Human,p_road_bandit_b,p_road_bandit_b_stats,7,p_road_bandit_b_s) );
+        
+        var p_mercenaries_b = new UnitCharacteristics(5, 11, 4, 2, 0, 0);
+        List<UnitWeightsOfChars> p_mercenaries_b_stats = new List<UnitWeightsOfChars>
+        {
+            new UnitWeightsOfChars(1, 2, 10),
+            new UnitWeightsOfChars(1, 2, 10),
+            new UnitWeightsOfChars(1, 1, 10),
+            new UnitWeightsOfChars(2, 1, 12),
+            new UnitWeightsOfChars(1, 1, 6),
+            new UnitWeightsOfChars(4, 1, 3)
+        };
+        int[] p_mercenaries_b_s = {1,0,1,0};
+        UnitList.Add(new BaseUnitCharacteristics("mercenaries",Race.Human,p_mercenaries_b,p_mercenaries_b_stats,6,p_mercenaries_b_s) );
+        
+        var p_hobelar_b = new UnitCharacteristics(3, 13, 4, 2, 2, 0);
+        List<UnitWeightsOfChars> p_hobelar_b_stats = new List<UnitWeightsOfChars>
+        {
+            new UnitWeightsOfChars(2, 1, 10),
+            new UnitWeightsOfChars(2, 3, 12),
+            new UnitWeightsOfChars(1, 2, 7),
+            new UnitWeightsOfChars(1, 1, 12),
+            new UnitWeightsOfChars(1, 1, 8),
+            new UnitWeightsOfChars(4, 1, 3)
+        };
+        int[] p_hobelar_b_s = {2,1,0,0};
+        UnitList.Add(new BaseUnitCharacteristics("hobelar",Race.Human,p_hobelar_b,p_hobelar_b_stats,5,p_hobelar_b_s) );
+        
+        var p_hedge_knight_b = new UnitCharacteristics(2, 16, 8, 1, 4, 1);
+        List<UnitWeightsOfChars> p_hedge_knight_b_stats = new List<UnitWeightsOfChars>
+        {
+            new UnitWeightsOfChars(3, 1, 6),
+            new UnitWeightsOfChars(1, 4, 12),
+            new UnitWeightsOfChars(1, 2, 12),
+            new UnitWeightsOfChars(1, 1, 7),
+            new UnitWeightsOfChars(1, 2, 10),
+            new UnitWeightsOfChars(3, 1, 6)
+        };
+        int[] p_hedge_knight_b_s = {1,2,0,0};
+        UnitList.Add(new BaseUnitCharacteristics("hedge_knight",Race.Human,p_hedge_knight_b,p_hedge_knight_b_stats,4,p_hedge_knight_b_s) );
+        
+        
+        var e_ogre_b = new UnitCharacteristics(1, 20, 12, 0, 3, 0);
         List<UnitWeightsOfChars> p_ogre_b_stats = new List<UnitWeightsOfChars>
         {
-            new UnitWeightsOfChars(4, 1, 2),
-            new UnitWeightsOfChars(1, 15, 10),
+            new UnitWeightsOfChars(4, 1, 6),
             new UnitWeightsOfChars(1, 10, 10),
+            new UnitWeightsOfChars(1, 6, 10),
+            new UnitWeightsOfChars(2, 1, 4),
             new UnitWeightsOfChars(1, 1, 7),
-            new UnitWeightsOfChars(1, 2, 4),
-            new UnitWeightsOfChars(2, 1, 4)
+            new UnitWeightsOfChars(4, 1, 4)
         };
-        int[] e_ogre_s = {2,0,0,1};
-        UnitList.Add(new BaseUnitCharacteristics("ogre",Race.Goblin,e_ogre_b,p_ogre_b_stats,6,e_ogre_s) );
+        int[] e_ogre_s = {1,0,0,0};
+        UnitList.Add(new BaseUnitCharacteristics("ogre",Race.Goblin,e_ogre_b,p_ogre_b_stats,8,e_ogre_s) );
 
-        var e_rgoblin_b = new UnitCharacteristics(12, 3, 3, 2, -1, 0);
-        List<UnitWeightsOfChars> p_rgoblin_b_stats = new List<UnitWeightsOfChars>
+        var e_goblin_militia_b = new UnitCharacteristics(8, 4, 2, 0, -1, 0);
+        List<UnitWeightsOfChars> p_goblin_militia_b_stats = new List<UnitWeightsOfChars>
         {
-            new UnitWeightsOfChars(2, 5, 10),
-            new UnitWeightsOfChars(1, 1, 8),
+            new UnitWeightsOfChars(2, 3, 10),
+            new UnitWeightsOfChars(2, 1, 10),
+            new UnitWeightsOfChars(2, 1, 12),
             new UnitWeightsOfChars(1, 1, 12),
-            new UnitWeightsOfChars(1, 1, 12),
-            new UnitWeightsOfChars(1, 1, 8),
-            new UnitWeightsOfChars(5, 1, 2)
+            new UnitWeightsOfChars(2, 1, 8),
+            new UnitWeightsOfChars(6, 1, 2)
         };
-        int[] e_rgoblin_s = {0,1,1,0};
-        UnitList.Add(new BaseUnitCharacteristics("goblin_rogue",Race.Goblin,e_rgoblin_b,p_rgoblin_b_stats,8,e_rgoblin_s) );
+        int[] e_goblin_militia_s = {0,1,0,0};
+        UnitList.Add(new BaseUnitCharacteristics("goblin_militia",Race.Goblin,e_goblin_militia_b,p_goblin_militia_b_stats,8,e_goblin_militia_s) );
 
-        var e_pgoblin_b = new UnitCharacteristics(24, 2, 1, -1, -3, 0);
-        List<UnitWeightsOfChars> p_pgoblin_b_stats = new List<UnitWeightsOfChars>
+        var e_goblin_spearman_b = new UnitCharacteristics(6, 6, 3, 1, 2, 0);
+        List<UnitWeightsOfChars> p_goblin_spearman_b_stats = new List<UnitWeightsOfChars>
         {
-            new UnitWeightsOfChars(2, 14, 12),
-            new UnitWeightsOfChars(2, 1, 5),
-            new UnitWeightsOfChars(3, 1, 8),
-            new UnitWeightsOfChars(1, 1, 12),
-            new UnitWeightsOfChars(2, 2, 5),
-            new UnitWeightsOfChars(5, 1, 2)
+            new UnitWeightsOfChars(1, 2, 10),
+            new UnitWeightsOfChars(1, 1, 8),
+            new UnitWeightsOfChars(1, 1, 8),
+            new UnitWeightsOfChars(1, 1, 8),
+            new UnitWeightsOfChars(2, 1, 12),
+            new UnitWeightsOfChars(5, 1, 3)
         };
-        int[] e_pgoblin_s = {1,1,0,0};
-        UnitList.Add(new BaseUnitCharacteristics("goblin_punks",Race.Goblin,e_pgoblin_b,p_pgoblin_b_stats,10,e_pgoblin_s) );
+        int[] e_goblin_spearman_s = {1,1,0,0};
+        UnitList.Add(new BaseUnitCharacteristics("goblin_spearman",Race.Goblin,e_goblin_spearman_b,p_goblin_spearman_b_stats,10,e_goblin_spearman_s) );
+        
+        var e_goblin_skiermisher_b = new UnitCharacteristics(5, 4, 2, 1, 0, 0);
+        List<UnitWeightsOfChars> p_goblin_skiermisher_b_stats = new List<UnitWeightsOfChars>
+        {
+            new UnitWeightsOfChars(1, 2, 8),
+            new UnitWeightsOfChars(1, 1, 10),
+            new UnitWeightsOfChars(2, 1, 12),
+            new UnitWeightsOfChars(1, 1, 10),
+            new UnitWeightsOfChars(2, 1, 8),
+            new UnitWeightsOfChars(6, 1, 3)
+        };
+        int[] e_goblin_skiermisher_s = {1,0,0,0};
+        UnitList.Add(new BaseUnitCharacteristics("goblin_skiermisher",Race.Goblin,e_goblin_skiermisher_b,p_goblin_skiermisher_b_stats,6,e_goblin_skiermisher_s) );
     }
 }
