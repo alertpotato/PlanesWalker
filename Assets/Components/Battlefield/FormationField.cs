@@ -166,6 +166,18 @@ public class FormationField : ScriptableObject
         }
         return compList;
     }
+    public List<Company> GetAvaliableFields()
+    {
+        List<Company> compList = new List<Company>();
+        foreach (var formation in Formation)
+        {
+            foreach (var company in formation.Line)
+            {
+                if (company.Type == CompanyType.Available) compList.Add(company);
+            }
+        }
+        return compList;
+    }
     private bool IsCompanyOnField(GameObject unit) //Checks if unit already assigned to any company(field cell)
     {
         bool answer = false;

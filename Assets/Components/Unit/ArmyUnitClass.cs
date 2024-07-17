@@ -37,10 +37,10 @@ public struct UnitUpgrades
     }
 }
 
-public struct UnitBuff
+public class UnitBuff
 {
     public UnitCharacteristics Buff; public GameObject BuffParent; public int BuffTurns;
-    UnitBuff(UnitCharacteristics buff, GameObject buffParent, int buffTurns)
+    public UnitBuff(UnitCharacteristics buff, GameObject buffParent, int buffTurns)
     {
         Buff = buff;
         BuffParent = buffParent;
@@ -61,11 +61,10 @@ public class ArmyUnitClass : MonoBehaviour
     public string UnitName;
     public ListOfCommonUnits UnitFactory;
     public int SupplyMultiplier;
-    public void InitializeUnit(string unitName, Race unitRace, UnitUpgrades upgrades)
+    public void InitializeUnit(string unitName, UnitUpgrades upgrades)
     {
         FactoryCharacteristics = UnitFactory.UnitList.Find(x => x.UnitType.Equals(unitName));
         UnitName = unitName;
-        unitRace = unitRace;
         List<UnitAbility> UnitAbilities = new List<UnitAbility>();
         foreach (var ability in FactoryCharacteristics.UnitAbilities)
         {
@@ -96,10 +95,10 @@ public class ArmyUnitClass : MonoBehaviour
         {
             if (FactoryCharacteristics.UnitSupplyReq[i]==0) continue;
             var x = Mathf.CeilToInt(supply[i] / FactoryCharacteristics.UnitSupplyReq[i]);
-            Debug.Log(UnitName+" "+i+"+"+supply[0]+supply[1]+supply[2]+supply[3]+"|"+FactoryCharacteristics.UnitSupplyReq[0]+FactoryCharacteristics.UnitSupplyReq[1]+FactoryCharacteristics.UnitSupplyReq[2]+FactoryCharacteristics.UnitSupplyReq[3]+"|"+x);
+            //Debug.Log(UnitName+" "+i+"+"+supply[0]+supply[1]+supply[2]+supply[3]+"|"+FactoryCharacteristics.UnitSupplyReq[0]+FactoryCharacteristics.UnitSupplyReq[1]+FactoryCharacteristics.UnitSupplyReq[2]+FactoryCharacteristics.UnitSupplyReq[3]+"|"+x);
             x = Mathf.Clamp(x, 0, 999);
             if (x < newSupplyMultiplier) newSupplyMultiplier = x;
-            Debug.Log(newSupplyMultiplier);
+            //Debug.Log(newSupplyMultiplier);
         }
         if (newSupplyMultiplier == 999) newSupplyMultiplier = 0;
         
@@ -107,17 +106,44 @@ public class ArmyUnitClass : MonoBehaviour
         RebuildCharacteristics();
     }
 
-    public void CheckBuffs()
+    public void UpdateEffectiveness(int activeUnits, bool toApply)
     {
-        //Buffs.FindAll(Buffs => Buffs.BuffTurns).Where(BuffTurns > 0);
- 
+        // TODO make units get out of the field so that do not happaned
+        if (toApply && CurrentUnitCharacteristics.NumberOfUnits>0)
+        currentUnitEffectiveness = Mathf.Clamp(currentUnitEffectiveness - (activeUnits/CurrentUnitCharacteristics.NumberOfUnits)*0.75f, 0, 1);
+    }
+
+    public void OnRoundEnd() //Must be called at the end of the round
+    {
+        currentUnitEffectiveness = 1;
+        CheckBuffs();
+        ApplyBuffs();
+    }
+    public void OnBattleEnd() //Must be called at the end of the battle
+    {
+        currentUnitEffectiveness = 1;
+        Buffs.Clear();
+        RebuildCharacteristics();
+    }
+
+    private void CheckBuffs()
+    {
+        foreach (var buff in Buffs)
+        {
+            buff.BuffTurns -= 1;
+        }
+        var expiredBuffs = Buffs.Where(bf => bf.BuffTurns <=0).ToList();
+        foreach (var buff in expiredBuffs)
+        {
+            Buffs.Remove(buff);
+        }
     }
     public void ReciveBuffs(List<UnitBuff> buffs)
     {
         Buffs.AddRange(buffs);
     }
 
-    public void ApplyBuffs() // Reverting to baseline and then applying buffs
+    private void ApplyBuffs() // Reverting to baseline and then applying buffs
     {
         var bc = BaseCharacteristics;
         var cur = CurrentUnitCharacteristics;

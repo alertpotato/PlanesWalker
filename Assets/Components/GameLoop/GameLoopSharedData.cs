@@ -25,7 +25,6 @@ public class GameLoopSharedData : MonoBehaviour
     [Header("Variables")]
     public LayerMask UnitLayer;
     public LayerMask BattlefieldLayer;
-    public int CurrentRound = 0;
     [Header("Prefabs")]
     public GameObject Unit;
     public GameObject UnitCard;
@@ -87,7 +86,7 @@ public class GameLoopSharedData : MonoBehaviour
         var newUnitCharacteristics = listOfCommonUnits.GetRandomUnit(unitRace);
         GameObject newUnit = Instantiate(Unit,RewardParent.transform);
         ArmyUnitClass unitClass = newUnit.GetComponent<ArmyUnitClass>();
-        unitClass.InitializeUnit(newUnitCharacteristics.Item1,newUnitCharacteristics.Item2,newUnitCharacteristics.Item3);
+        unitClass.InitializeUnit(newUnitCharacteristics.Item1,newUnitCharacteristics.Item2);
         newUnit.name = $"{unitClass.UnitName}_{newUnit.GetInstanceID()}";
         return newUnit;
     }

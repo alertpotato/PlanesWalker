@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Linq;
+using UnityEngine.Rendering;
 
 [RequireComponent(typeof(GameLoopSharedData))]
 public class GameLoopPreBattleState : StateBehaviour
@@ -10,7 +12,6 @@ public class GameLoopPreBattleState : StateBehaviour
     public GameObject StartBattleButton;
     public override void OnEnter()
     {
-        Config.CurrentRound = 0;
         Config.Battlefield.SetActive(true);
         StartBattleButton.SetActive(true);
         Config.UpdateHelpText("Pre battle state","Q to look at owned cards, left click on any field piece to reset.");
@@ -25,8 +26,11 @@ public class GameLoopPreBattleState : StateBehaviour
         // Draw field
         Config.Battlefield.GetComponent<Battlefield>().RebuildField(Config.PlayerFormation,Config.EnemyFormation);
         Config.Battlefield.GetComponent<Battlefield>().UpdateField();
-        //
-        Config.CreateRandomUnits(Config.EnemyHero.GetComponent<Hero>(),3,Race.Goblin);
+        // Create and place enemy units
+        Config.CreateRandomUnits(Config.EnemyHero.GetComponent<Hero>(),4,Race.Goblin);
+        EnemyUnitAllocation();
+        Config.Battlefield.GetComponent<Battlefield>().UpdateField();
+        
     }
 
     private void UpdateUnitSupplies()
@@ -60,4 +64,51 @@ public class GameLoopPreBattleState : StateBehaviour
         Debug.Log("Hello Q");
         Config.ArmyDeck.GetComponent<ArmyDeck>().UpdateDeck();
     }*/
+    public void EnemyUnitAllocation()
+    {
+        
+        var enemyUnits = Config.EnemyHero.GetComponent<Hero>().bannersList;
+        var rangedUnits = enemyUnits.Where(go => go.GetComponent<ArmyUnitClass>().UnitName == "goblin_skiermisher").ToList();
+        var avaliableSpaces = Config.EnemyFormation.GetAvaliableFields();
+        var secondLine = avaliableSpaces.Where(comp => comp.Banner.Item1 == 1).ToList();
+
+        int safeIndex = 0;
+        bool rangedToBackLine = true;
+        while (rangedToBackLine == true)
+        {
+            if (secondLine.Count > 0 && rangedUnits.Count > 0)
+            {
+                if (Config.EnemyFormation.AddUnitToFormation(secondLine[0].Banner, rangedUnits[0],
+                        Config.PlayerFormation))
+                {
+                    enemyUnits.Remove(rangedUnits[0]);
+                    rangedUnits.Remove(rangedUnits[0]);
+                    avaliableSpaces.Remove(secondLine[0]);
+                    secondLine.Remove(secondLine[0]);
+                }
+            }
+            else rangedToBackLine = false;
+
+            safeIndex++;
+            if (safeIndex>99) rangedToBackLine = false;
+        }
+
+        safeIndex = 0;
+        bool otherPlaces = true;
+        while (otherPlaces == true)
+        {
+            if (avaliableSpaces.Count > 0 && enemyUnits.Count > 0)
+            {
+                if (Config.EnemyFormation.AddUnitToFormation(avaliableSpaces[0].Banner, enemyUnits[0],
+                        Config.PlayerFormation))
+                {
+                    enemyUnits.Remove(enemyUnits[0]);
+                    avaliableSpaces.Remove(avaliableSpaces[0]);
+                }
+            }
+            else otherPlaces = false;
+            safeIndex++;
+            if (safeIndex>99) otherPlaces = false;
+        }
+    }
 }

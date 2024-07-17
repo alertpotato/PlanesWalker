@@ -24,9 +24,25 @@ public class UnitBasicAttack : UnitAbility
             var yourUnit = UnitCompany.Unit.GetComponent<ArmyUnitClass>();
             var enemyUnit = opposingUnit.Unit.GetComponent<ArmyUnitClass>();
             var yourUnitDamage = yourUnit.CurrentUnitCharacteristics.Damage;
-            var yourUnitAllDamage = yourUnit.CurrentUnitCharacteristics.NumberOfUnits * yourUnitDamage;
+            int yourUnitAllDamage = (int)(yourUnit.CurrentUnitCharacteristics.NumberOfUnits * yourUnitDamage * yourUnit.currentUnitEffectiveness);
             var enemyUnitDamage = enemyUnit.CurrentUnitCharacteristics.Damage;
-            var enemyUnitAllDamage = enemyUnit.CurrentUnitCharacteristics.NumberOfUnits * enemyUnitDamage;
+            int enemyUnitAllDamage = (int)(enemyUnit.CurrentUnitCharacteristics.NumberOfUnits * enemyUnitDamage * enemyUnit.currentUnitEffectiveness);
+            var yourUnitNumber = yourUnit.CurrentUnitCharacteristics.NumberOfUnits;
+            var enemyUnitNumber = enemyUnit.CurrentUnitCharacteristics.NumberOfUnits;
+            //Update currentUnitEffectiveness and calculate true damage based on numbers disparity
+            if (yourUnitNumber > enemyUnitNumber * 3)
+            {
+                yourUnitAllDamage = (int)(enemyUnitNumber * 3 * yourUnitDamage * yourUnit.currentUnitEffectiveness);
+                yourUnit.UpdateEffectiveness(enemyUnitNumber * 3, applyDamage);
+            }
+            else yourUnit.UpdateEffectiveness(yourUnitNumber, applyDamage);
+            if (enemyUnitNumber > yourUnitNumber * 3)
+            {
+                enemyUnitAllDamage = (int)(yourUnitNumber * 3 * enemyUnitDamage * enemyUnit.currentUnitEffectiveness);
+                enemyUnit.UpdateEffectiveness(yourUnitNumber * 3, applyDamage);
+            }
+            else enemyUnit.UpdateEffectiveness(enemyUnitNumber, applyDamage);
+
             TakeDamage(enemyUnit,yourUnitAllDamage,yourUnitDamage,yourUnit.name,applyDamage);
             TakeDamage(yourUnit,enemyUnitAllDamage,enemyUnitDamage,enemyUnit.UnitName,applyDamage);
             //Debug.Log($"{UnitSquad.Unit.name}({unitPosition[0]} {unitPosition[1]}) attack {OpposingHero.ArmyFormation[unitPosition[0]].ArmyLine[unitPosition[1]].Unit.name}");
@@ -44,7 +60,7 @@ public class UnitBasicAttack : UnitAbility
     public void TakeDamage(ArmyUnitClass unit,int incsquaddmg, int incunitdmg, string enemyunitname, bool applyDamage)
     {
         // Local Variables
-        int cohdamage = 0; 
+        int cohdamage = Mathf.Clamp(incunitdmg/unit.CurrentUnitCharacteristics.Health - 1,0,20); // for each time opposing unit attack is higher - lose 1 coh
         int desserts = 0; 
         string additionallog = "";
         double decnumberof = unit.CurrentUnitCharacteristics.NumberOfUnits;

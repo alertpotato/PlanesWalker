@@ -93,7 +93,7 @@ public class ListOfCommonUnits : ScriptableObject
     public List<PointsToRandomuzeUnitWeights> pointsRandomizerList;
     [Tooltip("All default unit characteristics")]
     public List<BaseUnitCharacteristics> UnitList = new List<BaseUnitCharacteristics>();
-    public (string,Race, UnitUpgrades) GetRandomUnit(Race unitRace)
+    public (string, UnitUpgrades) GetRandomUnit(Race unitRace)
     {
         List<BaseUnitCharacteristics> localList = new List<BaseUnitCharacteristics>();
         foreach (BaseUnitCharacteristics _class in UnitList.FindAll(x => x.UnitRace.Equals(unitRace)))
@@ -110,7 +110,7 @@ public class ListOfCommonUnits : ScriptableObject
 
         
         UnitUpgrades newUnitUpgrades = GetUnitWithRandomizedStats(localList[indexOfSelectedUnit], pointsRandomizerList[indexOfNumberOfPoints].points);
-        return (localList[indexOfSelectedUnit].UnitType,localList[indexOfSelectedUnit].UnitRace, newUnitUpgrades);
+        return (localList[indexOfSelectedUnit].UnitType, newUnitUpgrades);
     }
 
     public UnitUpgrades GetUnitWithRandomizedStats(BaseUnitCharacteristics unit,int numberOfPointsToRandomize)

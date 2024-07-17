@@ -16,7 +16,6 @@ public class ArmyCellScript : MonoBehaviour
     public TextMeshProUGUI UnitNumberText;
     public TextMeshProUGUI UnitPowerText;
     
-
     public void InitializeCell(Company company)
     {
         Company = company;
@@ -44,7 +43,7 @@ public class ArmyCellScript : MonoBehaviour
         UnitHealthText.text = unit.currentSquadHealth + "/" + unit.BaseCharacteristics.Health * unit.BaseCharacteristics.NumberOfUnits;
         UnitNumberText.text =
             unit.CurrentUnitCharacteristics.NumberOfUnits + "/" + unit.BaseCharacteristics.NumberOfUnits;
-
+        UnitPowerText.text = Mathf.RoundToInt(unit.currentUnitEffectiveness * 100).ToString()+"%";
     }
     public void GetAttackedFromRight()
     {
