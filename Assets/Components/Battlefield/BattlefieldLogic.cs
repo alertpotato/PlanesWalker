@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Assertions.Must;
 
 public class BattlefieldLogic : MonoBehaviour
 {
@@ -19,17 +20,24 @@ public class BattlefieldLogic : MonoBehaviour
     {
         foreach (var ability in AbilitiesOrder)
         {
+            if (ability.UnitCompany.Unit==null) continue;
             var cycleAbility = ability;
             // check target again -> calculate damage -> calculate retaliate damage -> apply -> check for defeted companies
             // check target again 
             if (!cycleAbility.SelectTargets())
             {
-                cycleAbility = cycleAbility.UnitCompany.Unit.GetComponent<ArmyUnitClass>().GetPossibleAbility();
-                if (!cycleAbility.SelectTargets()) continue;
+                var newPossibleAbility = cycleAbility.UnitCompany.Unit.GetComponent<ArmyUnitClass>().GetPossibleAbility();
+                if (newPossibleAbility != null) cycleAbility = newPossibleAbility;
+                if (!cycleAbility.SelectTargets())
+                {
+                    Debug.Log($"{ability.UnitCompany.Unit.name} does not have targets");
+                    continue;
+                }
             }
-
+            List<(GameObject, int, int, int,FormationField)> results = new List<(GameObject, int, int, int,FormationField)>();
             // calculate damage
             var abilityOwnerResult = cycleAbility.GetAbilityImpact();
+            var abilityOpposingResult = (-1, -1, -1);
             
             // calculate retaliate damage
             var opposingCompany = cycleAbility.OpposingField.GetCompany(cycleAbility.targets[0]);
@@ -38,14 +46,29 @@ public class BattlefieldLogic : MonoBehaviour
             if (opposingCompanyAbility != null)
             {
                 opposingCompanyAbility.AssignTargetForRetaliation(cycleAbility.UnitCompany.Banner);
-                var abilityOpposingResult = opposingCompanyAbility.GetAbilityImpact();
-                // apply -> check for defeted companies
-                if (!cycleAbility.UnitCompany.Unit.GetComponent<ArmyUnitClass>().TakeDamage(abilityOpposingResult))
-                    cycleAbility.UnitCompany.Field.RemoveUnitFromField(cycleAbility.UnitCompany.Unit);
+                abilityOpposingResult = opposingCompanyAbility.GetAbilityImpact();
             }
+            // create list of combat results
+            results.Add((cycleAbility.UnitCompany.Unit,abilityOpposingResult.Item1,abilityOpposingResult.Item2,abilityOwnerResult.Item3,cycleAbility.UnitField));
+            results.Add((opposingCompany.Unit,abilityOwnerResult.Item1,abilityOwnerResult.Item2,abilityOpposingResult.Item3,opposingCompany.Field));
             // apply -> check for defeted companies
-            if (!opposingCompany.Unit.GetComponent<ArmyUnitClass>().TakeDamage(abilityOwnerResult))
-                opposingCompany.Field.RemoveUnitFromField(opposingCompany.Unit);
+            ApplyResults(results);
+        }
+        Order();
+    }
+
+    public void ApplyResults(List<(GameObject, int, int, int,FormationField)> results)
+    {
+        foreach (var res in results)
+        {
+            if (res.Item2 != -1)
+                if (!res.Item1.GetComponent<ArmyUnitClass>().TakeDamage((res.Item2, res.Item3)))
+                {
+                    res.Item5.RemoveUnitFromField(res.Item1);
+                    continue;
+                }
+            if (res.Item4 != -1) 
+                res.Item1.GetComponent<ArmyUnitClass>().UpdateEffectiveness(res.Item4);
         }
     }
 

@@ -29,9 +29,9 @@ public class GameLoopRewardState : StateBehaviour
         Config.UpdateHelpText("Chosing rewards","Choose cards that would be added to your collection");
         
         //TODO Make proper supply ui manager
-        Config.WorldData.AddSupply(0,1);
-        Config.WorldData.AddSupply(1,1);
-        Config.WorldData.AddSupply(2,1);
+        Config.WorldData.AddSupply(0,2);
+        Config.WorldData.AddSupply(1,2);
+        Config.WorldData.AddSupply(2,2);
         SupplyText.text = "1110";
     }
 

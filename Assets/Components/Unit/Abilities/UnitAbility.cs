@@ -5,7 +5,7 @@ using UnityEngine;
 public enum AbilityTags { Melee, Ranged, MeleeRetaliation, RangedRetaliation, Mounted  };
 [System.Serializable] 
 public enum Abilities { MeleeCombat, ArrowVolley, MountedCharge, CowardlyAttack, SuppressiveFire, KnightlyFeat};
-[Serializable]
+[Serializable] 
 public abstract class UnitAbility
 {
     public string AbilityName = "Default ability name";
@@ -108,7 +108,7 @@ public abstract class UnitAbility
         var newSquadHealth = (int)totalHPAfterIncDamage;
         var newNumberOfUnits = (int)newnumberof;
         if (newSquadHealth <= 0) newNumberOfUnits = 0;
-        string battlelog = $"The {unit.UnitName} c:{trueCohesion} squad taken {incdamage} damage from {enemyunitname}. There are {newnumberof}/{startnumberof} with {totalHPAfterIncDamage} hp.";
+        string battlelog = $"The {unit.UnitName} c:{trueCohesion} taken {incdamage} d from {enemyunitname} with '{AbilityName}'. {newnumberof}/{startnumberof} with {totalHPAfterIncDamage} hp.";
         Debug.Log(battlelog + additionallog);
         
         return (newSquadHealth,newNumberOfUnits );

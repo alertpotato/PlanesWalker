@@ -197,18 +197,18 @@ public class ArmyUnitClass : MonoBehaviour
         SupplyMultiplier = newSupplyMultiplier;
         RebuildCharacteristics();
     }
-    public bool TakeDamage((int, int, int) statsToChange)
+    public bool TakeDamage((int, int) statsToChange)
     {
         bool isAlive = true;
         currentSquadHealth = statsToChange.Item1;
         CurrentUnitCharacteristics.NumberOfUnits = statsToChange.Item2;
-        UpdateEffectiveness(statsToChange.Item3);
         // TODO is it ok? maybe check for NumberOfUnits >0
         if (currentSquadHealth <= 0) isAlive = false;
+        Debug.Log($"{UnitName} HP:{currentSquadHealth} N:{CurrentUnitCharacteristics.NumberOfUnits} IA:{isAlive.ToString()}");
         return isAlive;
     }
 
-    private void UpdateEffectiveness(int engagedUnits)
+    public void UpdateEffectiveness(int engagedUnits)
     {
         // TODO make units get out of the field so that do not happaned
         if (CurrentUnitCharacteristics.NumberOfUnits>0)
