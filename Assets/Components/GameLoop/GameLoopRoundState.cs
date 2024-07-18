@@ -26,6 +26,9 @@ public class GameLoopRoundState : StateBehaviour
         // Round ending logic
         CurrentRound += 1;
         TriggerOnFieldUnitsRoundEffects();
+        // Formation Round ending effects
+        Config.PlayerFormation.OnRoundEnd();
+        Config.EnemyFormation.OnRoundEnd();
     }
     public override void OnExit()
     {

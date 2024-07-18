@@ -61,7 +61,45 @@ public class FormationField : ScriptableObject
     [Header("Private variables")] 
     public int maxArmyWigth = 5;
     public int maxArmyDepth = 3;
-    
+
+    public void OnRoundEnd() //Must be called at the end of the round
+    {
+        FrontShift();
+    }
+    public void OnBattleEnd() //Must be called at the end of the battle
+    {
+
+    }
+
+    private void FrontShift() // If first line is empty shift second line forward
+    {
+        var onField = GetOnFieldcompanies();
+        var firstLine = onField.Where(company => company.Banner.Item1 == 0).ToList();
+        var secondLine = onField.Where(company => company.Banner.Item1 == 1).ToList();
+        if (firstLine.Count == 0 && secondLine.Count > 0)
+        {
+            Debug.Log("Front shifted");
+            foreach (var comp in secondLine)
+            {
+                var unit = comp.Unit;
+                RemoveUnitFromField(unit);
+                Formation[0].Line[comp.Banner.Item2].Type = CompanyType.Occupied;
+                Formation[0].Line[comp.Banner.Item2].Unit = unit;
+            }
+        }
+    }
+
+    public void RemoveUnitFromField(GameObject unit)
+    {
+        var onField = GetOnFieldcompanies();
+        var comp = onField.Where(un => un.Unit == unit).First();
+        if (comp != null)
+        {
+            comp.Type = CompanyType.Available;
+            comp.Unit = null;
+        }
+    }
+
     public Company GetCompany((int, int) banner)
     {
         var ASD = Formation.SelectMany(formationLine => formationLine.Line).Where(line => line.Banner == banner);
@@ -123,7 +161,7 @@ public class FormationField : ScriptableObject
         }
     }
 
-    public void ClearField()
+    public void ClearField() // Clear field from all units
     {
         for (int line = 0; line < maxArmyDepth; line++)
         {

@@ -19,7 +19,33 @@ public class BattlefieldLogic : MonoBehaviour
     {
         foreach (var ability in AbilitiesOrder)
         {
-            ability.MainFunc(true);
+            var cycleAbility = ability;
+            // check target again -> calculate damage -> calculate retaliate damage -> apply -> check for defeted companies
+            // check target again 
+            if (!cycleAbility.SelectTargets())
+            {
+                cycleAbility = cycleAbility.UnitCompany.Unit.GetComponent<ArmyUnitClass>().GetPossibleAbility();
+                if (!cycleAbility.SelectTargets()) continue;
+            }
+
+            // calculate damage
+            var abilityOwnerResult = cycleAbility.GetAbilityImpact();
+            
+            // calculate retaliate damage
+            var opposingCompany = cycleAbility.OpposingField.GetCompany(cycleAbility.targets[0]);
+            var opposingCompanyAbility = opposingCompany.Unit.GetComponent<ArmyUnitClass>()
+                .GetRetaliationAbility(cycleAbility.RetaliationTags);
+            if (opposingCompanyAbility != null)
+            {
+                opposingCompanyAbility.AssignTargetForRetaliation(cycleAbility.UnitCompany.Banner);
+                var abilityOpposingResult = opposingCompanyAbility.GetAbilityImpact();
+                // apply -> check for defeted companies
+                if (!cycleAbility.UnitCompany.Unit.GetComponent<ArmyUnitClass>().TakeDamage(abilityOpposingResult))
+                    cycleAbility.UnitCompany.Field.RemoveUnitFromField(cycleAbility.UnitCompany.Unit);
+            }
+            // apply -> check for defeted companies
+            if (!opposingCompany.Unit.GetComponent<ArmyUnitClass>().TakeDamage(abilityOwnerResult))
+                opposingCompany.Field.RemoveUnitFromField(opposingCompany.Unit);
         }
     }
 
@@ -42,7 +68,8 @@ public class BattlefieldLogic : MonoBehaviour
         foreach (var comp in sortedUnits)
         {
             answer = $"{answer} -> {comp.Unit.gameObject.name}[{comp.Unit.GetComponent<ArmyUnitClass>().CurrentUnitCharacteristics.Initiative}]";
-            AbilitiesOrder.Add(comp.Unit.GetComponent<ArmyUnitClass>().Abilities[0]);
+            var ab = comp.Unit.GetComponent<ArmyUnitClass>().GetPossibleAbility();
+            if (ab!=null) AbilitiesOrder.Add(ab);
         }
         //Debug.Log(answer);
         // -------------GRAPHIC
@@ -51,7 +78,6 @@ public class BattlefieldLogic : MonoBehaviour
         foreach (var ability in AbilitiesOrder)
         {
             //Debug.Log($"{ability.UnitSquad.Unit.name} {ability.IsActive.ToString()}");
-            if (!ability.IsActive) continue;
             float YYY = YY * index;
             var newUI = Instantiate(AbilityUI,AbilityUIParent.transform);
             newUI.transform.localPosition = new Vector3(0,YYY,0);

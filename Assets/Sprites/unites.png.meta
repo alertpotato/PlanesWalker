@@ -800,6 +800,50 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: test1
+      rect:
+        serializedVersion: 2
+        x: 469
+        y: 811
+        width: 28
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 327f9d4cd1e6af44191d352e8be20e16
+      internalID: 781457695
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: test2
+      rect:
+        serializedVersion: 2
+        x: 469
+        y: 765
+        width: 26
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2d344c379e2d375408ff9077fe71fbd0
+      internalID: 920043092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -844,6 +888,8 @@ TextureImporter:
       road_bandit_icon: 1026871330
       spearman_card: 1217069307
       spearman_icon: 2081352197
+      test1: 781457695
+      test2: 920043092
       ui_attack_left: 1641438441
       ui_attack_right: -753987447
   mipmapLimitGroupName: 

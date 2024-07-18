@@ -47,12 +47,12 @@ public class BaseUnitCharacteristics
         UnitWeight = unitWeight;
         UnitSupplyReq = unitSupplyReq;
     }
-    public BaseUnitCharacteristics(string unitType,Race unitRace,UnitCharacteristics uChar,List<UnitWeightsOfChars> listUnitWeightsOfChars, int unitWeight, int[] unitSupplyReq)
+    public BaseUnitCharacteristics(string unitType,Race unitRace,UnitCharacteristics uChar,List<UnitWeightsOfChars> listUnitWeightsOfChars, int unitWeight, int[] unitSupplyReq, List<Abilities> abilities)
     {
         UnitType = unitType;
         UnitRace = unitRace;
         Characteristics = uChar;
-        UnitAbilities.Add(Abilities.BasicAttack);
+        UnitAbilities.AddRange(abilities);
         NumberOfUnitsUpgrade = listUnitWeightsOfChars[0];
         HealthUpgrade = listUnitWeightsOfChars[1];
         DamageUpgrade = listUnitWeightsOfChars[2];
@@ -169,6 +169,13 @@ public class ListOfCommonUnits : ScriptableObject
     }
     private void FillListOfUnitChars()
     {
+        //Sets of abilities
+        var melee = new List<Abilities> { Abilities.MeleeCombat };
+        var knight = new List<Abilities> { Abilities.KnightlyFeat, Abilities.MeleeCombat };
+        var merc = new List<Abilities> { Abilities.MeleeCombat,Abilities.SuppressiveFire };
+        var coward = new List<Abilities> {Abilities.CowardlyAttack, Abilities.MeleeCombat };
+        var ranged = new List<Abilities> { Abilities.ArrowVolley,Abilities.MeleeCombat };
+        var mounted = new List<Abilities> { Abilities.MountedCharge,Abilities.MeleeCombat };
         // LOOK INTO SAVE LOAD ?
         UnitList.Clear();
         var p_lmilita_b = new UnitCharacteristics(4, 8, 3, 0, 1, 0);
@@ -182,7 +189,7 @@ public class ListOfCommonUnits : ScriptableObject
             new UnitWeightsOfChars(5, 1, 2)
         };
         int[] p_lmilita_s = {0,1,0,0};
-        UnitList.Add(new BaseUnitCharacteristics("militia",Race.Human,p_lmilita_b,p_militia_stats,9,p_lmilita_s ));
+        UnitList.Add(new BaseUnitCharacteristics("militia",Race.Human,p_lmilita_b,p_militia_stats,9,p_lmilita_s,melee) );
         
         var p_spearman_b = new UnitCharacteristics(5, 10, 3, 1, 2, 0);
         List<UnitWeightsOfChars> p_spearman_b_stats = new List<UnitWeightsOfChars>
@@ -195,7 +202,7 @@ public class ListOfCommonUnits : ScriptableObject
             new UnitWeightsOfChars(4, 1, 3)
         };
         int[] p_spearman_s = {1,1,0,0};
-        UnitList.Add(new BaseUnitCharacteristics("spearman",Race.Human,p_spearman_b,p_spearman_b_stats,10,p_spearman_s) );
+        UnitList.Add(new BaseUnitCharacteristics("spearman",Race.Human,p_spearman_b,p_spearman_b_stats,10,p_spearman_s,melee) );
         
         var p_archer_b = new UnitCharacteristics(4, 7, 3, 1, 2, 0);
         List<UnitWeightsOfChars> p_archer_b_stats = new List<UnitWeightsOfChars>
@@ -208,7 +215,7 @@ public class ListOfCommonUnits : ScriptableObject
             new UnitWeightsOfChars(5, 1, 2)
         };
         int[] p_archer_s = {2,0,0,0};
-        UnitList.Add(new BaseUnitCharacteristics("archer",Race.Human,p_archer_b,p_archer_b_stats,8,p_archer_s) );
+        UnitList.Add(new BaseUnitCharacteristics("archer",Race.Human,p_archer_b,p_archer_b_stats,8,p_archer_s,ranged) );
         
         var p_road_bandit_b = new UnitCharacteristics(5, 8, 2, 2, -1, 0);
         List<UnitWeightsOfChars> p_road_bandit_b_stats = new List<UnitWeightsOfChars>
@@ -221,7 +228,7 @@ public class ListOfCommonUnits : ScriptableObject
             new UnitWeightsOfChars(5, 1, 2)
         };
         int[] p_road_bandit_b_s = {0,0,1,0};
-        UnitList.Add(new BaseUnitCharacteristics("road_bandit",Race.Human,p_road_bandit_b,p_road_bandit_b_stats,7,p_road_bandit_b_s) );
+        UnitList.Add(new BaseUnitCharacteristics("road_bandit",Race.Human,p_road_bandit_b,p_road_bandit_b_stats,7,p_road_bandit_b_s,coward) );
         
         var p_mercenaries_b = new UnitCharacteristics(5, 11, 4, 2, 0, 0);
         List<UnitWeightsOfChars> p_mercenaries_b_stats = new List<UnitWeightsOfChars>
@@ -234,7 +241,7 @@ public class ListOfCommonUnits : ScriptableObject
             new UnitWeightsOfChars(4, 1, 3)
         };
         int[] p_mercenaries_b_s = {1,0,1,0};
-        UnitList.Add(new BaseUnitCharacteristics("mercenaries",Race.Human,p_mercenaries_b,p_mercenaries_b_stats,6,p_mercenaries_b_s) );
+        UnitList.Add(new BaseUnitCharacteristics("mercenaries",Race.Human,p_mercenaries_b,p_mercenaries_b_stats,6,p_mercenaries_b_s,merc) );
         
         var p_hobelar_b = new UnitCharacteristics(3, 13, 4, 2, 2, 0);
         List<UnitWeightsOfChars> p_hobelar_b_stats = new List<UnitWeightsOfChars>
@@ -247,7 +254,7 @@ public class ListOfCommonUnits : ScriptableObject
             new UnitWeightsOfChars(4, 1, 3)
         };
         int[] p_hobelar_b_s = {2,1,0,0};
-        UnitList.Add(new BaseUnitCharacteristics("hobelar",Race.Human,p_hobelar_b,p_hobelar_b_stats,5,p_hobelar_b_s) );
+        UnitList.Add(new BaseUnitCharacteristics("hobelar",Race.Human,p_hobelar_b,p_hobelar_b_stats,5,p_hobelar_b_s,mounted) );
         
         var p_hedge_knight_b = new UnitCharacteristics(2, 16, 8, 1, 4, 1);
         List<UnitWeightsOfChars> p_hedge_knight_b_stats = new List<UnitWeightsOfChars>
@@ -260,7 +267,7 @@ public class ListOfCommonUnits : ScriptableObject
             new UnitWeightsOfChars(3, 1, 6)
         };
         int[] p_hedge_knight_b_s = {1,2,0,0};
-        UnitList.Add(new BaseUnitCharacteristics("hedge_knight",Race.Human,p_hedge_knight_b,p_hedge_knight_b_stats,4,p_hedge_knight_b_s) );
+        UnitList.Add(new BaseUnitCharacteristics("hedge_knight",Race.Human,p_hedge_knight_b,p_hedge_knight_b_stats,4,p_hedge_knight_b_s,knight) );
         
         
         var e_ogre_b = new UnitCharacteristics(1, 20, 12, 0, 3, 0);
@@ -274,7 +281,7 @@ public class ListOfCommonUnits : ScriptableObject
             new UnitWeightsOfChars(4, 1, 4)
         };
         int[] e_ogre_s = {1,0,0,0};
-        UnitList.Add(new BaseUnitCharacteristics("ogre",Race.Goblin,e_ogre_b,p_ogre_b_stats,8,e_ogre_s) );
+        UnitList.Add(new BaseUnitCharacteristics("ogre",Race.Goblin,e_ogre_b,p_ogre_b_stats,8,e_ogre_s,melee) );
 
         var e_goblin_militia_b = new UnitCharacteristics(8, 4, 2, 0, -1, 0);
         List<UnitWeightsOfChars> p_goblin_militia_b_stats = new List<UnitWeightsOfChars>
@@ -287,7 +294,7 @@ public class ListOfCommonUnits : ScriptableObject
             new UnitWeightsOfChars(6, 1, 2)
         };
         int[] e_goblin_militia_s = {0,1,0,0};
-        UnitList.Add(new BaseUnitCharacteristics("goblin_militia",Race.Goblin,e_goblin_militia_b,p_goblin_militia_b_stats,8,e_goblin_militia_s) );
+        UnitList.Add(new BaseUnitCharacteristics("goblin_militia",Race.Goblin,e_goblin_militia_b,p_goblin_militia_b_stats,8,e_goblin_militia_s,coward) );
 
         var e_goblin_spearman_b = new UnitCharacteristics(6, 6, 3, 1, 2, 0);
         List<UnitWeightsOfChars> p_goblin_spearman_b_stats = new List<UnitWeightsOfChars>
@@ -300,7 +307,7 @@ public class ListOfCommonUnits : ScriptableObject
             new UnitWeightsOfChars(5, 1, 3)
         };
         int[] e_goblin_spearman_s = {1,1,0,0};
-        UnitList.Add(new BaseUnitCharacteristics("goblin_spearman",Race.Goblin,e_goblin_spearman_b,p_goblin_spearman_b_stats,10,e_goblin_spearman_s) );
+        UnitList.Add(new BaseUnitCharacteristics("goblin_spearman",Race.Goblin,e_goblin_spearman_b,p_goblin_spearman_b_stats,10,e_goblin_spearman_s,melee) );
         
         var e_goblin_skiermisher_b = new UnitCharacteristics(5, 4, 2, 1, 0, 0);
         List<UnitWeightsOfChars> p_goblin_skiermisher_b_stats = new List<UnitWeightsOfChars>
@@ -313,6 +320,6 @@ public class ListOfCommonUnits : ScriptableObject
             new UnitWeightsOfChars(6, 1, 3)
         };
         int[] e_goblin_skiermisher_s = {1,0,0,0};
-        UnitList.Add(new BaseUnitCharacteristics("goblin_skiermisher",Race.Goblin,e_goblin_skiermisher_b,p_goblin_skiermisher_b_stats,6,e_goblin_skiermisher_s) );
+        UnitList.Add(new BaseUnitCharacteristics("goblin_skiermisher",Race.Goblin,e_goblin_skiermisher_b,p_goblin_skiermisher_b_stats,6,e_goblin_skiermisher_s,ranged) );
     }
 }
