@@ -109,7 +109,7 @@ public abstract class UnitAbility
         var newNumberOfUnits = (int)newnumberof;
         if (newSquadHealth <= 0) newNumberOfUnits = 0;
         string battlelog = $"The {unit.UnitName} c:{trueCohesion} taken {incdamage} d from {enemyunitname} with '{AbilityName}'. {newnumberof}/{startnumberof} with {totalHPAfterIncDamage} hp.";
-        Debug.Log(battlelog + additionallog);
+        //Debug.Log(battlelog + additionallog);
         
         return (newSquadHealth,newNumberOfUnits );
     }

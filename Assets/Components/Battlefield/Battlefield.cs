@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 public class Battlefield : MonoBehaviour
@@ -6,7 +7,7 @@ public class Battlefield : MonoBehaviour
     [Header("Field Graphics")]
     public List<GameObject> playerFieldList = new List<GameObject>();
     public List<GameObject> enemyFieldList = new List<GameObject>();
-    public float armyCellSpacing = 1.3f;
+    public float armyCellSpacing = 2f;
 
     [Header("Components")] 
     public Camera MainCamera;
@@ -24,7 +25,7 @@ public class Battlefield : MonoBehaviour
     }
     public void UpdateField()
     {
-        UpdateField(playerFieldList,-1,0.55f);
+        UpdateField(playerFieldList,-1,0.5f);
         UpdateField(enemyFieldList,1,0.65f);
         /*
         foreach (var ability in logic.AbilitiesOrder)
@@ -60,7 +61,7 @@ public class Battlefield : MonoBehaviour
     private void UpdateField(List<GameObject> cellList,float sine,float xMulti)
     {
         float stepFromLeft = (Screen.width * xMulti);
-        float stepFromTop = Screen.height * 0.8f;
+        float stepFromTop = Screen.height * 0.9f;
         var ScreenPos = Camera.main.ScreenToWorldPoint(new Vector3(stepFromLeft, stepFromTop, 8) );
         
         foreach (GameObject cell in cellList)
@@ -104,5 +105,17 @@ public class Battlefield : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void DestroyField()
+    {
+        var tempList = playerFieldList;
+        tempList.AddRange(enemyFieldList);
+        for (int i = 0; i < tempList.Count(); i++)
+        {
+            Destroy(tempList[i]);
+        }
+        playerFieldList.Clear();
+        enemyFieldList.Clear();
     }
 }

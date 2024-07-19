@@ -9,7 +9,7 @@
                     "name": "Show army",
                     "type": "Button",
                     "id": "920f0bf7-259b-4371-9433-85d1706edcdd",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -18,7 +18,7 @@
                     "name": "Click",
                     "type": "Button",
                     "id": "f3a3bfc3-a08c-4957-8aa7-464fcfa4b757",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -27,7 +27,16 @@
                     "name": "AlternateClick",
                     "type": "Button",
                     "id": "723082be-bcb6-4e3b-b596-77abaa5adb84",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "RestartGame",
+                    "type": "Button",
+                    "id": "94dc6f9a-7ca3-4eae-b810-e2eea52390f7",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -64,6 +73,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "AlternateClick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7c5fcddc-3652-4d51-8392-82ac625b21ce",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RestartGame",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

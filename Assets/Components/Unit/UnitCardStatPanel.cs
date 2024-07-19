@@ -14,11 +14,12 @@ public class UnitCardStatPanel : MonoBehaviour
     void Update()
     {
         float multi;
-        if (MainCardScript.IsSelected) multi = animationSpeed;
+        /*if (MainCardScript.IsSelected) multi = animationSpeed;
         else multi = -animationSpeed;
         var localPos = StatPanel.transform.localPosition;
         StatPanel.transform.localPosition = new Vector3(Mathf.Clamp(localPos.x + multi * Time.deltaTime,minX,maxX), localPos.y, localPos.z);
         if (!MainCardScript.IsSelected && localPos.x == minX) MainCardScript.UIElements.SetActive(false);
+        */
     }
     public void SetStatText(UnitCharacteristics defaultChars,UnitCharacteristics currentChars, UnitUpgrades upgrd)
     {
@@ -39,6 +40,6 @@ public class UnitCardStatPanel : MonoBehaviour
         {
             starsToAdd += "★";
         }
-        return starsToAdd;
+        return $"<color=#c8a106>{starsToAdd}</color>" ;
     }
 }

@@ -4,6 +4,8 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
+
 public class GameLoopSharedData : MonoBehaviour
 {
     [Header("Components")]
@@ -19,17 +21,20 @@ public class GameLoopSharedData : MonoBehaviour
     public FormationField PlayerFormation;
     public FormationField EnemyFormation;
     public PlayerData WorldData;
+    public Scene MainGame;
     [Header("UI")]
     public TextMeshProUGUI HeadText;
     public TextMeshProUGUI BottomText;
     [Header("Variables")]
     public LayerMask UnitLayer;
     public LayerMask BattlefieldLayer;
+    public int BattlesWon;
     [Header("Prefabs")]
     public GameObject Unit;
     public GameObject UnitCard;
     [Header("States")]
     public GameLoopPreBattleState PreBattleState;
+    public GameLoopRewardState RewardState;
     private void Awake()
     {
         Battlefield.SetActive(false);
@@ -46,7 +51,21 @@ public class GameLoopSharedData : MonoBehaviour
         //Battlefield.GetComponent<Battlefield>().InicializeField(PlayerHero.GetComponent<Hero>(), EnemyHero.GetComponent<Hero>());
         ArmyDeck.GetComponent<ArmyDeck>().GetArmyHero(PlayerHero.GetComponent<Hero>());
         
+        //Supply
+        WorldData.Reset();
+        WorldData.AddSupply(0,1);
+        WorldData.AddSupply(1,1);
+        WorldData.AddSupply(2,1);
+
+        BattlesWon = 0;
     }
+    //TODO .....
+    public void TempRewards()
+    {
+        int newNumberOfRewards = 1;
+        RewardState.NumberOfRewards = newNumberOfRewards;
+    }
+
     void OnClick(InputValue value)
     {
         Ray ray = MainCamera.ScreenPointToRay(Input.mousePosition);
@@ -81,6 +100,13 @@ public class GameLoopSharedData : MonoBehaviour
         }
         else SelectedUnits.DeSelectEntity();
     }
+
+    private void OnRestartGame(InputValue value)
+    {
+        int currentIndex = SceneManager.GetActiveScene().buildIndex;
+        SceneManager.LoadScene(currentIndex);
+    }
+
     public GameObject InstantiateRandomUnit(Race unitRace)
     {
         var newUnitCharacteristics = listOfCommonUnits.GetRandomUnit(unitRace);

@@ -65,6 +65,7 @@ public class FormationField : ScriptableObject
     public void OnRoundEnd() //Must be called at the end of the round
     {
         FrontShift();
+        FrontSquash();
     }
     public void OnBattleEnd() //Must be called at the end of the battle
     {
@@ -82,10 +83,37 @@ public class FormationField : ScriptableObject
             foreach (var comp in secondLine)
             {
                 var unit = comp.Unit;
+                var newComp = Formation[0].Line[comp.Banner.Item2];
                 RemoveUnitFromField(unit);
-                Formation[0].Line[comp.Banner.Item2].Type = CompanyType.Occupied;
-                Formation[0].Line[comp.Banner.Item2].Unit = unit;
+                newComp.Type = CompanyType.Occupied;
+                newComp.Unit = unit;
+                unit.GetComponent<ArmyUnitClass>().InitializeAbilities(newComp);
             }
+        }
+    }
+    //TODO Temp stupid solution
+    private void FrontSquash()
+    {
+        var comp1 = Formation[0].Line[1];
+        var comp2 = Formation[0].Line[2];
+        var comp3 = Formation[0].Line[3];
+        if (comp1.Type == CompanyType.Available && comp2.Type == CompanyType.Available &&
+            comp3.Type == CompanyType.Occupied)
+        {
+            var unit = comp3.Unit;
+            RemoveUnitFromField(unit);
+            comp2.Type = CompanyType.Occupied;
+            comp2.Unit = unit;
+            unit.GetComponent<ArmyUnitClass>().InitializeAbilities(comp2);
+        }
+        if (comp1.Type == CompanyType.Occupied && comp2.Type == CompanyType.Available &&
+            comp3.Type == CompanyType.Available)
+        {
+            var unit = comp1.Unit;
+            RemoveUnitFromField(unit);
+            comp2.Type = CompanyType.Occupied;
+            comp2.Unit = unit;
+            unit.GetComponent<ArmyUnitClass>().InitializeAbilities(comp2);
         }
     }
 
@@ -137,10 +165,7 @@ public class FormationField : ScriptableObject
         {
             Formation[banner.Item1].ChangeUnit(unit, banner.Item2);
             answer = true;
-            foreach (var ability in unit.GetComponent<ArmyUnitClass>().Abilities)
-            {
-                ability.InitAbility(toComp,this,opposingFormation);
-            }
+            unit.GetComponent<ArmyUnitClass>().InitializeAbilities(toComp,this,opposingFormation);
         }
         return answer;
         

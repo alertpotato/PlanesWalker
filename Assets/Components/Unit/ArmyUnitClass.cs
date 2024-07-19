@@ -75,13 +75,13 @@ public class ArmyUnitClass : MonoBehaviour
                 case global::Abilities.ArrowVolley:
                     UnitAbilities.Add(new ArrowVolleyAbility()); break;
                 case global::Abilities.MountedCharge:
-                    UnitAbilities.Add(new MeleeCombatAbility()); break;
+                    UnitAbilities.Add(new MountedChargeAbility()); break;
                 case global::Abilities.CowardlyAttack:
-                    UnitAbilities.Add(new MeleeCombatAbility()); break;
+                    UnitAbilities.Add(new CowardlyAttackAbility()); break;
                 case global::Abilities.SuppressiveFire:
-                    UnitAbilities.Add(new MeleeCombatAbility()); break;
+                    UnitAbilities.Add(new SuppressiveFireAbility()); break;
                 case global::Abilities.KnightlyFeat:
-                    UnitAbilities.Add(new MeleeCombatAbility()); break;
+                    UnitAbilities.Add(new KnightlyFeatAbility()); break;
                 default: throw new Exception($"Ability '{ability.ToString()}' is not in handler!!!");
             }
         }
@@ -104,6 +104,21 @@ public class ArmyUnitClass : MonoBehaviour
                              CurrentUnitCharacteristics.Health;
     }
     //-----------Abilities logic
+    public void InitializeAbilities(Company newCompany,FormationField field,FormationField opposingField)
+    {
+        foreach (var ability in Abilities)
+        {
+            ability.InitAbility(newCompany,field,opposingField);
+        }
+    }
+    public void InitializeAbilities(Company newCompany)
+    {
+        foreach (var ability in Abilities)
+        {
+            ability.ChangeCompany(newCompany);
+        }
+    }
+
     [CanBeNull]
     public UnitAbility GetPossibleAbility() //used to get ability that would be used by this unit next round
     {
@@ -204,7 +219,7 @@ public class ArmyUnitClass : MonoBehaviour
         CurrentUnitCharacteristics.NumberOfUnits = statsToChange.Item2;
         // TODO is it ok? maybe check for NumberOfUnits >0
         if (currentSquadHealth <= 0) isAlive = false;
-        Debug.Log($"{UnitName} HP:{currentSquadHealth} N:{CurrentUnitCharacteristics.NumberOfUnits} IA:{isAlive.ToString()}");
+//        Debug.Log($"{UnitName} HP:{currentSquadHealth} N:{CurrentUnitCharacteristics.NumberOfUnits} IA:{isAlive.ToString()}");
         return isAlive;
     }
 

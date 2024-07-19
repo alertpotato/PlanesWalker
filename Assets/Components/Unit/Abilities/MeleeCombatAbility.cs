@@ -17,7 +17,6 @@ public class MeleeCombatAbility : UnitAbility
     }
     public override bool SelectTargets()
     {
-        Debug.Log($"Debug {UnitCompany.Banner} {UnitCompany.Field.FieldOwner.heroName}");
         //if (UnitCompany.Unit.GetComponent<ArmyUnitClass>().currentUnitEffectiveness<=0.25) return false;
         // Check if we are on the fronline
         (int,int) unitPosition = UnitCompany.Banner;

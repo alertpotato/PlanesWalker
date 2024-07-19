@@ -14,7 +14,7 @@ public class GameLoopPreBattleState : StateBehaviour
     {
         Config.Battlefield.SetActive(true);
         StartBattleButton.SetActive(true);
-        Config.UpdateHelpText("Pre battle state","Q to look at owned cards, left click on any field piece to reset.");
+        Config.UpdateHelpText("Pre battle state","Left click on card you want to pick, then left click again on the field. Right click on any field piece to reset.");
         // Update unit supply
         UpdateUnitSupplies();
         // Draw deck space
@@ -30,7 +30,6 @@ public class GameLoopPreBattleState : StateBehaviour
         Config.CreateRandomUnits(Config.EnemyHero.GetComponent<Hero>(),4,Race.Goblin);
         EnemyUnitAllocation();
         Config.Battlefield.GetComponent<Battlefield>().UpdateField();
-        
     }
 
     private void UpdateUnitSupplies()
@@ -66,8 +65,11 @@ public class GameLoopPreBattleState : StateBehaviour
     }*/
     public void EnemyUnitAllocation()
     {
-        
         var enemyUnits = Config.EnemyHero.GetComponent<Hero>().bannersList;
+        foreach (var unit in enemyUnits)
+        {
+            unit.GetComponent<ArmyUnitClass>().UpdateSupply(Config.WorldData.PlayerSupply);
+        }
         var rangedUnits = enemyUnits.Where(go => go.GetComponent<ArmyUnitClass>().UnitName == "goblin_skiermisher").ToList();
         var avaliableSpaces = Config.EnemyFormation.GetAvaliableFields();
         var secondLine = avaliableSpaces.Where(comp => comp.Banner.Item1 == 1).ToList();
