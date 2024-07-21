@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using NUnit.Framework.Internal.Execution;
 using TMPro;
 using UnityEngine;
 
@@ -11,6 +10,7 @@ public class GameLoopRewardState : StateBehaviour
     public GameLoopSharedData Config;
     public GameObject SelectButton;
     public TextMeshProUGUI SupplyText;
+    public GameObject SupplyButtons;
     [Header("Reward logic")]
     public int NumberOfRewards = 3;
     public int NumberOfCardsToChoose = 5;
@@ -27,12 +27,13 @@ public class GameLoopRewardState : StateBehaviour
         isChosing = false;
         SelectButton.SetActive(true);
         Config.UpdateHelpText("Chosing rewards","Choose cards that would be added to your collection");
-        
         //TODO Make proper supply ui manager
-        Config.WorldData.AddSupply(0,1);
-        Config.WorldData.AddSupply(1,1);
-        Config.WorldData.AddSupply(2,1);
-        SupplyText.text = "1110";
+        string newVal = "";
+        for (int i = 0; i < 4; i++)
+        {
+            newVal += Config.WorldData.PlayerSupply[i];
+        }
+        SupplyText.text = newVal;
     }
 
     public override void OnExit()
@@ -60,7 +61,7 @@ public class GameLoopRewardState : StateBehaviour
             GameObject newCard = Instantiate(Config.UnitCard);
             newCard.name = $"{unit.name}_Card";
             newCard.transform.SetParent(unit.transform);
-            newCard.GetComponent<UnitCardMain>().SetUnitParameters(unit, pos,false);
+            newCard.GetComponent<UnitCardMain>().SetUnitParameters(unit, pos,Vector3.one*1.1f,true);
             CardList.Add(newCard);
             i += 1;
         }
@@ -84,9 +85,26 @@ public class GameLoopRewardState : StateBehaviour
 
         if (isChosing==false & leftNumberOfRewards == 0)
         {
-            ChangeState<GameLoopPreBattleState>();
+            SupplyButtons.SetActive(true);
+            Config.UpdateHelpText("Choose 1 supply","<color=\"yellow\">Each unit requires a supply to be able to participate in battle. Keep in mind that each multiple combination of supply increases the number of units in the squad by the same amount.</color>");
+            //ChangeState<GameLoopPreBattleState>();
         }
     }
+
+    public void GetSupply(int value)
+    {
+        Config.WorldData.AddSupply(value, 1);
+        //TODO Make proper supply ui manager
+        string newVal = "";
+        for (int i = 0; i < 4; i++)
+        {
+            newVal += Config.WorldData.PlayerSupply[i];
+        }
+        SupplyText.text = newVal;
+        SupplyButtons.SetActive(false);
+        ChangeState<GameLoopPreBattleState>();
+    }
+
     public void AddRewardToHero()
     {
         GameObject rewardUnit = Config.SelectedUnits.SelectedEntity.GetComponent<UnitCardMain>().RelatedUnit;

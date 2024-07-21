@@ -14,6 +14,7 @@ public class UnitCardMain : MonoBehaviour
     public SpriteRenderer cardSprite;
     public GameObject RelatedUnit;
     public GameObject UIElements;
+    public GameObject UIOutline;
 
     [Header("Private variables")]
     public bool IsSelected = false;
@@ -22,6 +23,7 @@ public class UnitCardMain : MonoBehaviour
     [SerializeField] private float cardRotateMultiplier = 10;
     float _approach;
     [SerializeField] private Vector3 startCardPos;
+    [SerializeField] private Vector3 StartCardScale;
     [SerializeField] private Vector2 _startCardSize;
     [SerializeField] private Color _newCardColor = new Color(1, 1, 1, 1);
     [SerializeField] private Vector3 _cardMoveDirection = new Vector3(0, 0, -0.1f);
@@ -31,9 +33,11 @@ public class UnitCardMain : MonoBehaviour
     {
         _startCardSize = cardSprite.size*2;
         //_approach = 0.1f * (MainCamera.transform.position.z - _startCardPos.z);
+        UIElements.SetActive(true);
     }
-    public void SetUnitParameters(GameObject unit,Vector3 pos, bool isInArmy)
+    public void SetUnitParameters(GameObject unit,Vector3 pos,Vector3 startCardScale, bool showMore)
     {
+        StartCardScale = startCardScale;
         RelatedUnit = unit;
         ArmyUnitClass RelatedUnitClass = RelatedUnit.GetComponent<ArmyUnitClass>();
         SetSpriteByName(RelatedUnitClass.UnitName);
@@ -44,11 +48,20 @@ public class UnitCardMain : MonoBehaviour
         startCardPos = pos;
         StatText.SetStatText(RelatedUnitClass.FactoryCharacteristics.Characteristics,RelatedUnitClass.CurrentUnitCharacteristics, RelatedUnitClass.unitUpgrades);
         SupplyText.SetSupplyText(RelatedUnitClass.FactoryCharacteristics.UnitSupplyReq);
+        if (showMore) SupplyText.CreateAbilityUI(RelatedUnit.GetComponent<ArmyUnitClass>());
     }
     private void Update()
     {
-        if (IsSelected) transform.position = new Vector3(startCardPos.x, startCardPos.y, startCardPos.z * 0.9f);
-        else transform.position = startCardPos;
+        if (IsSelected)
+        {
+            transform.position = new Vector3(startCardPos.x, startCardPos.y, startCardPos.z * 0.96f);
+            transform.localScale = StartCardScale*1.2f;
+        }
+        else
+        {
+            transform.position = startCardPos;
+            transform.localScale = StartCardScale;
+        }
         
         float detlaTime = Time.deltaTime * 30;
         if (!isMouseOff)
@@ -138,11 +151,13 @@ public class UnitCardMain : MonoBehaviour
     public void selectCard()
     {
         IsSelected = true;
-        UIElements.SetActive(true);
+        //UIElements.SetActive(true);
+        UIOutline.SetActive(true);
     }
     public void deSelectCard()
     {
         IsSelected = false;
         //UIElements.SetActive(false);
+        UIOutline.SetActive(false);
     }
 }

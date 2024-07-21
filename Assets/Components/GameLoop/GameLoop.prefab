@@ -54,25 +54,28 @@ MonoBehaviour:
   Battlefield: {fileID: 0}
   ArmyDeck: {fileID: 0}
   listOfCommonUnits: {fileID: 11400000, guid: 4df28bdcbf64e5241a86717ac39ecdeb, type: 2}
-  YourHero: {fileID: 4566354792725591614, guid: 2132259902ea23648a531edf4119b785,
-    type: 3}
-  EvilHero: {fileID: 4566354792725591614, guid: 2132259902ea23648a531edf4119b785,
-    type: 3}
-  Unit: {fileID: 918958474132185176, guid: bf59c730e343e07429aca668f5e86307, type: 3}
-  UnitCard: {fileID: 5469837566480996917, guid: d12a8ca1ab4c2d04289b0ea6fc21720b,
-    type: 3}
+  PlayerHero: {fileID: 0}
+  EnemyHero: {fileID: 0}
+  StateManager: {fileID: 4306738705462158818}
+  RewardParent: {fileID: 7122453889681228223}
+  PlayerFormation: {fileID: 0}
+  EnemyFormation: {fileID: 0}
+  WorldData: {fileID: 0}
+  MainGame:
+    m_Handle: 0
   HeadText: {fileID: 0}
   BottomText: {fileID: 0}
-  StateManager: {fileID: 4306738705462158818}
   UnitLayer:
     serializedVersion: 2
     m_Bits: 0
   BattlefieldLayer:
     serializedVersion: 2
-    m_Bits: 256
-  CurrentRound: 0
-  RewardParent: {fileID: 7122453889681228223}
+    m_Bits: 0
+  BattlesWon: 0
+  Unit: {fileID: 918958474132185176, guid: bf59c730e343e07429aca668f5e86307, type: 3}
+  UnitCard: {fileID: 5469837566480996917, guid: d12a8ca1ab4c2d04289b0ea6fc21720b, type: 3}
   PreBattleState: {fileID: 5879750598252854110}
+  RewardState: {fileID: 0}
 --- !u!114 &6890867112935168127
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -87,6 +90,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Config: {fileID: 6543516443291923443}
   SelectButton: {fileID: 0}
+  SupplyText: {fileID: 0}
+  SupplyButtons: {fileID: 0}
   NumberOfRewards: 3
   NumberOfCardsToChoose: 5
   leftNumberOfRewards: 0
@@ -134,6 +139,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Config: {fileID: 6543516443291923443}
   StartRoundButton: {fileID: 0}
+  CurrentRound: 0
+  GameOverScreen: {fileID: 0}
+  Score: {fileID: 0}
 --- !u!1 &7122453889681228223
 GameObject:
   m_ObjectHideFlags: 0

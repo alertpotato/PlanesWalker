@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Serialization;
-
-/// <summary>
-/// Все дебафы хранят накладывающие объекты со ссылкой на получателя
-/// </summary>
 [System.Serializable]
 public class UnitCharacteristics
 {
@@ -37,10 +34,10 @@ public struct UnitUpgrades
     }
 }
 
-public struct UnitBuff
+public class UnitBuff
 {
     public UnitCharacteristics Buff; public GameObject BuffParent; public int BuffTurns;
-    UnitBuff(UnitCharacteristics buff, GameObject buffParent, int buffTurns)
+    public UnitBuff(UnitCharacteristics buff, GameObject buffParent, int buffTurns)
     {
         Buff = buff;
         BuffParent = buffParent;
@@ -58,65 +55,126 @@ public class ArmyUnitClass : MonoBehaviour
     public UnitUpgrades unitUpgrades;
     public List<UnitAbility> Abilities;
     public List<UnitBuff> Buffs;
+    public List<AbilityTags> UnitAbilityTags;
     public string UnitName;
     public ListOfCommonUnits UnitFactory;
     public int SupplyMultiplier;
-    public void InitializeUnit(string unitName, Race unitRace, UnitUpgrades upgrades)
+    
+    //-----------Initialization logic
+    public void InitializeUnit(string unitName, UnitUpgrades upgrades)
     {
         FactoryCharacteristics = UnitFactory.UnitList.Find(x => x.UnitType.Equals(unitName));
         UnitName = unitName;
-        unitRace = unitRace;
         List<UnitAbility> UnitAbilities = new List<UnitAbility>();
         foreach (var ability in FactoryCharacteristics.UnitAbilities)
         {
             switch (ability)
             {
-                case global::Abilities.BasicAttack:
-                    UnitAbilities.Add(new UnitBasicAttack()); break;
-                case global::Abilities.Defend: UnitAbilities.Add(new UnitBasicAttack());
-                    break;
+                case global::Abilities.MeleeCombat:
+                    UnitAbilities.Add(new MeleeCombatAbility()); break;
+                case global::Abilities.ArrowVolley:
+                    UnitAbilities.Add(new ArrowVolleyAbility()); break;
+                case global::Abilities.MountedCharge:
+                    UnitAbilities.Add(new MountedChargeAbility()); break;
+                case global::Abilities.CowardlyAttack:
+                    UnitAbilities.Add(new CowardlyAttackAbility()); break;
+                case global::Abilities.SuppressiveFire:
+                    UnitAbilities.Add(new SuppressiveFireAbility()); break;
+                case global::Abilities.KnightlyFeat:
+                    UnitAbilities.Add(new KnightlyFeatAbility()); break;
                 default: throw new Exception($"Ability '{ability.ToString()}' is not in handler!!!");
             }
         }
-        Buffs = new List<UnitBuff>();
-        UnitAbilities.Add(new UnitBasicAttack());
         Abilities = UnitAbilities;
+        //TODO TEMP solution dnt know what to do
+        UpdateUnitTags();
+        Buffs = new List<UnitBuff>();
         //Abilities = DefaultUnitCharacteristics.UnitAbilities;
         SupplyMultiplier = 1;
+        currentUnitEffectiveness = 1;
         unitUpgrades = upgrades;
         
         RebuildCharacteristics();
     }
-
-    public void UpdateSupply(int[] supply)
+    public void RebuildCharacteristics() // Revert to baseline
     {
-        int newSupplyMultiplier = 999;
-        for (int i = 0;i<4;i++ )
+        CurrentUnitCharacteristics = new UnitCharacteristics(FactoryCharacteristics,unitUpgrades, SupplyMultiplier);
+        BaseCharacteristics = new UnitCharacteristics(FactoryCharacteristics, unitUpgrades, Mathf.Clamp(SupplyMultiplier,1,999));
+        currentSquadHealth = CurrentUnitCharacteristics.NumberOfUnits *
+                             CurrentUnitCharacteristics.Health;
+    }
+    //-----------Abilities logic
+    public void InitializeAbilities(Company newCompany,FormationField field,FormationField opposingField)
+    {
+        foreach (var ability in Abilities)
         {
-            if (FactoryCharacteristics.UnitSupplyReq[i]==0) continue;
-            var x = Mathf.CeilToInt(supply[i] / FactoryCharacteristics.UnitSupplyReq[i]);
-            Debug.Log(UnitName+" "+i+"+"+supply[0]+supply[1]+supply[2]+supply[3]+"|"+FactoryCharacteristics.UnitSupplyReq[0]+FactoryCharacteristics.UnitSupplyReq[1]+FactoryCharacteristics.UnitSupplyReq[2]+FactoryCharacteristics.UnitSupplyReq[3]+"|"+x);
-            x = Mathf.Clamp(x, 0, 999);
-            if (x < newSupplyMultiplier) newSupplyMultiplier = x;
-            Debug.Log(newSupplyMultiplier);
+            ability.InitAbility(newCompany,field,opposingField);
         }
-        if (newSupplyMultiplier == 999) newSupplyMultiplier = 0;
-        
-        SupplyMultiplier = newSupplyMultiplier;
-        RebuildCharacteristics();
+    }
+    public void InitializeAbilities(Company newCompany)
+    {
+        foreach (var ability in Abilities)
+        {
+            ability.ChangeCompany(newCompany);
+        }
     }
 
-    public void CheckBuffs()
+    [CanBeNull]
+    public UnitAbility GetPossibleAbility() //used to get ability that would be used by this unit next round
     {
-        //Buffs.FindAll(Buffs => Buffs.BuffTurns).Where(BuffTurns > 0);
- 
+        UnitAbility activeAbility = null;
+        foreach (var ability in Abilities)
+        {
+            if (ability.SelectTargets()) return ability;
+        }
+        return activeAbility;
+    }
+    [CanBeNull]
+    public UnitAbility GetRetaliationAbility(List<AbilityTags> retaliationTags) //used to get ability to retaliate attack
+    {
+        UnitAbility retaliationAbility = null;
+        foreach (var ability in Abilities)
+        {
+            foreach (var tag in retaliationTags)
+            {
+                if (ability.Tags.Contains(tag)) return ability;
+            }
+        }
+        return retaliationAbility;
+    }
+    
+    //-----------Unit stats logic
+    public void OnRoundEnd() //Must be called at the end of the round
+    {
+        currentUnitEffectiveness = 1;
+        CheckBuffs();
+        ApplyBuffs();
+    }
+    public void OnBattleEnd() //Must be called at the end of the battle
+    {
+        currentUnitEffectiveness = 1;
+        Buffs.Clear();
+        RebuildCharacteristics();
+    }
+    //-----------Unit buffs logic
+    private void CheckBuffs()
+    {
+        foreach (var buff in Buffs)
+        {
+            buff.BuffTurns -= 1;
+        }
+        var expiredBuffs = Buffs.Where(bf => bf.BuffTurns <=0).ToList();
+        foreach (var buff in expiredBuffs)
+        {
+            Buffs.Remove(buff);
+        }
     }
     public void ReciveBuffs(List<UnitBuff> buffs)
     {
         Buffs.AddRange(buffs);
     }
 
-    public void ApplyBuffs() // Reverting to baseline and then applying buffs
+    private void ApplyBuffs() // Reverting to baseline and then applying buffs
     {
         var bc = BaseCharacteristics;
         var cur = CurrentUnitCharacteristics;
@@ -136,11 +194,47 @@ public class ArmyUnitClass : MonoBehaviour
             cur.Armour = cur.Armour + buff.Buff.Armour;
         }
     }
-    public void RebuildCharacteristics() // Revert to baseline
+    //-----------Unit stats logic
+    public void UpdateSupply(int[] supply)
     {
-        CurrentUnitCharacteristics = new UnitCharacteristics(FactoryCharacteristics,unitUpgrades, SupplyMultiplier);
-        BaseCharacteristics = new UnitCharacteristics(FactoryCharacteristics, unitUpgrades, Mathf.Clamp(SupplyMultiplier,1,999));
-        currentSquadHealth = CurrentUnitCharacteristics.NumberOfUnits *
-                             CurrentUnitCharacteristics.Health;
+        int newSupplyMultiplier = 999;
+        for (int i = 0;i<4;i++ )
+        {
+            if (FactoryCharacteristics.UnitSupplyReq[i]==0) continue;
+            var x = Mathf.CeilToInt(supply[i] / FactoryCharacteristics.UnitSupplyReq[i]);
+            //Debug.Log(UnitName+" "+i+"+"+supply[0]+supply[1]+supply[2]+supply[3]+"|"+FactoryCharacteristics.UnitSupplyReq[0]+FactoryCharacteristics.UnitSupplyReq[1]+FactoryCharacteristics.UnitSupplyReq[2]+FactoryCharacteristics.UnitSupplyReq[3]+"|"+x);
+            x = Mathf.Clamp(x, 0, 999);
+            if (x < newSupplyMultiplier) newSupplyMultiplier = x;
+            //Debug.Log(newSupplyMultiplier);
+        }
+        if (newSupplyMultiplier == 999) newSupplyMultiplier = 0;
+        
+        SupplyMultiplier = newSupplyMultiplier;
+        RebuildCharacteristics();
+    }
+    public bool TakeDamage((int, int) statsToChange)
+    {
+        bool isAlive = true;
+        currentSquadHealth = statsToChange.Item1;
+        CurrentUnitCharacteristics.NumberOfUnits = statsToChange.Item2;
+        // TODO is it ok? maybe check for NumberOfUnits >0
+        if (currentSquadHealth <= 0) isAlive = false;
+//        Debug.Log($"{UnitName} HP:{currentSquadHealth} N:{CurrentUnitCharacteristics.NumberOfUnits} IA:{isAlive.ToString()}");
+        return isAlive;
+    }
+
+    public void UpdateEffectiveness(int engagedUnits)
+    {
+        // TODO make units get out of the field so that do not happaned
+        if (CurrentUnitCharacteristics.NumberOfUnits>0)
+            currentUnitEffectiveness = Mathf.Clamp(currentUnitEffectiveness - (engagedUnits/CurrentUnitCharacteristics.NumberOfUnits)*0.75f, 0, 1);
+    }
+
+    private void UpdateUnitTags()
+    {
+        foreach (var ability in Abilities)
+        {
+            UnitAbilityTags.AddRange(ability.Tags);
+        }
     }
 }

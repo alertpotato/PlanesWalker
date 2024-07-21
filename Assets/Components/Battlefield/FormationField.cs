@@ -61,7 +61,73 @@ public class FormationField : ScriptableObject
     [Header("Private variables")] 
     public int maxArmyWigth = 5;
     public int maxArmyDepth = 3;
-    
+
+    public void OnRoundEnd() //Must be called at the end of the round
+    {
+        FrontShift();
+        FrontSquash();
+    }
+    public void OnBattleEnd() //Must be called at the end of the battle
+    {
+
+    }
+
+    private void FrontShift() // If first line is empty shift second line forward
+    {
+        var onField = GetOnFieldcompanies();
+        var firstLine = onField.Where(company => company.Banner.Item1 == 0).ToList();
+        var secondLine = onField.Where(company => company.Banner.Item1 == 1).ToList();
+        if (firstLine.Count == 0 && secondLine.Count > 0)
+        {
+            Debug.Log("Front shifted");
+            foreach (var comp in secondLine)
+            {
+                var unit = comp.Unit;
+                var newComp = Formation[0].Line[comp.Banner.Item2];
+                RemoveUnitFromField(unit);
+                newComp.Type = CompanyType.Occupied;
+                newComp.Unit = unit;
+                unit.GetComponent<ArmyUnitClass>().InitializeAbilities(newComp);
+            }
+        }
+    }
+    //TODO Temp stupid solution
+    private void FrontSquash()
+    {
+        var comp1 = Formation[0].Line[1];
+        var comp2 = Formation[0].Line[2];
+        var comp3 = Formation[0].Line[3];
+        if (comp1.Type == CompanyType.Available && comp2.Type == CompanyType.Available &&
+            comp3.Type == CompanyType.Occupied)
+        {
+            var unit = comp3.Unit;
+            RemoveUnitFromField(unit);
+            comp2.Type = CompanyType.Occupied;
+            comp2.Unit = unit;
+            unit.GetComponent<ArmyUnitClass>().InitializeAbilities(comp2);
+        }
+        if (comp1.Type == CompanyType.Occupied && comp2.Type == CompanyType.Available &&
+            comp3.Type == CompanyType.Available)
+        {
+            var unit = comp1.Unit;
+            RemoveUnitFromField(unit);
+            comp2.Type = CompanyType.Occupied;
+            comp2.Unit = unit;
+            unit.GetComponent<ArmyUnitClass>().InitializeAbilities(comp2);
+        }
+    }
+
+    public void RemoveUnitFromField(GameObject unit)
+    {
+        var onField = GetOnFieldcompanies();
+        var comp = onField.Where(un => un.Unit == unit).First();
+        if (comp != null)
+        {
+            comp.Type = CompanyType.Available;
+            comp.Unit = null;
+        }
+    }
+
     public Company GetCompany((int, int) banner)
     {
         var ASD = Formation.SelectMany(formationLine => formationLine.Line).Where(line => line.Banner == banner);
@@ -99,10 +165,7 @@ public class FormationField : ScriptableObject
         {
             Formation[banner.Item1].ChangeUnit(unit, banner.Item2);
             answer = true;
-            foreach (var ability in unit.GetComponent<ArmyUnitClass>().Abilities)
-            {
-                ability.InitAbility(toComp,this,opposingFormation);
-            }
+            unit.GetComponent<ArmyUnitClass>().InitializeAbilities(toComp,this,opposingFormation);
         }
         return answer;
         
@@ -123,7 +186,7 @@ public class FormationField : ScriptableObject
         }
     }
 
-    public void ClearField()
+    public void ClearField() // Clear field from all units
     {
         for (int line = 0; line < maxArmyDepth; line++)
         {
@@ -162,6 +225,18 @@ public class FormationField : ScriptableObject
             foreach (var company in formation.Line)
             {
                 if (company.Type == CompanyType.Occupied) compList.Add(company);
+            }
+        }
+        return compList;
+    }
+    public List<Company> GetAvaliableFields()
+    {
+        List<Company> compList = new List<Company>();
+        foreach (var formation in Formation)
+        {
+            foreach (var company in formation.Line)
+            {
+                if (company.Type == CompanyType.Available) compList.Add(company);
             }
         }
         return compList;
