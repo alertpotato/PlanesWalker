@@ -1,0 +1,5 @@
+|Front|Flank|Support|Reserve|
+
+Front -> Front, mounted units + -> Flanks
+Flanks -> Flanks, or Flanks -> Front, mounted units + -> Support
+archers Support-> Front,Flanks, mounted support -> Flank or ->Front

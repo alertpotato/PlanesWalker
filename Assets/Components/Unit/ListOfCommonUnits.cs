@@ -322,4 +322,5 @@ public class ListOfCommonUnits : ScriptableObject
         int[] e_goblin_skiermisher_s = {1,0,0,0};
         UnitList.Add(new BaseUnitCharacteristics("goblin_skiermisher",Race.Goblin,e_goblin_skiermisher_b,p_goblin_skiermisher_b_stats,6,e_goblin_skiermisher_s,ranged) );
     }
+
 }

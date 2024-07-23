@@ -26,7 +26,7 @@ public class GameLoopRewardState : StateBehaviour
         leftNumberOfRewards = NumberOfRewards;
         isChosing = false;
         SelectButton.SetActive(true);
-        Config.UpdateHelpText("Chosing rewards","Choose cards that would be added to your collection");
+        Config.InterfaceUI.UpdateHelpText("Chosing rewards","Choose cards that would be added to your collection");
         //TODO Make proper supply ui manager
         string newVal = "";
         for (int i = 0; i < 4; i++)
@@ -86,7 +86,7 @@ public class GameLoopRewardState : StateBehaviour
         if (isChosing==false & leftNumberOfRewards == 0)
         {
             SupplyButtons.SetActive(true);
-            Config.UpdateHelpText("Choose 1 supply","<color=\"yellow\">Each unit requires a supply to be able to participate in battle. Keep in mind that each multiple combination of supply increases the number of units in the squad by the same amount.</color>");
+            Config.InterfaceUI.UpdateHelpText("Choose 1 supply","<color=\"yellow\">Each unit requires a supply to be able to participate in battle. Keep in mind that each multiple combination of supply increases the number of units in the squad by the same amount.</color>");
             //ChangeState<GameLoopPreBattleState>();
         }
     }

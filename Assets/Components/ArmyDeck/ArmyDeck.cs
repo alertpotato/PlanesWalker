@@ -8,7 +8,8 @@ public class ArmyDeck : MonoBehaviour
     public List<GameObject> _cards;
     public GameObject yourDeckSpace;
     [SerializeField]private GameObject UnitCard;
-    public void GetArmyHero(Hero hero)
+    
+    public void InitializeDeck(Hero hero)
     {
         if (armyHero == null) { armyHero = hero; }
     }

@@ -85,6 +85,7 @@ public class ArmyUnitClass : MonoBehaviour
                 default: throw new Exception($"Ability '{ability.ToString()}' is not in handler!!!");
             }
         }
+        
         Abilities = UnitAbilities;
         //TODO TEMP solution dnt know what to do
         UpdateUnitTags();

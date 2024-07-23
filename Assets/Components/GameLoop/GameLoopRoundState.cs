@@ -17,7 +17,7 @@ public class GameLoopRoundState : StateBehaviour
     public TextMeshProUGUI Score;
     public override void OnEnter()
     {
-        Config.UpdateHelpText("Battle started!","Defeat your enemies");
+        Config.InterfaceUI.UpdateHelpText("Battle started!","Defeat your enemies");
         StartRoundButton.SetActive(true);
         CurrentRound = 1;
     }
@@ -25,7 +25,7 @@ public class GameLoopRoundState : StateBehaviour
     {
         StartRoundButton.SetActive(false);
         Debug.Log($"Entered round {CurrentRound}!");
-        Config.UpdateHelpText($"Round {CurrentRound}, every army cohesion reduced by {CurrentRound-1}.","Defeat your enemies");
+        Config.InterfaceUI.UpdateHelpText($"Round {CurrentRound}, every army cohesion reduced by {CurrentRound-1}.","Defeat your enemies");
         var Logic = Config.Battlefield.GetComponent<BattlefieldLogic>();
         Logic.Order();
         Logic.ApplyAbilities(this);

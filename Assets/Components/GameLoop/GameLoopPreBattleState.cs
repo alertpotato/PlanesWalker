@@ -14,13 +14,13 @@ public class GameLoopPreBattleState : StateBehaviour
     {
         Config.Battlefield.SetActive(true);
         StartBattleButton.SetActive(true);
-        Config.UpdateHelpText("Pre battle state","Left click on card you want to pick, then left click again on the field. Right click on any field piece to reset.");
+        Config.InterfaceUI.UpdateHelpText("Pre battle state","Left click on card you want to pick, then left click again on the field. Right click on any field piece to reset.");
         // Update unit supply
         UpdateUnitSupplies();
         // Draw deck space
         Config.ArmyDeck.GetComponent<ArmyDeck>().ShowCards();
         // Init field
-        var newField = new List<(int,int)>() { (0,1), (0,2), (0,3), (1,2) };
+        var newField = new Dictionary<FormationType, int> { {FormationType.Frontline,3}, {FormationType.Support,1}, {FormationType.Flank1,1}, {FormationType.Flank2,1}};
         Config.PlayerFormation.RebuildField(newField);
         Config.EnemyFormation.RebuildField(newField);
         // Draw field
@@ -70,23 +70,23 @@ public class GameLoopPreBattleState : StateBehaviour
         {
             unit.GetComponent<ArmyUnitClass>().UpdateSupply(Config.WorldData.PlayerSupply);
         }
-        var rangedUnits = enemyUnits.Where(go => go.GetComponent<ArmyUnitClass>().UnitName == "goblin_skiermisher").ToList();
+        var rangedUnits = enemyUnits.Where(go => go.GetComponent<ArmyUnitClass>().UnitAbilityTags.Contains(AbilityTags.Ranged)).ToList();
         var avaliableSpaces = Config.EnemyFormation.GetAvaliableFields();
-        var secondLine = avaliableSpaces.Where(comp => comp.Banner.Item1 == 1).ToList();
+        var supportLine = avaliableSpaces.Where(comp => comp.Type == FormationType.Support).ToList();
 
         int safeIndex = 0;
         bool rangedToBackLine = true;
         while (rangedToBackLine == true)
         {
-            if (secondLine.Count > 0 && rangedUnits.Count > 0)
+            if (supportLine.Count > 0 && rangedUnits.Count > 0)
             {
-                if (Config.EnemyFormation.AddUnitToFormation(secondLine[0].Banner, rangedUnits[0],
+                if (Config.EnemyFormation.AddUnitToFormation(supportLine[0], rangedUnits[0],
                         Config.PlayerFormation))
                 {
                     enemyUnits.Remove(rangedUnits[0]);
                     rangedUnits.Remove(rangedUnits[0]);
-                    avaliableSpaces.Remove(secondLine[0]);
-                    secondLine.Remove(secondLine[0]);
+                    avaliableSpaces.Remove(supportLine[0]);
+                    supportLine.Remove(supportLine[0]);
                 }
             }
             else rangedToBackLine = false;
@@ -101,7 +101,7 @@ public class GameLoopPreBattleState : StateBehaviour
         {
             if (avaliableSpaces.Count > 0 && enemyUnits.Count > 0)
             {
-                if (Config.EnemyFormation.AddUnitToFormation(avaliableSpaces[0].Banner, enemyUnits[0],
+                if (Config.EnemyFormation.AddUnitToFormation(avaliableSpaces[0], enemyUnits[0],
                         Config.PlayerFormation))
                 {
                     enemyUnits.Remove(enemyUnits[0]);

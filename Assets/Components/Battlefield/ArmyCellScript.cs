@@ -21,10 +21,6 @@ public class ArmyCellScript : MonoBehaviour
         Company = company;
         UI.SetActive(false);
     }
-    public (int,int) GetCompanyBanner()
-    {
-        return (Company.Banner);
-    }
     public void ChangeSprite(Sprite newSprite)
     {
         spriteComponent.sprite = newSprite;

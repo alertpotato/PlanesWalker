@@ -22,7 +22,7 @@ public class BattlefieldLogic : MonoBehaviour
         {
             bool answer = ApplyAbility(ability);
             Battlefield.UpdateField();
-            if (answer) yield return new WaitForSeconds(2); // wait for 2 sec ifability was applied
+            if (answer) yield return new WaitForSeconds(2); // wait for 2 sec if ability was applied
         }
         //Order();
         parent.RoundEnd();
@@ -94,7 +94,6 @@ public class BattlefieldLogic : MonoBehaviour
                     continue;
                 }
             }
-
             if (res.Item4 != -1) 
                 res.Item1.GetComponent<ArmyUnitClass>().UpdateEffectiveness(res.Item4);
         }

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+[RequireComponent(typeof(BattlefieldLogic))]
 public class Battlefield : MonoBehaviour
 {
     [Header("Field Graphics")]
@@ -18,7 +19,16 @@ public class Battlefield : MonoBehaviour
     public BattlefieldLogic logic;
     public FormationField PlayerFormation;
     public FormationField EnemyFormation;
-    
+
+    public void Initialize(Camera camera,FormationField playerFormation,FormationField enemyFormation)
+    {
+        MainCamera = camera;
+        logic = transform.GetComponent<BattlefieldLogic>();
+        logic.Battlefield = this;
+        PlayerFormation = playerFormation;
+        EnemyFormation = enemyFormation;
+    }
+
     private void Start()
     {
         transform.position = new Vector3(0, 0, 8.5f);
@@ -67,49 +77,36 @@ public class Battlefield : MonoBehaviour
         foreach (GameObject cell in cellList)
         {
             var cellscript = cell.GetComponent<ArmyCellScript>();
-            if (cellscript.Company.Type != CompanyType.NotAvailable)
+            cell.transform.position = new Vector3(ScreenPos.x + sine * cellscript.Company.Position * armyCellSpacing, ScreenPos.y - cellscript.Company.Position * armyCellSpacing, transform.position.z);
+            if (cellscript.Company.Unit == null)
             {
-                cell.transform.position = new Vector3(ScreenPos.x + sine * cellscript.Company.Banner.Item1 * armyCellSpacing, ScreenPos.y - cellscript.Company.Banner.Item2 * armyCellSpacing, transform.position.z);
-                //cellArmy.ChangeSprite(UnitSprites.GetIconSpriteByName("notavailable"));
-                //cellArmy.ClearAttack();
-                if (cellscript.Company.Type == CompanyType.Available)
-                {
-                    cellscript.ChangeSprite(UnitSprites.GetIconSpriteByName("available"));
-                    cellscript.ClearAttack();
-                    cellscript.DisableCellText();
-                }
-                else if (cellscript.Company.Type == CompanyType.Occupied)
-                {
-                    cellscript.ChangeSprite(UnitSprites.GetIconSpriteByName(cellscript.Company.Unit.GetComponent<ArmyUnitClass>().UnitName));
-                    cellscript.UpdateCellText();
-                }
+                cellscript.ChangeSprite(UnitSprites.GetIconSpriteByName("available"));
+                cellscript.ClearAttack();
+                cellscript.DisableCellText();
             }
-        }
+            else
+            {
+                cellscript.ChangeSprite(UnitSprites.GetIconSpriteByName(cellscript.Company.Unit.GetComponent<ArmyUnitClass>().UnitName));
+                cellscript.UpdateCellText();
+            }
+    }
     }
     private void InitializeField(FormationField formation,GameObject parent, List<GameObject> cellList)
     {
         cellList.Clear();
-        for (int line = 0; line < formation.Formation.Count; line++)
+        foreach (var comp in formation.Formation)
         {
-            for (int column = 0; column < formation.Formation[line].Line.Count; column++)
-            {
-                Company company = formation.GetCompany((line, column));
-                //if (company.Type != CompanyType.NotAvailable) Debug.Log(parent.gameObject.name+" | "+company+" | "+(line, column));
-                GameObject cell = Instantiate(ArmyFieldCell,parent.transform);
-                cell.GetComponent<ArmyCellScript>().InitializeCell(company);
-                cell.name = $"{formation.FieldOwner.heroName}_{line}_{column}";
-                cellList.Add(cell);
-                if (company.Type == CompanyType.NotAvailable)
-                {
-                    cell.SetActive(false);
-                }
-            }
+            GameObject cell = Instantiate(ArmyFieldCell,parent.transform);
+            cell.GetComponent<ArmyCellScript>().InitializeCell(comp);
+            cell.name = $"{formation.FieldOwner.heroName}_{comp.Type.ToString()}_{comp.Position}";
+            cellList.Add(cell);
         }
     }
 
     public void DestroyField()
     {
-        var tempList = playerFieldList;
+        var tempList = new List<GameObject>();
+        tempList.AddRange(playerFieldList);
         tempList.AddRange(enemyFieldList);
         for (int i = 0; i < tempList.Count(); i++)
         {

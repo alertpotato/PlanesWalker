@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -5,6 +6,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+
 [RequireComponent(typeof(StateBehaviour))]
 [RequireComponent(typeof(GameLoopRewardState))]
 [RequireComponent(typeof(GameLoopPreBattleState))]
@@ -16,21 +18,19 @@ public class GameLoopSharedData : MonoBehaviour
     public SelectManager SelectedUnits;
     public GameObject Battlefield;
     public GameObject ArmyDeck;
-    public ListOfCommonUnits listOfCommonUnits;
-    public GameObject PlayerHero;
-    public GameObject EnemyHero;
     public StateMachine StateManager;
     public GameObject RewardParent;
+    [Header("Data")]
+    public PlayerData WorldData;
+    public ListOfCommonUnits listOfCommonUnits;
+    [Header("Entities")]
+    public GameObject PlayerHero;
+    public GameObject EnemyHero;
     public FormationField PlayerFormation;
     public FormationField EnemyFormation;
-    public PlayerData WorldData;
-    public Scene MainGame;
-    [Header("UI")]
-    public TextMeshProUGUI HeadText;
-    public TextMeshProUGUI BottomText;
+    [Header("UI")] 
+    public SceneInterfaceController InterfaceUI;
     [Header("Variables")]
-    public LayerMask UnitLayer;
-    public LayerMask BattlefieldLayer;
     public int BattlesWon;
     [Header("Prefabs")]
     public GameObject Unit;
@@ -38,28 +38,37 @@ public class GameLoopSharedData : MonoBehaviour
     [Header("States")]
     public GameLoopPreBattleState PreBattleState;
     public GameLoopRewardState RewardState;
-    private void Awake()
+    public GameLoopRoundState RoundState;
+
+    private void OnValidate()
     {
-        Battlefield.SetActive(false);
+        PreBattleState = transform.GetComponent<GameLoopPreBattleState>();
+        RewardState = transform.GetComponent<GameLoopRewardState>();
+        RoundState = transform.GetComponent<GameLoopRoundState>();
+        PreBattleState.Config = this;
+        RewardState.Config = this;
+        RoundState.Config = this;
+        Battlefield.GetComponent<Battlefield>().Initialize(MainCamera,PlayerFormation,EnemyFormation);
     }
+
     private void Start()
     {
+        //Init hero
         PlayerHero.GetComponent<Hero>().modifyHero("Planeswalker", 1, 1);
         EnemyHero.GetComponent<Hero>().modifyHero("Antagonist", 1, 1);
         
         //Init of Formation scriptable objects
         PlayerFormation.InitializeField(PlayerHero.GetComponent<Hero>());
         EnemyFormation.InitializeField(EnemyHero.GetComponent<Hero>());
-        
-        //Battlefield.GetComponent<Battlefield>().InicializeField(PlayerHero.GetComponent<Hero>(), EnemyHero.GetComponent<Hero>());
-        ArmyDeck.GetComponent<ArmyDeck>().GetArmyHero(PlayerHero.GetComponent<Hero>());
+        ArmyDeck.GetComponent<ArmyDeck>().InitializeDeck(PlayerHero.GetComponent<Hero>());
+        Battlefield.GetComponent<Battlefield>().Initialize(MainCamera,PlayerFormation,EnemyFormation);
         
         //Supply
         WorldData.Reset();
         WorldData.AddSupply(0,1);
         WorldData.AddSupply(1,1);
         WorldData.AddSupply(2,1);
-
+        InterfaceUI.UpdateSupply(WorldData.PlayerSupply);
         BattlesWon = 0;
     }
     //TODO .....
@@ -73,15 +82,15 @@ public class GameLoopSharedData : MonoBehaviour
     {
         Ray ray = MainCamera.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, Mathf.Infinity, UnitLayer))
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity))
         {
             SelectedUnits.SelectEntity(hit.collider.gameObject);
         }
         if (StateManager.CurrentState.Equals(PreBattleState))
         {
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity, BattlefieldLayer) & SelectedUnits.IsEntitySelected())
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity) & SelectedUnits.IsEntitySelected())
             {
-                if (PlayerFormation.AddUnitToFormation(hit.collider.gameObject.GetComponent<ArmyCellScript>().GetCompanyBanner(),
+                if (PlayerFormation.AddUnitToFormation(hit.collider.gameObject.GetComponent<ArmyCellScript>().Company,
                         SelectedUnits.SelectedEntity.GetComponent<UnitCardMain>().RelatedUnit,EnemyFormation))
                 {
                     Battlefield.GetComponent<BattlefieldLogic>().Order();
@@ -95,7 +104,7 @@ public class GameLoopSharedData : MonoBehaviour
         {
             Ray ray = MainCamera.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity, BattlefieldLayer))
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity))
             {
                 PlayerFormation.ClearField();
                 Battlefield.GetComponent<BattlefieldLogic>().Order();
@@ -126,11 +135,5 @@ public class GameLoopSharedData : MonoBehaviour
             GameObject newEnemyUnit = InstantiateRandomUnit(race);
             unitOwner.AddBannerList(newEnemyUnit);
         }
-    }
-
-    public void UpdateHelpText(string headText, string bottomText)
-    {
-        HeadText.text = headText;
-        BottomText.text = bottomText;
     }
 }

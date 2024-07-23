@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 [System.Serializable] 
 public enum AbilityTags { Melee, Ranged, MeleeRetaliation, RangedRetaliation, Mounted  };
@@ -9,7 +10,7 @@ public enum Abilities { MeleeCombat, ArrowVolley, MountedCharge, CowardlyAttack,
 public abstract class UnitAbility
 {
     public string AbilityName = "Default ability name";
-    public List<(int,int)> targets = new List<(int,int)>();
+    public List<Company> targets = new List<Company>();
     public List<AbilityTags> Tags = new List<AbilityTags>();
     public List<AbilityTags> RetaliationTags = new List<AbilityTags>();
     public Company UnitCompany;
@@ -20,7 +21,7 @@ public abstract class UnitAbility
     public (int,int,int) GetAbilityImpact()
     {
         //TODO temp solution for targets[0] - figure out what to do here - maybe predifined list?
-        var opposingUnit = OpposingField.Formation[targets[0].Item1].Line[targets[0].Item2];
+        var opposingUnit = targets[0];
         var yourUnit = UnitCompany.Unit.GetComponent<ArmyUnitClass>();
         var enemyUnit = opposingUnit.Unit.GetComponent<ArmyUnitClass>();
         var yourUnitDamage = yourUnit.CurrentUnitCharacteristics.Damage;
@@ -39,10 +40,10 @@ public abstract class UnitAbility
 
         return (calculationResult.Item1,calculationResult.Item2,engagedUnitNumber);
     }
-    public void AssignTargetForRetaliation((int, int) banner)
+    public void AssignTargetForRetaliation(Company comp)
     {
         targets.Clear();
-        targets.Add(banner);
+        targets.Add(comp);
     }
     public void InitAbility(Company unitCompany, FormationField unitField,FormationField opposingField)
     {
@@ -113,12 +114,66 @@ public abstract class UnitAbility
         
         return (newSquadHealth,newNumberOfUnits );
     }
-    public List<(int,int)> GetAbilityTargets()
+    public List<Company> GetAbilityTargets()
     {
-        foreach (var target in targets)
-        {
-            //Debug.Log($"{UnitSquad.Unit.name}({target[0]} {target[1]}) attacks {OpposingHero.ArmyFormation[target[0]].ArmyLine[target[1]].Unit.name}");
-        }
         return targets;
+    }
+
+    public List<Company> GetPossibleTargets()
+    {
+        var onFieldcompanies = OpposingField.GetOnFieldcompanies();
+        List<Company> possibleComp = new List<Company>();
+        if (UnitCompany.Type == FormationType.Frontline)
+        {
+            possibleComp.AddRange(onFieldcompanies.Where(comp => comp.Type==FormationType.Frontline));
+            if (UnitCompany.Unit.GetComponent<ArmyUnitClass>().UnitAbilityTags.Contains(AbilityTags.Mounted))
+            {
+                possibleComp.AddRange(onFieldcompanies.Where(comp => comp.Type==FormationType.Flank1 || comp.Type==FormationType.Flank2));
+            }
+        }
+        
+        else if (UnitCompany.Type == FormationType.Flank1)
+        {
+            possibleComp.AddRange(onFieldcompanies.Where(comp => comp.Type==FormationType.Flank1));
+            if (onFieldcompanies.Where(comp => comp.Type == FormationType.Flank1).Count() == 0)
+            {
+                possibleComp.AddRange(onFieldcompanies.Where(comp => comp.Type==FormationType.Frontline));
+                if (UnitCompany.Unit.GetComponent<ArmyUnitClass>().UnitAbilityTags.Contains(AbilityTags.Mounted))
+                {
+                    possibleComp.AddRange(onFieldcompanies.Where(comp => comp.Type==FormationType.Support));
+                }
+            }
+        }
+        else if (UnitCompany.Type == FormationType.Flank2)
+        {
+            possibleComp.AddRange(onFieldcompanies.Where(comp => comp.Type==FormationType.Flank2));
+            if (onFieldcompanies.Where(comp => comp.Type == FormationType.Flank2).Count() == 0)
+            {
+                possibleComp.AddRange(onFieldcompanies.Where(comp => comp.Type==FormationType.Frontline));
+                if (UnitCompany.Unit.GetComponent<ArmyUnitClass>().UnitAbilityTags.Contains(AbilityTags.Mounted))
+                {
+                    possibleComp.AddRange(onFieldcompanies.Where(comp => comp.Type==FormationType.Support));
+                }
+            }
+        }
+        else if (UnitCompany.Type == FormationType.Support)
+        {
+            if (UnitCompany.Unit.GetComponent<ArmyUnitClass>().UnitAbilityTags.Contains(AbilityTags.Ranged))
+            {
+                possibleComp.AddRange(onFieldcompanies.Where(comp => comp.Type==FormationType.Frontline));
+                possibleComp.AddRange(onFieldcompanies.Where(comp => comp.Type==FormationType.Flank1));
+                possibleComp.AddRange(onFieldcompanies.Where(comp => comp.Type==FormationType.Flank2));
+            }
+            else if (UnitCompany.Unit.GetComponent<ArmyUnitClass>().UnitAbilityTags.Contains(AbilityTags.Mounted))
+            {
+                possibleComp.AddRange(onFieldcompanies.Where(comp => comp.Type==FormationType.Flank1 || comp.Type==FormationType.Flank2));
+                if (onFieldcompanies.Where(comp => comp.Type == FormationType.Flank2).Count() == 0 ||
+                    onFieldcompanies.Where(comp => comp.Type == FormationType.Flank1).Count() == 0)
+                {
+                    possibleComp.AddRange(onFieldcompanies.Where(comp => comp.Type==FormationType.Frontline));
+                }
+            }
+        }
+        return possibleComp;
     }
 }
