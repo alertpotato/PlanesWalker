@@ -13,25 +13,25 @@ MonoBehaviour:
   m_Name: Unit Graphic 2
   m_EditorClassIdentifier: 
   UnitGraphics:
-  - UnitType: militia
+  - UnitType: Militia
     Card: {fileID: 642402666, guid: b88cf9c5962bde44faf0729c4fd6f60e, type: 3}
     BattleIcon: {fileID: 2120849509, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
-  - UnitType: spearman
+  - UnitType: Spearman
     Card: {fileID: 1429790235, guid: b88cf9c5962bde44faf0729c4fd6f60e, type: 3}
     BattleIcon: {fileID: 2081352197, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
-  - UnitType: archer
+  - UnitType: Archer
     Card: {fileID: -1101479294, guid: b88cf9c5962bde44faf0729c4fd6f60e, type: 3}
     BattleIcon: {fileID: 1882734544, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
-  - UnitType: road_bandit
+  - UnitType: Bandits
     Card: {fileID: 412322085, guid: b88cf9c5962bde44faf0729c4fd6f60e, type: 3}
     BattleIcon: {fileID: 1026871330, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
-  - UnitType: mercenaries
+  - UnitType: Mercenaries
     Card: {fileID: 700647249, guid: b88cf9c5962bde44faf0729c4fd6f60e, type: 3}
     BattleIcon: {fileID: -480950132, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
-  - UnitType: hobelar
+  - UnitType: Hobelar
     Card: {fileID: 657396421, guid: b88cf9c5962bde44faf0729c4fd6f60e, type: 3}
     BattleIcon: {fileID: -882399599, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
-  - UnitType: hedge_knight
+  - UnitType: Hedge Knight
     Card: {fileID: 808901960, guid: b88cf9c5962bde44faf0729c4fd6f60e, type: 3}
     BattleIcon: {fileID: 63150407, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
   - UnitType: ogre

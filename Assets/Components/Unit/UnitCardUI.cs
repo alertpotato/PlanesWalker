@@ -22,6 +22,10 @@ public class UnitCardUI : MonoBehaviour
     public TextMeshProUGUI weapon;
     public TextMeshProUGUI coin;
     public TextMeshProUGUI knowledge;
+    [Header("Abilities")] 
+    public GameObject AbilityPrefab;
+    public GameObject VerticalGroup;
+    public OtherGraphic Icons;
 
     public void InitializeUI(ArmyUnitClass unit)
     {
@@ -33,6 +37,14 @@ public class UnitCardUI : MonoBehaviour
         UpdateCard();
         UpdateSupply();
         UpdateStats();
+    }
+    public void CreateAbilityUI()
+    {
+        foreach (var ability in Unit.Abilities)
+        {
+            var newPanel = Instantiate(AbilityPrefab, VerticalGroup.transform);
+            newPanel.GetComponent<AbilityPanelManager>().Initialize(Icons.GetSpriteByName(ability.AbilityName),ability.AbilityName);
+        }
     }
 
     private void UpdateCard()

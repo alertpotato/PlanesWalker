@@ -26,8 +26,6 @@ public class UnitCardMain : MonoBehaviour
     [SerializeField] private Color _newCardColor = new Color(1, 1, 1, 1);
     [SerializeField] private Vector3 _cardMoveDirection = new Vector3(0, 0, -0.1f);
     [SerializeField] private bool isMouseOff = true;
-    [SerializeField] private bool isAttachedToMouse = false;
-    [SerializeField] private LayerMask CardLayer;
 
     private void OnValidate()
     {
@@ -53,10 +51,10 @@ public class UnitCardMain : MonoBehaviour
         startCardPos = pos;
         
         CardUI.UpdateAllUI();
-        //if (showMore) SupplyText.CreateAbilityUI(RelatedUnit.GetComponent<ArmyUnitClass>());
+        if (showMore) CardUI.CreateAbilityUI();
     }
 
-    private void OnUpdate()
+    private void Update()
     {
         float detlaTime = Time.deltaTime * 30;
         if (!isMouseOff)
@@ -65,7 +63,7 @@ public class UnitCardMain : MonoBehaviour
             Ray ray = MainCamera.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             Vector3 startMousePos;
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity, CardLayer))
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity))
             { startMousePos = hit.point;}
             else return;
             float relativeXToMouse = -(transform.position.x - startMousePos.x) / (cardSpriteSize.x / 2);

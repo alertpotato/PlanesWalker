@@ -596,6 +596,7 @@ RectTransform:
   - {fileID: 9141972898503701992}
   - {fileID: 4018717752454230546}
   - {fileID: 5481900019246036609}
+  - {fileID: 1683521027839122315}
   m_Father: {fileID: 5273121110899672772}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1124,6 +1125,7 @@ GameObject:
   - component: {fileID: 7380976899612080127}
   - component: {fileID: 5081028186314948388}
   - component: {fileID: 2201209396677397097}
+  - component: {fileID: 2814657118164825601}
   m_Layer: 0
   m_Name: UnitCard
   m_TagString: Untagged
@@ -1175,10 +1177,6 @@ MonoBehaviour:
   _newCardColor: {r: 1, g: 1, b: 1, a: 1}
   _cardMoveDirection: {x: 0, y: 0, z: -0.1}
   isMouseOff: 1
-  isAttachedToMouse: 0
-  CardLayer:
-    serializedVersion: 2
-    m_Bits: 0
 --- !u!65 &5081028186314948388
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1226,6 +1224,51 @@ MonoBehaviour:
   weapon: {fileID: 6142429277398594407}
   coin: {fileID: 182331636699256890}
   knowledge: {fileID: 3507333868464878522}
+  AbilityPrefab: {fileID: 7206457637190699672, guid: 38304c755c34e56468c6782bb4bea088, type: 3}
+  VerticalGroup: {fileID: 8968032716923553425}
+  Icons: {fileID: 11400000, guid: bca28af3eb0bffb4bb89604fcddbf8a7, type: 2}
+--- !u!114 &2814657118164825601
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4751710123259907381}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16a40ec2adfc88c4abbdfc6e973df2ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Select:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7380976899612080127}
+        m_TargetAssemblyTypeName: UnitCardMain, Assembly-CSharp
+        m_MethodName: selectCard
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  Deselect:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7380976899612080127}
+        m_TargetAssemblyTypeName: UnitCardMain, Assembly-CSharp
+        m_MethodName: deSelectCard
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &5239200060363524368
 GameObject:
   m_ObjectHideFlags: 0
@@ -2252,3 +2295,65 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!1 &8968032716923553425
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1683521027839122315}
+  - component: {fileID: 8735150814222613948}
+  m_Layer: 0
+  m_Name: Abilities
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1683521027839122315
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8968032716923553425}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6143255270763285985}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: -245}
+  m_SizeDelta: {x: 101, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &8735150814222613948
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8968032716923553425}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 1
+  m_Spacing: 0
+  m_ChildForceExpandWidth: 1
+  m_ChildForceExpandHeight: 1
+  m_ChildControlWidth: 0
+  m_ChildControlHeight: 0
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0
