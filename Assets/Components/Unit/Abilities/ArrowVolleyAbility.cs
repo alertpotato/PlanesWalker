@@ -7,7 +7,6 @@ using Random = System.Random;
 [System.Serializable]
 public class ArrowVolleyAbility : UnitAbility
 {
-    public static Abilities UniqueType = Abilities.ArrowVolley;
     public ArrowVolleyAbility()
     {
         AbilityName = "Arrow Volley";
@@ -18,7 +17,7 @@ public class ArrowVolleyAbility : UnitAbility
     public override bool SelectTargets()
     {
         targets.Clear();
-        var onFieldTargetsList = OpposingField.GetOnFieldcompanies();
+        var onFieldTargetsList = GetPossibleTargets();
         //making list of priorities - first will check for mounted units, then for ranged, then others
         List<AbilityTags> cycleOrder = new List<AbilityTags>()
             { AbilityTags.Mounted, AbilityTags.Ranged, AbilityTags.Melee }; 
@@ -36,7 +35,7 @@ public class ArrowVolleyAbility : UnitAbility
             if (possibleUnits.Count > 0)
             {
                 int index = rand.Next(possibleUnits.Count);
-                targets.Add(possibleUnits[index].Banner);
+                targets.Add(possibleUnits[index]);
                 return true;
             }
         }

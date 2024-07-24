@@ -7,7 +7,6 @@ using Random = System.Random;
 [System.Serializable]
 public class SuppressiveFireAbility : UnitAbility
 {
-    public static Abilities UniqueType = Abilities.SuppressiveFire;
     public SuppressiveFireAbility()
     {
         AbilityName = "Suppressive Fire";
@@ -17,17 +16,29 @@ public class SuppressiveFireAbility : UnitAbility
     }
     public override bool SelectTargets()
     {
-        var answer = false;
         targets.Clear();
-        Random rand = new Random();
-        var onFieldTargetsList = OpposingField.GetOnFieldcompanies();
-        //making list of priorities - first will check for mounted units, then for ranged, then others
-        if (onFieldTargetsList.Count > 0)
-        {
-            int index = rand.Next(onFieldTargetsList.Count);
-            targets.Add(onFieldTargetsList[index].Banner);
-            return true;
-        }
+        var onFieldTargetsList = GetPossibleTargets();
+        //making list of priorities - first will check for Melee units, then for Mounted, then others
+        List<AbilityTags> cycleOrder = new List<AbilityTags>()
+            { AbilityTags.Melee,AbilityTags.Mounted, AbilityTags.Ranged }; 
+        bool answer = CycleOrder(onFieldTargetsList, cycleOrder);
         return answer;
+    }
+    private bool CycleOrder(List<Company> onFieldTargetsList,List<AbilityTags> cycleOrder)
+    {
+        Random rand = new Random();
+        foreach (var tag in cycleOrder)
+        {
+            var possibleUnits = onFieldTargetsList
+                .Where(tar => tar.Unit.GetComponent<ArmyUnitClass>().UnitAbilityTags.Contains(tag))
+                .ToList();
+            if (possibleUnits.Count > 0)
+            {
+                int index = rand.Next(possibleUnits.Count);
+                targets.Add(possibleUnits[index]);
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -53,7 +53,7 @@ public class ArmyUnitClass : MonoBehaviour
     public int currentSquadHealth;
     public float currentUnitEffectiveness;
     public UnitUpgrades unitUpgrades;
-    public List<UnitAbility> Abilities;
+    public List<UnitAbility> Abilities = new List<UnitAbility>();
     public List<UnitBuff> Buffs;
     public List<AbilityTags> UnitAbilityTags;
     public string UnitName;
@@ -65,32 +65,13 @@ public class ArmyUnitClass : MonoBehaviour
     {
         FactoryCharacteristics = UnitFactory.UnitList.Find(x => x.UnitType.Equals(unitName));
         UnitName = unitName;
-        List<UnitAbility> UnitAbilities = new List<UnitAbility>();
         foreach (var ability in FactoryCharacteristics.UnitAbilities)
         {
-            switch (ability)
-            {
-                case global::Abilities.MeleeCombat:
-                    UnitAbilities.Add(new MeleeCombatAbility()); break;
-                case global::Abilities.ArrowVolley:
-                    UnitAbilities.Add(new ArrowVolleyAbility()); break;
-                case global::Abilities.MountedCharge:
-                    UnitAbilities.Add(new MountedChargeAbility()); break;
-                case global::Abilities.CowardlyAttack:
-                    UnitAbilities.Add(new CowardlyAttackAbility()); break;
-                case global::Abilities.SuppressiveFire:
-                    UnitAbilities.Add(new SuppressiveFireAbility()); break;
-                case global::Abilities.KnightlyFeat:
-                    UnitAbilities.Add(new KnightlyFeatAbility()); break;
-                default: throw new Exception($"Ability '{ability.ToString()}' is not in handler!!!");
-            }
+            Abilities.Add(ability());
         }
-        
-        Abilities = UnitAbilities;
         //TODO TEMP solution dnt know what to do
         UpdateUnitTags();
         Buffs = new List<UnitBuff>();
-        //Abilities = DefaultUnitCharacteristics.UnitAbilities;
         SupplyMultiplier = 1;
         currentUnitEffectiveness = 1;
         unitUpgrades = upgrades;

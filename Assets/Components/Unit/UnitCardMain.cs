@@ -1,20 +1,18 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
-
+[RequireComponent(typeof(UnitCardUI))]
 public class UnitCardMain : MonoBehaviour
 {
     [Header("Components")]
     public Camera MainCamera;
     public UnitGraphic UnitSprites;
-    public UnitCardStatPanel StatText;
-    public UnitCardSupplyPanel SupplyText;
+    public UnitCardUI CardUI;
     public BoxCollider cardCollider;
     public SpriteRenderer cardSprite;
     public GameObject RelatedUnit;
-    public GameObject UIElements;
-    public GameObject UIOutline;
 
     [Header("Private variables")]
     public bool IsSelected = false;
@@ -28,41 +26,38 @@ public class UnitCardMain : MonoBehaviour
     [SerializeField] private Color _newCardColor = new Color(1, 1, 1, 1);
     [SerializeField] private Vector3 _cardMoveDirection = new Vector3(0, 0, -0.1f);
     [SerializeField] private bool isMouseOff = true;
+    [SerializeField] private bool isAttachedToMouse = false;
     [SerializeField] private LayerMask CardLayer;
+
+    private void OnValidate()
+    {
+        CardUI = transform.GetComponent<UnitCardUI>();
+    }
+
     private void Start()
     {
         _startCardSize = cardSprite.size*2;
         //_approach = 0.1f * (MainCamera.transform.position.z - _startCardPos.z);
-        UIElements.SetActive(true);
-    }
-    public void SetUnitParameters(GameObject unit,Vector3 pos,Vector3 startCardScale, bool showMore)
+    } 
+    public void SetUnitParameters(Camera camera,GameObject unit,Vector3 pos,Vector3 startCardScale, bool showMore)
     {
+        MainCamera = camera;
         StartCardScale = startCardScale;
         RelatedUnit = unit;
         ArmyUnitClass RelatedUnitClass = RelatedUnit.GetComponent<ArmyUnitClass>();
+        CardUI.InitializeUI(RelatedUnitClass);
         SetSpriteByName(RelatedUnitClass.UnitName);
         cardSpriteSize = cardSprite.size;
         cardCollider.size = new Vector3(cardSprite.size.x, cardSprite.size.y, 0.1f);
-        //_cardText.GetComponent<UnitCardText>().ChangeText(RelatedUnitClass.DefaultUnitCharacteristics.Characteristics,RelatedUnitClass.CurrentUnitCharacteristics, RelatedUnitClass.unitUpgrades);
         transform.position = pos;
         startCardPos = pos;
-        StatText.SetStatText(RelatedUnitClass.FactoryCharacteristics.Characteristics,RelatedUnitClass.CurrentUnitCharacteristics, RelatedUnitClass.unitUpgrades);
-        SupplyText.SetSupplyText(RelatedUnitClass.FactoryCharacteristics.UnitSupplyReq);
-        if (showMore) SupplyText.CreateAbilityUI(RelatedUnit.GetComponent<ArmyUnitClass>());
-    }
-    private void Update()
-    {
-        if (IsSelected)
-        {
-            transform.position = new Vector3(startCardPos.x, startCardPos.y, startCardPos.z * 0.96f);
-            transform.localScale = StartCardScale*1.2f;
-        }
-        else
-        {
-            transform.position = startCardPos;
-            transform.localScale = StartCardScale;
-        }
         
+        CardUI.UpdateAllUI();
+        //if (showMore) SupplyText.CreateAbilityUI(RelatedUnit.GetComponent<ArmyUnitClass>());
+    }
+
+    private void OnUpdate()
+    {
         float detlaTime = Time.deltaTime * 30;
         if (!isMouseOff)
         {
@@ -124,8 +119,6 @@ public class UnitCardMain : MonoBehaviour
         //cardCollider.size = new Vector3(cardSprite.size.x, cardSprite.size.y, 0.1f);
         //_cardText.GetComponent<UnitCardText>().HideText();
     }
-    public GameObject GetCardUnit()
-    { return RelatedUnit; }
     //--------------Collider
     public RaycastHit GetRaycastHit()
     {
@@ -147,17 +140,21 @@ public class UnitCardMain : MonoBehaviour
     {
         cardSprite.sprite = UnitSprites.GetCardSpriteByName(spriteName);
     }
-    
+    //=--= Select adapter ivents
     public void selectCard()
     {
         IsSelected = true;
+        transform.position = new Vector3(startCardPos.x, startCardPos.y, startCardPos.z * 0.96f);
+        transform.localScale = StartCardScale*1.2f;
         //UIElements.SetActive(true);
-        UIOutline.SetActive(true);
+        //UIOutline.SetActive(true);
     }
     public void deSelectCard()
     {
         IsSelected = false;
+        transform.position = startCardPos;
+        transform.localScale = StartCardScale;
         //UIElements.SetActive(false);
-        UIOutline.SetActive(false);
+        //UIOutline.SetActive(false);
     }
 }

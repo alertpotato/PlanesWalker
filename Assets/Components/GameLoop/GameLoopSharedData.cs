@@ -40,6 +40,7 @@ public class GameLoopSharedData : MonoBehaviour
     public GameLoopRewardState RewardState;
     public GameLoopRoundState RoundState;
 
+
     private void OnValidate()
     {
         PreBattleState = transform.GetComponent<GameLoopPreBattleState>();
@@ -60,7 +61,8 @@ public class GameLoopSharedData : MonoBehaviour
         //Init of Formation scriptable objects
         PlayerFormation.InitializeField(PlayerHero.GetComponent<Hero>());
         EnemyFormation.InitializeField(EnemyHero.GetComponent<Hero>());
-        ArmyDeck.GetComponent<ArmyDeck>().InitializeDeck(PlayerHero.GetComponent<Hero>());
+        //-----------????
+        //ArmyDeck.GetComponent<ArmyDeck>().InitializeDeck(PlayerHero.GetComponent<Hero>());
         Battlefield.GetComponent<Battlefield>().Initialize(MainCamera,PlayerFormation,EnemyFormation);
         
         //Supply
@@ -112,27 +114,27 @@ public class GameLoopSharedData : MonoBehaviour
         }
         else SelectedUnits.DeSelectEntity();
     }
-
     private void OnRestartGame(InputValue value)
     {
         int currentIndex = SceneManager.GetActiveScene().buildIndex;
         SceneManager.LoadScene(currentIndex);
     }
 
-    public GameObject InstantiateRandomUnit(Race unitRace)
+    public GameObject InstantiateRandomUnit(Race unitRace,GameObject parent)
     {
         var newUnitCharacteristics = listOfCommonUnits.GetRandomUnit(unitRace);
-        GameObject newUnit = Instantiate(Unit,RewardParent.transform);
+        GameObject newUnit = Instantiate(Unit,parent.transform);
         ArmyUnitClass unitClass = newUnit.GetComponent<ArmyUnitClass>();
         unitClass.InitializeUnit(newUnitCharacteristics.Item1,newUnitCharacteristics.Item2);
         newUnit.name = $"{unitClass.UnitName}_{newUnit.GetInstanceID()}";
+        newUnit.transform.position = Vector3.zero;
         return newUnit;
     }
     public void CreateRandomUnits(Hero unitOwner,int number, Race race)
     {
         for (int i = 0; i < number; i++)
         {
-            GameObject newEnemyUnit = InstantiateRandomUnit(race);
+            GameObject newEnemyUnit = InstantiateRandomUnit(race,unitOwner.GameObject());
             unitOwner.AddBannerList(newEnemyUnit);
         }
     }

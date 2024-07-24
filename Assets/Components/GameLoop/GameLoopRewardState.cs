@@ -9,70 +9,27 @@ public class GameLoopRewardState : StateBehaviour
     [Header("Components")]
     public GameLoopSharedData Config;
     public GameObject SelectButton;
-    public TextMeshProUGUI SupplyText;
     public GameObject SupplyButtons;
     [Header("Reward logic")]
     public int NumberOfRewards = 3;
     public int NumberOfCardsToChoose = 5;
-    public int leftNumberOfRewards;
+    public int leftNumberOfRewards = 0;
     
     [Header("Private variables")]
     [SerializeField] private bool isChosing;
-    [SerializeField] private List<GameObject> RewardList;
-    [SerializeField] private List<GameObject> CardList;
-    
+    [SerializeField] private List<GameObject> RewardList = new List<GameObject>();
+    [SerializeField] private List<GameObject> CardList = new List<GameObject>();
+    private void OnValidate()
+    {
+        SelectButton.GetComponent<SelectRewardButton>().SelectedEntity = Config.SelectedUnits;
+    }
     public override void OnEnter()
     {
         leftNumberOfRewards = NumberOfRewards;
         isChosing = false;
         SelectButton.SetActive(true);
+        Config.InterfaceUI.UpdateSupply(Config.WorldData.PlayerSupply);
         Config.InterfaceUI.UpdateHelpText("Chosing rewards","Choose cards that would be added to your collection");
-        //TODO Make proper supply ui manager
-        string newVal = "";
-        for (int i = 0; i < 4; i++)
-        {
-            newVal += Config.WorldData.PlayerSupply[i];
-        }
-        SupplyText.text = newVal;
-    }
-
-    public override void OnExit()
-    {
-        SelectButton.SetActive(false);
-    }
-
-    private void CreateUnits()
-    {
-        RewardList.Clear();
-        for (int i=0; i<NumberOfCardsToChoose; i++)
-        {
-            var newUnit = Config.InstantiateRandomUnit(Race.Human);
-            RewardList.Add(newUnit);
-        }
-        CreateCards();
-    }
-    private void CreateCards()
-    {
-        int i = 0;
-        var rewards = RewardList.Count;
-        foreach (GameObject unit in RewardList)
-        {
-            var pos = Camera.main.ScreenToWorldPoint(new Vector3((Screen.width / (rewards + 1)) * (i + 1), Screen.height/2, 8));
-            GameObject newCard = Instantiate(Config.UnitCard);
-            newCard.name = $"{unit.name}_Card";
-            newCard.transform.SetParent(unit.transform);
-            newCard.GetComponent<UnitCardMain>().SetUnitParameters(unit, pos,Vector3.one*1.1f,true);
-            CardList.Add(newCard);
-            i += 1;
-        }
-        i = 0;
-        foreach (GameObject unit in RewardList)
-        {
-            var pos = Camera.main.ScreenToWorldPoint(new Vector3((Screen.width / (rewards + 1)) * (i + 1),
-                Screen.height / 2, 8));
-            unit.transform.position = pos;
-            i += 1;
-        }
     }
     public override void OnUpdate()
     {
@@ -91,16 +48,42 @@ public class GameLoopRewardState : StateBehaviour
         }
     }
 
+    public override void OnExit()
+    {
+        SelectButton.SetActive(false);
+    }
+
+    private void CreateUnits()
+    {
+        RewardList.Clear();
+        for (int i=0; i<NumberOfCardsToChoose; i++)
+        {
+            var newUnit = Config.InstantiateRandomUnit(Race.Human,Config.RewardParent);
+            RewardList.Add(newUnit);
+        }
+        CreateCards();
+    }
+    private void CreateCards()
+    {
+        int i = 0;
+        var rewards = RewardList.Count;
+        foreach (GameObject unit in RewardList)
+        {
+            var pos = Config.MainCamera.ScreenToWorldPoint(new Vector3((Screen.width / (rewards + 1)) * (i + 1), Screen.height/2, 5)); //z = 5 bc its distance between cards and camera
+            GameObject newCard = Instantiate(Config.UnitCard);
+            newCard.name = $"{unit.name}_Card";
+            newCard.transform.SetParent(unit.transform);
+            newCard.GetComponent<UnitCardMain>().SetUnitParameters(Config.MainCamera,unit, pos,Vector3.one*1.1f,true);
+            CardList.Add(newCard);
+            i += 1;
+        }
+    }
+    
+
     public void GetSupply(int value)
     {
         Config.WorldData.AddSupply(value, 1);
-        //TODO Make proper supply ui manager
-        string newVal = "";
-        for (int i = 0; i < 4; i++)
-        {
-            newVal += Config.WorldData.PlayerSupply[i];
-        }
-        SupplyText.text = newVal;
+        Config.InterfaceUI.UpdateSupply(Config.WorldData.PlayerSupply);
         SupplyButtons.SetActive(false);
         ChangeState<GameLoopPreBattleState>();
     }

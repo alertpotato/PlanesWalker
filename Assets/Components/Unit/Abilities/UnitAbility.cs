@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-[System.Serializable] 
+using AbilityFactory = System.Func<UnitAbility>;
+
+[System.Serializable]
 public enum AbilityTags { Melee, Ranged, MeleeRetaliation, RangedRetaliation, Mounted  };
-[System.Serializable] 
-public enum Abilities { MeleeCombat, ArrowVolley, MountedCharge, CowardlyAttack, SuppressiveFire, KnightlyFeat};
-[Serializable] 
+
+
+[Serializable]
 public abstract class UnitAbility
 {
     public string AbilityName = "Default ability name";

@@ -53,12 +53,12 @@ public class BattlefieldLogic : MonoBehaviour
         var abilityOpposingResult = (-1, -1, -1);
         
         // calculate retaliate damage
-        var opposingCompany = cycleAbility.OpposingField.GetCompany(cycleAbility.targets[0]);
+        var opposingCompany = cycleAbility.targets[0];
         var opposingCompanyAbility = opposingCompany.Unit.GetComponent<ArmyUnitClass>()
             .GetRetaliationAbility(cycleAbility.RetaliationTags);
         if (opposingCompanyAbility != null)
         {
-            opposingCompanyAbility.AssignTargetForRetaliation(cycleAbility.UnitCompany.Banner);
+            opposingCompanyAbility.AssignTargetForRetaliation(cycleAbility.UnitCompany);
             abilityOpposingResult = opposingCompanyAbility.GetAbilityImpact();
         }
         // create list of combat results
@@ -135,7 +135,7 @@ public class BattlefieldLogic : MonoBehaviour
             newUI.GetComponent<AbilityOrderUI>().SetIcons(
                 IconsSprites.GetSpriteByName(ability.AbilityName),
                 UnitSprites.GetIconSpriteByName(ability.UnitCompany.Unit.GetComponent<ArmyUnitClass>().UnitName),
-                UnitSprites.GetIconSpriteByName(ability.OpposingField.Formation[ability.targets[0].Item1].Line[ability.targets[0].Item2].Unit.GetComponent<ArmyUnitClass>().UnitName)
+                UnitSprites.GetIconSpriteByName(ability.targets[0].Unit.GetComponent<ArmyUnitClass>().UnitName)
                 );
             index++;
         }

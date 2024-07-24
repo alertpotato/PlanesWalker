@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Random = System.Random;
 
 [System.Serializable]
 public class MeleeCombatAbility : UnitAbility
 {
-    public static Abilities UniqueType = Abilities.MeleeCombat;
     public MeleeCombatAbility()
     {
         AbilityName = "Melee Combat";
@@ -17,28 +17,22 @@ public class MeleeCombatAbility : UnitAbility
     }
     public override bool SelectTargets()
     {
-        //if (UnitCompany.Unit.GetComponent<ArmyUnitClass>().currentUnitEffectiveness<=0.25) return false;
-        // Check if we are on the fronline
-        (int,int) unitPosition = UnitCompany.Banner;
-        if (unitPosition.Item1 != 0) return false;
-        targets.Clear();
-        // First try to find target infront
-        var opposingUnit = OpposingField.GetCompany(unitPosition);
-        if (opposingUnit?.Type == CompanyType.Occupied)
+        var onFieldTargetsList = GetPossibleTargets();
+        if (onFieldTargetsList.Count > 0)
         {
-            targets.Add(unitPosition);
-            return true;
-        }
-        // If noones infront try to find neigbours
-        List<Company> neigbours = new List<Company>();
-        neigbours.Add(OpposingField.GetCompany((unitPosition.Item1,unitPosition.Item2-1)));
-        neigbours.Add(OpposingField.GetCompany((unitPosition.Item1,unitPosition.Item2+1)));
-        Random rand = new Random();
-        int index = rand.Next(neigbours.Count);
-        if (neigbours[index]?.Type == CompanyType.Occupied)
-        {
-            targets.Add(neigbours[index].Banner);
-            return true;
+            if (onFieldTargetsList.Where(comp => comp.Type == UnitCompany.Type && comp.Position == UnitCompany.Position)
+                    .Count() == 1)
+            {
+                targets.Add(onFieldTargetsList.Where(comp => comp.Type == UnitCompany.Type && comp.Position == UnitCompany.Position).First());
+                return true;
+            }
+            else
+            {
+                Random rand = new Random();
+                int index = rand.Next(onFieldTargetsList.Count);
+                targets.Add(onFieldTargetsList[index]);
+                return true;
+            }
         }
         return false;
     }

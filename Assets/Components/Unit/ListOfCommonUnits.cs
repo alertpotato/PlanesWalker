@@ -24,7 +24,7 @@ public class BaseUnitCharacteristics
     public Race UnitRace;
     public UnitCharacteristics Characteristics;
     //public Abilities UnitAbilities = new Abilities();
-    public List<Abilities> UnitAbilities = new List<Abilities>();
+    public List<Func<UnitAbility>> UnitAbilities = new List<Func<UnitAbility>>();
     public UnitWeightsOfChars NumberOfUnitsUpgrade;
     public UnitWeightsOfChars HealthUpgrade;
     public UnitWeightsOfChars DamageUpgrade;
@@ -47,7 +47,7 @@ public class BaseUnitCharacteristics
         UnitWeight = unitWeight;
         UnitSupplyReq = unitSupplyReq;
     }
-    public BaseUnitCharacteristics(string unitType,Race unitRace,UnitCharacteristics uChar,List<UnitWeightsOfChars> listUnitWeightsOfChars, int unitWeight, int[] unitSupplyReq, List<Abilities> abilities)
+    public BaseUnitCharacteristics(string unitType,Race unitRace,UnitCharacteristics uChar,List<UnitWeightsOfChars> listUnitWeightsOfChars, int unitWeight, int[] unitSupplyReq, List<Func<UnitAbility>> abilities)
     {
         UnitType = unitType;
         UnitRace = unitRace;
@@ -163,19 +163,19 @@ public class ListOfCommonUnits : ScriptableObject
 
         return -1;
     }
-    private void OnEnable()
+    private void OnValidate()
     {
         FillListOfUnitChars();
     }
     private void FillListOfUnitChars()
     {
         //Sets of abilities
-        var melee = new List<Abilities> { Abilities.MeleeCombat };
-        var knight = new List<Abilities> { Abilities.KnightlyFeat, Abilities.MeleeCombat };
-        var merc = new List<Abilities> { Abilities.MeleeCombat,Abilities.SuppressiveFire };
-        var coward = new List<Abilities> {Abilities.CowardlyAttack, Abilities.MeleeCombat };
-        var ranged = new List<Abilities> { Abilities.ArrowVolley,Abilities.MeleeCombat };
-        var mounted = new List<Abilities> { Abilities.MountedCharge,Abilities.MeleeCombat };
+        var melee = new List<Func<UnitAbility>> { () => new MeleeCombatAbility() };
+        var knight = new List<Func<UnitAbility>> { () => new KnightlyFeatAbility(), () => new MeleeCombatAbility()};
+        var merc = new List<Func<UnitAbility>> { () => new MeleeCombatAbility(),() => new SuppressiveFireAbility() };
+        var coward = new List<Func<UnitAbility>> {() => new CowardlyAttackAbility(), () => new MeleeCombatAbility() };
+        var ranged = new List<Func<UnitAbility>> {() => new ArrowVolleyAbility(),() => new MeleeCombatAbility() };
+        var mounted = new List<Func<UnitAbility>> { () => new MountedChargeAbility(),() => new MeleeCombatAbility() };
         // LOOK INTO SAVE LOAD ?
         UnitList.Clear();
         var p_lmilita_b = new UnitCharacteristics(4, 8, 3, 0, 1, 0);

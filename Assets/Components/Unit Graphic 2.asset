@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14fd09677bf1cb34a95ff412a96e08ac, type: 3}
+  m_Name: Unit Graphic 2
+  m_EditorClassIdentifier: 
+  UnitGraphics:
+  - UnitType: militia
+    Card: {fileID: 642402666, guid: b88cf9c5962bde44faf0729c4fd6f60e, type: 3}
+    BattleIcon: {fileID: 2120849509, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+  - UnitType: spearman
+    Card: {fileID: 1429790235, guid: b88cf9c5962bde44faf0729c4fd6f60e, type: 3}
+    BattleIcon: {fileID: 2081352197, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+  - UnitType: archer
+    Card: {fileID: -1101479294, guid: b88cf9c5962bde44faf0729c4fd6f60e, type: 3}
+    BattleIcon: {fileID: 1882734544, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+  - UnitType: road_bandit
+    Card: {fileID: 412322085, guid: b88cf9c5962bde44faf0729c4fd6f60e, type: 3}
+    BattleIcon: {fileID: 1026871330, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+  - UnitType: mercenaries
+    Card: {fileID: 700647249, guid: b88cf9c5962bde44faf0729c4fd6f60e, type: 3}
+    BattleIcon: {fileID: -480950132, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+  - UnitType: hobelar
+    Card: {fileID: 657396421, guid: b88cf9c5962bde44faf0729c4fd6f60e, type: 3}
+    BattleIcon: {fileID: -882399599, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+  - UnitType: hedge_knight
+    Card: {fileID: 808901960, guid: b88cf9c5962bde44faf0729c4fd6f60e, type: 3}
+    BattleIcon: {fileID: 63150407, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+  - UnitType: ogre
+    Card: {fileID: 827792109, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+    BattleIcon: {fileID: 74608049, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+  - UnitType: goblin_militia
+    Card: {fileID: 122455890, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+    BattleIcon: {fileID: -1604203927, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+  - UnitType: goblin_spearman
+    Card: {fileID: -1070660373, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+    BattleIcon: {fileID: 9055929, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+  - UnitType: goblin_skiermisher
+    Card: {fileID: 193465111, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+    BattleIcon: {fileID: 1678730303, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+  - UnitType: available
+    Card: {fileID: 1046290716, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+    BattleIcon: {fileID: -1285038483, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+  - UnitType: notavailable
+    Card: {fileID: -713104645, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+    BattleIcon: {fileID: 1459736435, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
