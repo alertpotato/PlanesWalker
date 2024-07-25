@@ -80,7 +80,7 @@ public class BattlefieldLogic : MonoBehaviour
                 var allcells = new List<GameObject>();
                 allcells.AddRange(Battlefield.playerFieldList);
                 allcells.AddRange(Battlefield.enemyFieldList);
-                var targetCell = allcells.Where(cell => cell.GetComponent<ArmyCellScript>().Company == res.Item5)
+                var targetCell = allcells.Where(cell => cell.GetComponent<OnFieldCompanyManager>().Company == res.Item5)
                     .First();
                 DamageIndicator indicator =
                     Instantiate(DamageIndicator, targetCell.transform.position, Quaternion.identity)

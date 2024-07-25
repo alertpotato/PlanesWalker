@@ -17,7 +17,7 @@ public class GameLoopSharedData : MonoBehaviour
     public Camera MainCamera;
     public SelectManager SelectedUnits;
     public GameObject Battlefield;
-    public GameObject ArmyDeck;
+    public GameObject DeckManager;
     public StateMachine StateManager;
     public GameObject RewardParent;
     [Header("Data")]
@@ -62,7 +62,7 @@ public class GameLoopSharedData : MonoBehaviour
         PlayerFormation.InitializeField(PlayerHero.GetComponent<Hero>());
         EnemyFormation.InitializeField(EnemyHero.GetComponent<Hero>());
         //-----------????
-        //ArmyDeck.GetComponent<ArmyDeck>().InitializeDeck(PlayerHero.GetComponent<Hero>());
+        DeckManager.GetComponent<Deck>().InitializeDeck(PlayerHero.GetComponent<Hero>(),MainCamera,UnitCard);
         Battlefield.GetComponent<Battlefield>().Initialize(MainCamera,PlayerFormation,EnemyFormation);
         
         //Supply
@@ -92,7 +92,7 @@ public class GameLoopSharedData : MonoBehaviour
         {
             if (Physics.Raycast(ray, out hit, Mathf.Infinity) & SelectedUnits.IsEntitySelected())
             {
-                if (PlayerFormation.AddUnitToFormation(hit.collider.gameObject.GetComponent<ArmyCellScript>().Company,
+                if (PlayerFormation.AddUnitToFormation(hit.collider.gameObject.GetComponent<OnFieldCompanyManager>().Company,
                         SelectedUnits.SelectedEntity.GetComponent<UnitCardMain>().RelatedUnit,EnemyFormation))
                 {
                     Battlefield.GetComponent<BattlefieldLogic>().Order();

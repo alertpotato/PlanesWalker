@@ -17,8 +17,11 @@ public class GameLoopPreBattleState : StateBehaviour
         Config.InterfaceUI.UpdateHelpText("Pre battle state","Left click on card you want to pick, then left click again on the field. Right click on any field piece to reset.");
         // Update unit supply
         UpdateUnitSupplies();
+        //TEst
+        Config.CreateRandomUnits(Config.PlayerHero.GetComponent<Hero>(),20,Race.Human);
         // Draw deck space
-        Config.ArmyDeck.GetComponent<ArmyDeck>().ShowCards();
+        Config.DeckManager.SetActive(true);
+        Config.DeckManager.GetComponent<Deck>().RebuildDeck();
         // Init field
         var newField = new Dictionary<FormationType, int> { {FormationType.Frontline,3}, {FormationType.Support,1}, {FormationType.Flank1,1}, {FormationType.Flank2,1}};
         Config.PlayerFormation.RebuildField(newField);
@@ -47,7 +50,7 @@ public class GameLoopPreBattleState : StateBehaviour
     {
         StartBattleButton.SetActive(false);
         // Clean deck space
-        Config.ArmyDeck.GetComponent<ArmyDeck>().WipeCards();
+        Config.DeckManager.GetComponent<Deck>().WipeCards();
     }
     public override void OnUpdate()
     {

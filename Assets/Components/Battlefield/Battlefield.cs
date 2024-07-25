@@ -8,17 +8,21 @@ public class Battlefield : MonoBehaviour
     [Header("Field Graphics")]
     public List<GameObject> playerFieldList = new List<GameObject>();
     public List<GameObject> enemyFieldList = new List<GameObject>();
-    public float armyCellSpacing = 2f;
+    
 
-    [Header("Components")] 
+    [Header("Components")]
     public Camera MainCamera;
-    public GameObject ArmyFieldCell;
-    public GameObject YourHeroField;
-    public GameObject EnemyHeroField;
+    public GameObject OnFieldCompanyPrefab;
     public UnitGraphic UnitSprites;
     public BattlefieldLogic logic;
     public FormationField PlayerFormation;
     public FormationField EnemyFormation;
+    public GameObject PlayerFieldParent;
+    public GameObject EnemyFieldParent;
+    [Header("FieldVars")]
+    public float companySpacing = 0.2f;
+    public float companyHeight = 2f;
+    public float fieldZPos = -1f;
 
     public void Initialize(Camera camera,FormationField playerFormation,FormationField enemyFormation)
     {
@@ -28,15 +32,12 @@ public class Battlefield : MonoBehaviour
         PlayerFormation = playerFormation;
         EnemyFormation = enemyFormation;
     }
-
-    private void Start()
-    {
-        transform.position = new Vector3(0, 0, 8.5f);
-    }
     public void UpdateField()
     {
-        UpdateField(playerFieldList,-1,0.5f);
-        UpdateField(enemyFieldList,1,0.65f);
+        PlayerFieldParent.transform.position = new Vector3(-2, 0, fieldZPos);
+        EnemyFieldParent.transform.position = new Vector3(2, 0, fieldZPos);
+        UpdateField(playerFieldList,-1);
+        UpdateField(enemyFieldList,1);
         /*
         foreach (var ability in logic.AbilitiesOrder)
         {
@@ -62,42 +63,65 @@ public class Battlefield : MonoBehaviour
 
     public void RebuildField(FormationField playerFormation, FormationField enemyFormation)
     {
-        InitializeField(playerFormation, YourHeroField, playerFieldList);
-        InitializeField(enemyFormation, EnemyHeroField, enemyFieldList);
+        InitializeField(playerFormation, playerFieldList,PlayerFieldParent);
+        InitializeField(enemyFormation, enemyFieldList,EnemyFieldParent);
         PlayerFormation = playerFormation;
         EnemyFormation = enemyFormation;
     }
 
-    private void UpdateField(List<GameObject> cellList,float sine,float xMulti)
+    private void UpdateField(List<GameObject> cellList,float sine)
     {
-        float stepFromLeft = (Screen.width * xMulti);
-        float stepFromTop = Screen.height * 0.9f;
-        var ScreenPos = Camera.main.ScreenToWorldPoint(new Vector3(stepFromLeft, stepFromTop, 8) );
+        //calc front width and middle index
+        int frontCount = cellList
+            .Where(x => x.GetComponent<OnFieldCompanyManager>().Company.Type == FormationType.Frontline)
+            .ToList().Count;
+        int middlePosition =(frontCount -1) / 2;
         
-        foreach (GameObject cell in cellList)
+        foreach (GameObject comp in cellList)
         {
-            var cellscript = cell.GetComponent<ArmyCellScript>();
-            cell.transform.position = new Vector3(ScreenPos.x + sine * cellscript.Company.Position * armyCellSpacing, ScreenPos.y - cellscript.Company.Position * armyCellSpacing, transform.position.z);
-            if (cellscript.Company.Unit == null)
-            {
-                cellscript.ChangeSprite(UnitSprites.GetIconSpriteByName("available"));
-                cellscript.ClearAttack();
-                cellscript.DisableCellText();
-            }
-            else
-            {
-                cellscript.ChangeSprite(UnitSprites.GetIconSpriteByName(cellscript.Company.Unit.GetComponent<ArmyUnitClass>().UnitName));
-                cellscript.UpdateCellText();
-            }
+            var compMan = comp.GetComponent<OnFieldCompanyManager>();
+            var truePos = GetTruePosition(compMan,frontCount, middlePosition);
+            //x adjustment for flanks and reserve
+            float stepX = 0;
+            if (compMan.Company.Type == FormationType.Flank1 || compMan.Company.Type == FormationType.Flank2)
+                stepX = companyHeight / 2;
+            if (compMan.Company.Type == FormationType.Support) stepX = companyHeight *1.5f;
+            else if (compMan.Company.Type == FormationType.Reserve) stepX = companyHeight *3.5f;
+            comp.transform.localPosition = new Vector3(stepX*sine,-truePos * (companySpacing+companyHeight),0);
+            //UpdateCompanySprite(compMan);
+        }
     }
+
+    private int GetTruePosition(OnFieldCompanyManager comp,int frontCount, int middlePos)
+    {
+        //Func to make middle of Frontline index = 0, and adjust flanks
+        int truePos = comp.Company.Position - middlePos;
+        if (comp.Company.Type == FormationType.Flank1) truePos = truePos - middlePos;
+        else if (comp.Company.Type == FormationType.Flank2) truePos = truePos + frontCount;
+        return truePos;
     }
-    private void InitializeField(FormationField formation,GameObject parent, List<GameObject> cellList)
+
+    private void UpdateCompanySprite(OnFieldCompanyManager comp)
+    {
+        if (comp.Company.Unit == null)
+        {
+            comp.ChangeSprite(UnitSprites.GetIconSpriteByName("available"));
+            comp.DisableCellText();
+        }
+        else
+        {
+            comp.ChangeSprite(UnitSprites.GetIconSpriteByName(comp.Company.Unit.GetComponent<ArmyUnitClass>().UnitName));
+            comp.UpdateCellText();
+        }
+    }
+
+    private void InitializeField(FormationField formation, List<GameObject> cellList,GameObject parent)
     {
         cellList.Clear();
         foreach (var comp in formation.Formation)
         {
-            GameObject cell = Instantiate(ArmyFieldCell,parent.transform);
-            cell.GetComponent<ArmyCellScript>().InitializeCell(comp);
+            GameObject cell = Instantiate(OnFieldCompanyPrefab,parent.transform);
+            cell.GetComponent<OnFieldCompanyManager>().InitializeCell(comp);
             cell.name = $"{formation.FieldOwner.heroName}_{comp.Type.ToString()}_{comp.Position}";
             cellList.Add(cell);
         }

@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class ArmyCellScript : MonoBehaviour
+public class OnFieldCompanyManager : MonoBehaviour
 {
     public SpriteRenderer spriteComponent;
     public BoxCollider CellCollider;
     public float colliderThickness=0.1f;
     public GameObject UI;
-    public GameObject ui_attack_right;
-    public GameObject ui_attack_left;
     public Company Company;
     public TextMeshProUGUI UnitHealthText;
     public TextMeshProUGUI UnitNumberText;
@@ -53,18 +51,5 @@ public class ArmyCellScript : MonoBehaviour
         if (coh < 0) UnitPowerText.text = $"<color=\"red\">{coh}</color>";
         else if (coh < unit.BaseCharacteristics.Cohesion) UnitPowerText.text = $"<color=\"yellow\">{coh}</color>";
         else UnitPowerText.text = $"<color=\"green\">{coh}</color>";
-    }
-    public void GetAttackedFromRight()
-    {
-        ui_attack_right.SetActive(true);
-    }
-    public void GetAttackedFromLeft()
-    {
-        ui_attack_left.SetActive(true);
-    }
-    public void ClearAttack()
-    {
-        ui_attack_right.SetActive(false);
-        ui_attack_left.SetActive(false);
     }
 }

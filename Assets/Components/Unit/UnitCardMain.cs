@@ -19,10 +19,8 @@ public class UnitCardMain : MonoBehaviour
     [SerializeField] private Vector2 cardSpriteSize;
     [SerializeField] private float _cardMoveMultiplier = 3;
     [SerializeField] private float cardRotateMultiplier = 10;
-    float _approach;
     [SerializeField] private Vector3 startCardPos;
     [SerializeField] private Vector3 StartCardScale;
-    [SerializeField] private Vector2 _startCardSize;
     [SerializeField] private Color _newCardColor = new Color(1, 1, 1, 1);
     [SerializeField] private Vector3 _cardMoveDirection = new Vector3(0, 0, -0.1f);
     [SerializeField] private bool isMouseOff = true;
@@ -32,11 +30,14 @@ public class UnitCardMain : MonoBehaviour
         CardUI = transform.GetComponent<UnitCardUI>();
     }
 
-    private void Start()
+    public void SetNewPosition(Vector3 newPos, Vector3 newScale)
     {
-        _startCardSize = cardSprite.size*2;
-        //_approach = 0.1f * (MainCamera.transform.position.z - _startCardPos.z);
-    } 
+        transform.localPosition = newPos;
+        transform.localScale = newScale;
+        startCardPos = newPos;
+        StartCardScale = newScale;
+    }
+
     public void SetUnitParameters(Camera camera,GameObject unit,Vector3 pos,Vector3 startCardScale, bool showMore)
     {
         MainCamera = camera;
@@ -142,7 +143,7 @@ public class UnitCardMain : MonoBehaviour
     public void selectCard()
     {
         IsSelected = true;
-        transform.position = new Vector3(startCardPos.x, startCardPos.y, startCardPos.z * 0.96f);
+        transform.localPosition = new Vector3(startCardPos.x, startCardPos.y, startCardPos.z * 0.96f);
         transform.localScale = StartCardScale*1.2f;
         //UIElements.SetActive(true);
         //UIOutline.SetActive(true);
@@ -150,7 +151,7 @@ public class UnitCardMain : MonoBehaviour
     public void deSelectCard()
     {
         IsSelected = false;
-        transform.position = startCardPos;
+        transform.localPosition = startCardPos;
         transform.localScale = StartCardScale;
         //UIElements.SetActive(false);
         //UIOutline.SetActive(false);

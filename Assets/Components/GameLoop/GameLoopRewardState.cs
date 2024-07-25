@@ -90,6 +90,7 @@ public class GameLoopRewardState : StateBehaviour
 
     public void AddRewardToHero()
     {
+        if (!Config.SelectedUnits.IsEntitySelected()) return;
         GameObject rewardUnit = Config.SelectedUnits.SelectedEntity.GetComponent<UnitCardMain>().RelatedUnit;
         Config.PlayerHero.GetComponent<Hero>().AddBannerList(rewardUnit);
         rewardUnit.transform.SetParent(Config.PlayerHero.transform);
