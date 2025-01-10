@@ -43,7 +43,7 @@ public class GameLoopRewardState : StateBehaviour
         if (isChosing==false & leftNumberOfRewards == 0)
         {
             SupplyButtons.SetActive(true);
-            Config.InterfaceUI.UpdateHelpText("Choose 1 supply","<color=\"yellow\">Each unit requires a supply to be able to participate in battle. Keep in mind that each multiple combination of supply increases the number of units in the squad by the same amount.</color>");
+            Config.InterfaceUI.UpdateHelpText("Choose 1 additional supply","Each unit requires a supply to be able to participate in battle. Keep in mind that each multiple combination of supply increases the number of units in the squad by the same amount.");
             //ChangeState<GameLoopPreBattleState>();
         }
     }
@@ -73,7 +73,7 @@ public class GameLoopRewardState : StateBehaviour
             GameObject newCard = Instantiate(Config.UnitCard);
             newCard.name = $"{unit.name}_Card";
             newCard.transform.SetParent(unit.transform);
-            newCard.GetComponent<UnitCardMain>().SetUnitParameters(Config.MainCamera,unit, pos,Vector3.one*1.1f,true);
+            newCard.GetComponent<UnitCardMain>().SetUnitParameters(Config.MainCamera,unit, pos,Vector3.one*1.1f,true,10);
             CardList.Add(newCard);
             i += 1;
         }
@@ -106,6 +106,7 @@ public class GameLoopRewardState : StateBehaviour
         isChosing = false;
         CardList.Clear();
         RewardList.Clear();
+        Config.SelectedUnits.DeSelectEntity();
     }
 }
 

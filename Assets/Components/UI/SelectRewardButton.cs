@@ -21,12 +21,12 @@ public class SelectRewardButton : MonoBehaviour
         if (SelectedEntity.IsEntitySelected())
         {
             SelectButton.interactable = true;
-            buttonText.text = "Select card";
+            buttonText.text = "Add card";
         }
         else
         {
             SelectButton.interactable = false;
-            buttonText.text = "";
+            buttonText.text = "Select card";
         }
         
     }

@@ -32,7 +32,7 @@ public class FormationField : ScriptableObject
 
     public void OnRoundEnd() //Must be called at the end of the round
     {
-        //FrontShift();
+        FrontShift();
         //FrontSquash();
     }
     public void OnBattleEnd() //Must be called at the end of the battle
@@ -40,27 +40,34 @@ public class FormationField : ScriptableObject
 
     }
 
-    /*private void FrontShift() // If first line is empty shift second line forward
+    private void FrontShift() // If front line is empty shift flanks or sup or reserve to front line
     {
         var onField = GetOnFieldcompanies();
-        var firstLine = onField.Where(company => company.Banner.Item1 == 0).ToList();
-        var secondLine = onField.Where(company => company.Banner.Item1 == 1).ToList();
-        if (firstLine.Count == 0 && secondLine.Count > 0)
+        var onFieldFront = onField.Where(company => company.Type == FormationType.Frontline).ToList();
+        var onFieldflank = onField.Where(company => company.Type == FormationType.Flank1||company.Type == FormationType.Flank2).ToList();
+        var onFieldSup = onField.Where(company => company.Type == FormationType.Support).ToList();
+        var onFieldRes = onField.Where(company => company.Type == FormationType.Reserve).ToList();
+        var frontComps = Formation.Where(company => company.Type == FormationType.Frontline).ToList();
+        
+        List<Company> compToShift = new List<Company>();
+        if (onFieldflank.Count != 0) compToShift = onFieldflank;
+        else if (onFieldSup.Count != 0) compToShift = onFieldSup;
+        else if (onFieldRes.Count != 0) compToShift = onFieldRes;
+        if (onFieldFront.Count == 0 && compToShift.Count!=0)
         {
-            Debug.Log("Front shifted");
-            foreach (var comp in secondLine)
+            Debug.Log("Front shifting");
+            foreach (var company in frontComps)
             {
-                var unit = comp.Unit;
-                var newComp = Formation[0].Line[comp.Banner.Item2];
-                RemoveUnitFromField(unit);
-                newComp.Type = CompanyType.Occupied;
-                newComp.Unit = unit;
-                unit.GetComponent<ArmyUnitClass>().InitializeAbilities(newComp);
+                company.Unit = compToShift.First().Unit;
+                compToShift.First().Unit = null;
+                compToShift.Remove(compToShift.First());
+                company.Unit.GetComponent<ArmyUnitClass>().InitializeAbilities(company);
+                if (compToShift.Count == 0) break;
             }
         }
     }
     //TODO Temp stupid solution
-    private void FrontSquash()
+    /*private void FrontSquash()
     {
         var comp1 = Formation[0].Line[1];
         var comp2 = Formation[0].Line[2];
@@ -137,7 +144,11 @@ public class FormationField : ScriptableObject
 
     public void ClearField() // Clear field from all units
     {
-        Formation.Clear();
+        var onField = GetOnFieldcompanies();
+        foreach (var comp in onField)
+        {
+            comp.Unit = null;
+        }
     }
 
     public void InitializeField(Hero owner) // Creating field for first time with maxArmyDepth and maxArmyWigth

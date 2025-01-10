@@ -587,7 +587,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1299307518712238843}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -0.01}
   m_LocalScale: {x: 0.010691671, y: 0.010691671, z: 0.010691671}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -625,7 +625,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 30
   m_TargetDisplay: 0
 --- !u!1 &3619513702964398060
 GameObject:
@@ -653,7 +653,7 @@ Transform:
   m_GameObject: {fileID: 3619513702964398060}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -0.001}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -699,7 +699,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 20
   m_Sprite: {fileID: 657396421, guid: b88cf9c5962bde44faf0729c4fd6f60e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -1173,7 +1173,6 @@ MonoBehaviour:
   cardRotateMultiplier: 10
   startCardPos: {x: 0, y: 0, z: 0}
   StartCardScale: {x: 0, y: 0, z: 0}
-  _startCardSize: {x: 0, y: 0}
   _newCardColor: {r: 1, g: 1, b: 1, a: 1}
   _cardMoveDirection: {x: 0, y: 0, z: -0.1}
   isMouseOff: 1
@@ -1211,6 +1210,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Unit: {fileID: 0}
+  Back: {fileID: 2365197052401252841}
+  Image: {fileID: 1100862839307804552}
+  UI: {fileID: 50855272438396926}
   name: {fileID: 7437060153776220201}
   add: {fileID: 5881253176708421401}
   multi: {fileID: 3147229909953689319}
@@ -1881,7 +1883,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 10
   m_Sprite: {fileID: -2123571295, guid: b0e66387f8ad6d24582e617eddbd85c9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

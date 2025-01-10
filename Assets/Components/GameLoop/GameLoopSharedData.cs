@@ -28,6 +28,8 @@ public class GameLoopSharedData : MonoBehaviour
     public GameObject EnemyHero;
     public FormationField PlayerFormation;
     public FormationField EnemyFormation;
+    private GameObject mousedOverUnit;
+    private GameObject unitPreview;
     [Header("UI")] 
     public SceneInterfaceController InterfaceUI;
     [Header("Variables")]
@@ -80,17 +82,58 @@ public class GameLoopSharedData : MonoBehaviour
         RewardState.NumberOfRewards = newNumberOfRewards;
     }
 
-    void OnClick(InputValue value)
+    private void Update()
     {
         Ray ray = MainCamera.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit, Mathf.Infinity))
         {
+        }
+        else
+        {
+            if (mousedOverUnit) {mousedOverUnit = null; Destroy(unitPreview);}
+            return;
+        }
+        
+        if (hit.collider.gameObject.GetComponent<OnFieldCompanyManager>())
+            {
+                GameObject newMousedOverUnit = hit.collider.gameObject.GetComponent<OnFieldCompanyManager>().Company.Unit;
+                if (mousedOverUnit != newMousedOverUnit & newMousedOverUnit)
+                {
+                    Destroy(unitPreview);
+                    mousedOverUnit = newMousedOverUnit;
+                    unitPreview = CreateCard(mousedOverUnit,0.8f,0.5f,3);
+                }
+            }
+        else if (mousedOverUnit) {mousedOverUnit = null; Destroy(unitPreview);}
+    }
+
+    public GameObject CreateCard(GameObject unit,float x, float y,float z)
+    {
+        var pos = MainCamera.ScreenToWorldPoint(new Vector3((Screen.width * x), Screen.height*y, z)); //z = 5 bc its distance between cards and camera
+        GameObject newCard = Instantiate(UnitCard);
+        newCard.name = $"{unit.name}_CardInfo";
+        newCard.transform.SetParent(unit.transform);
+        newCard.GetComponent<UnitCardMain>().SetUnitParameters(MainCamera,unit, pos,Vector3.one,true,61);
+        return newCard;
+    }
+
+    void OnClick(InputValue value)
+    {
+        //TODO Need to redone all of this
+        Ray ray = MainCamera.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+        {
+        }
+        else return;
+        if (hit.collider.gameObject.GetComponent<UnitCardMain>())
+        {
             SelectedUnits.SelectEntity(hit.collider.gameObject);
         }
         if (StateManager.CurrentState.Equals(PreBattleState))
         {
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity) & SelectedUnits.IsEntitySelected())
+            if (hit.collider.gameObject.GetComponent<OnFieldCompanyManager>().Company.Field.FieldOwner==PlayerHero.GetComponent<Hero>() & SelectedUnits.IsEntitySelected())
             {
                 if (PlayerFormation.AddUnitToFormation(hit.collider.gameObject.GetComponent<OnFieldCompanyManager>().Company,
                         SelectedUnits.SelectedEntity.GetComponent<UnitCardMain>().RelatedUnit,EnemyFormation))
@@ -102,14 +145,31 @@ public class GameLoopSharedData : MonoBehaviour
     }
     private void OnAlternateClick(InputValue value)
     {
+        Debug.Log("OnAlternateClick");
         if (StateManager.CurrentState.Equals(PreBattleState))
         {
+            Debug.Log("PreBattleState");
             Ray ray = MainCamera.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+            if (Physics.Raycast(ray, out hit,Mathf.Infinity))
             {
+                Debug.Log("Hit!");
+                if (hit.collider.gameObject.GetComponent<OnFieldCompanyManager>().Company.Field.FieldOwner ==
+                    PlayerHero.GetComponent<Hero>() &&
+                    hit.collider.gameObject.GetComponent<OnFieldCompanyManager>().Company.Unit != null)
+                {
+                    PlayerFormation.RemoveUnitFromField(hit.collider.gameObject.GetComponent<OnFieldCompanyManager>()
+                        .Company.Unit);
+                    Battlefield.GetComponent<Battlefield>().UpdateField();
+                    Battlefield.GetComponent<BattlefieldLogic>().Order();
+                }
+            else
+            {
+                Debug.Log("Else!");
                 PlayerFormation.ClearField();
+                Battlefield.GetComponent<Battlefield>().UpdateField();
                 Battlefield.GetComponent<BattlefieldLogic>().Order();
+            }
             }
         }
         else SelectedUnits.DeSelectEntity();
@@ -132,6 +192,17 @@ public class GameLoopSharedData : MonoBehaviour
     }
     public void CreateRandomUnits(Hero unitOwner,int number, Race race)
     {
+        //Checks
+        if (number <= 0)
+        {
+            Debug.LogError("Number of new units must be greater than 0");
+            return;
+        }
+        else if (number >= 100)
+        {
+            Debug.LogWarning("Are you sure you want THIS much units?");
+        }
+        
         for (int i = 0; i < number; i++)
         {
             GameObject newEnemyUnit = InstantiateRandomUnit(race,unitOwner.GameObject());

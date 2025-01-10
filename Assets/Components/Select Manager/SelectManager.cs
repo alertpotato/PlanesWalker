@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 [CreateAssetMenu]
 public class SelectManager : ScriptableObject
 {
-    public GameObject SelectedEntity;
-    public void Start()
+    public GameObject SelectedEntity = null;
+    public void OnValidate()
     {
         SelectedEntity = null;
     }

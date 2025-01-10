@@ -69,7 +69,7 @@ public class Deck : MonoBehaviour
         foreach (var unit in Hero.bannersList)
         {
             var card = Instantiate(UnitCard,yourDeckSpace.transform);
-            card.GetComponent<UnitCardMain>().SetUnitParameters(MainCamera, unit, Vector3.zero, Vector3.one,false);
+            card.GetComponent<UnitCardMain>().SetUnitParameters(MainCamera, unit, Vector3.zero, Vector3.one,false,10);
             cards.Add(card);
         }
         yourDeckSpace.SetActive(true);

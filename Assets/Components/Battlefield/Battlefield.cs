@@ -22,7 +22,7 @@ public class Battlefield : MonoBehaviour
     [Header("FieldVars")]
     public float companySpacing = 0.2f;
     public float companyHeight = 2f;
-    public float fieldZPos = -1f;
+    public float fieldZPos = -3.5f;
 
     public void Initialize(Camera camera,FormationField playerFormation,FormationField enemyFormation)
     {
@@ -34,8 +34,8 @@ public class Battlefield : MonoBehaviour
     }
     public void UpdateField()
     {
-        PlayerFieldParent.transform.position = new Vector3(-2, 0, fieldZPos);
-        EnemyFieldParent.transform.position = new Vector3(2, 0, fieldZPos);
+        PlayerFieldParent.transform.position = new Vector3(0, -1.5f, fieldZPos);
+        EnemyFieldParent.transform.position = new Vector3(0, 1.5f, fieldZPos);
         UpdateField(playerFieldList,-1);
         UpdateField(enemyFieldList,1);
         /*
@@ -82,13 +82,13 @@ public class Battlefield : MonoBehaviour
             var compMan = comp.GetComponent<OnFieldCompanyManager>();
             var truePos = GetTruePosition(compMan,frontCount, middlePosition);
             //x adjustment for flanks and reserve
-            float stepX = 0;
+            float stepY = 0;
             if (compMan.Company.Type == FormationType.Flank1 || compMan.Company.Type == FormationType.Flank2)
-                stepX = companyHeight / 2;
-            if (compMan.Company.Type == FormationType.Support) stepX = companyHeight *1.5f;
-            else if (compMan.Company.Type == FormationType.Reserve) stepX = companyHeight *3.5f;
-            comp.transform.localPosition = new Vector3(stepX*sine,-truePos * (companySpacing+companyHeight),0);
-            //UpdateCompanySprite(compMan);
+                stepY = companyHeight / 2;
+            if (compMan.Company.Type == FormationType.Support) stepY = companyHeight *1.5f;
+            else if (compMan.Company.Type == FormationType.Reserve) stepY = companyHeight *3.5f;
+            comp.transform.localPosition = new Vector3(-truePos * (companySpacing+companyHeight),stepY*sine,0);
+            UpdateCompanySprite(compMan);
         }
     }
 
@@ -105,12 +105,12 @@ public class Battlefield : MonoBehaviour
     {
         if (comp.Company.Unit == null)
         {
-            comp.ChangeSprite(UnitSprites.GetIconSpriteByName("available"));
+            comp.ChangeSprite(null);
             comp.DisableCellText();
         }
         else
         {
-            comp.ChangeSprite(UnitSprites.GetIconSpriteByName(comp.Company.Unit.GetComponent<ArmyUnitClass>().UnitName));
+            comp.ChangeSprite(UnitSprites.GetCardSpriteByName(comp.Company.Unit.GetComponent<ArmyUnitClass>().UnitName));
             comp.UpdateCellText();
         }
     }
@@ -138,5 +138,15 @@ public class Battlefield : MonoBehaviour
         }
         playerFieldList.Clear();
         enemyFieldList.Clear();
+    }
+
+    public GameObject GetFieldByUnit(GameObject unitToFind)
+    {
+        List<GameObject> allFiedlsList = new List<GameObject>();
+        allFiedlsList.AddRange(playerFieldList);
+        allFiedlsList.AddRange(enemyFieldList);
+        var field = allFiedlsList.Where(field => field.GetComponent<OnFieldCompanyManager>().Company.Unit == unitToFind)
+            .First();
+        return field;
     }
 }

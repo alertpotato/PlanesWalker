@@ -168,7 +168,7 @@ TextureImporter:
         width: 101
         height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -176,6 +176,69 @@ TextureImporter:
       bones: []
       spriteID: c88cfa30aa052cd4e875963747833309
       internalID: -1126414204
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: company_back
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 58
+        width: 210
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6b4edc63328e3764cb72ae72db1fb383
+      internalID: 1945245116
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: company_stats
+      rect:
+        serializedVersion: 2
+        x: 210
+        y: 120
+        width: 64
+        height: 90
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a8a683b14f42cbe4ab944cb12e78526d
+      internalID: 1211615254
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ability_back
+      rect:
+        serializedVersion: 2
+        x: 154
+        y: 209
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e4c4b255240b87e41b4b2d04d11b8bc3
+      internalID: -992130292
       vertices: []
       indices: 
       edges: []
@@ -191,10 +254,13 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
+      ability_back: -992130292
       ability_panel: -1126414204
       card_back: -2123571295
       card_stats: -770728179
       card_supply: 700682774
+      company_back: 1945245116
+      company_stats: 1211615254
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

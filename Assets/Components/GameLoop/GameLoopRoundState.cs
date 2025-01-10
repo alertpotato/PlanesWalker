@@ -14,10 +14,9 @@ public class GameLoopRoundState : StateBehaviour
     public GameObject StartRoundButton;
     public int CurrentRound = 0;
     public GameObject GameOverScreen;
-    public TextMeshProUGUI Score;
     public override void OnEnter()
     {
-        Config.InterfaceUI.UpdateHelpText("Battle started!","Defeat your enemies");
+        Config.InterfaceUI.UpdateHelpText("Battle started!","");
         StartRoundButton.SetActive(true);
         CurrentRound = 1;
     }
@@ -25,13 +24,14 @@ public class GameLoopRoundState : StateBehaviour
     {
         StartRoundButton.SetActive(false);
         Debug.Log($"Entered round {CurrentRound}!");
-        Config.InterfaceUI.UpdateHelpText($"Round {CurrentRound}, every army cohesion reduced by {CurrentRound-1}.","Defeat your enemies");
+        Config.InterfaceUI.UpdateHelpText($"Round {CurrentRound}, every army cohesion reduced by {CurrentRound-1}.","");
         var Logic = Config.Battlefield.GetComponent<BattlefieldLogic>();
         Logic.Order();
         Logic.ApplyAbilities(this);
     }
     public void RoundEnd()
     {
+        Debug.Log($"Round {CurrentRound} ended!");
         // Round ending logic
         CurrentRound += 1;
         TriggerOnFieldUnitsRoundEffects();
@@ -49,7 +49,6 @@ public class GameLoopRoundState : StateBehaviour
         {
             Config.TempRewards();
             Config.BattlesWon += 1;
-            Score.text = $"Battles Won: {Config.BattlesWon}";
             ChangeState<GameLoopRewardState>();
         }
         else if (Config.PlayerFormation.GetOnFieldcompanies().Count==0) StartCoroutine(EndGameScreen());
@@ -58,7 +57,7 @@ public class GameLoopRoundState : StateBehaviour
     IEnumerator EndGameScreen()
     {
         GameOverScreen.SetActive(true);
-        yield return new WaitForSeconds(10);
+        yield return new WaitForSeconds(5);
         int currentIndex = SceneManager.GetActiveScene().buildIndex;
         SceneManager.LoadScene(currentIndex);
     }

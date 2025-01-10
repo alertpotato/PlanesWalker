@@ -5,14 +5,18 @@ using UnityEngine;
 
 public class OnFieldCompanyManager : MonoBehaviour
 {
-    public SpriteRenderer spriteComponent;
-    public BoxCollider CellCollider;
-    public float colliderThickness=0.1f;
-    public GameObject UI;
+    [Header("Components")]
     public Company Company;
-    public TextMeshProUGUI UnitHealthText;
-    public TextMeshProUGUI UnitNumberText;
-    public TextMeshProUGUI UnitPowerText;
+    public SpriteRenderer CompanySprite;
+    public SpriteRenderer AbilitySprite;
+    [Header("UI")]
+    public GameObject UI;
+    public TextMeshProUGUI NumberText;
+    public TextMeshProUGUI HealthText;
+    public TextMeshProUGUI DamageText;
+    public TextMeshProUGUI InitiativeText;
+    public TextMeshProUGUI CohesionText;
+    public TextMeshProUGUI ArmourText;
     
     public void InitializeCell(Company company)
     {
@@ -21,8 +25,7 @@ public class OnFieldCompanyManager : MonoBehaviour
     }
     public void ChangeSprite(Sprite newSprite)
     {
-        spriteComponent.sprite = newSprite;
-        CellCollider.size = new Vector3(spriteComponent.size.x, spriteComponent.size.y, colliderThickness);
+        CompanySprite.sprite = newSprite;
     }
 
     public void DisableCellText()
@@ -33,23 +36,43 @@ public class OnFieldCompanyManager : MonoBehaviour
     public void UpdateCellText()
     {
         UI.SetActive(true);
-        
+        Color green = new Color(0.062f, 0.729f, 0, 1);
+        Color yelow = new Color(0.835f, 0.729f, 0, 1);
         var unit = Company.Unit.GetComponent<ArmyUnitClass>();
         float baseH = unit.BaseCharacteristics.Health * unit.BaseCharacteristics.NumberOfUnits;
         float curH = unit.currentSquadHealth;
-        if (curH / baseH > 0.75f) UnitHealthText.text = $"<color=\"green\">{curH}</color>/{baseH}";
-        else if (curH / baseH > 0.33f) UnitHealthText.text = $"<color=\"yellow\">{curH}</color>/{baseH}";
-        else UnitHealthText.text = $"<color=\"red\">{curH}</color>/{baseH}";
+        var newHColor = ColorUtility.ToHtmlStringRGBA(Color.Lerp(yelow,green, curH / baseH));
+        if (curH/baseH < 0.5f) newHColor =  ColorUtility.ToHtmlStringRGBA(Color.Lerp(Color.red, yelow, curH / baseH));
+        HealthText.text = $"<color=#{newHColor}>{curH}</color>";
 
         float baseN = unit.BaseCharacteristics.NumberOfUnits;
         float curN = unit.CurrentUnitCharacteristics.NumberOfUnits;
-        if (curN / baseN > 0.75f) UnitNumberText.text = $"<color=\"green\">{curN}</color>/{baseN}";
-        else if (curN / baseN > 0.33f) UnitNumberText.text = $"<color=\"yellow\">{curN}</color>/{baseN}";
-        else UnitNumberText.text = $"<color=\"red\">{curN}</color>/{baseN}";
+        var newNColor = ColorUtility.ToHtmlStringRGBA(Color.Lerp(Color.red,green, curN / baseN));
+        NumberText.text = $"<color=#{newNColor}>{curN}</color>";
         
-        var coh = unit.CurrentUnitCharacteristics.Cohesion;
-        if (coh < 0) UnitPowerText.text = $"<color=\"red\">{coh}</color>";
-        else if (coh < unit.BaseCharacteristics.Cohesion) UnitPowerText.text = $"<color=\"yellow\">{coh}</color>";
-        else UnitPowerText.text = $"<color=\"green\">{coh}</color>";
+        float baseD = unit.BaseCharacteristics.Damage;
+        float curD = unit.CurrentUnitCharacteristics.Damage;
+        DamageText.text = $"{curD}/{baseD}";
+        
+        float baseI = unit.BaseCharacteristics.Initiative;
+        float curI = unit.CurrentUnitCharacteristics.Initiative;
+        InitiativeText.text = $"{curI}/{baseI}";
+        
+        float baseC = unit.BaseCharacteristics.Cohesion;
+        float curC = unit.CurrentUnitCharacteristics.Cohesion;
+        string newCColor;
+        if (curC>0) newCColor = ColorUtility.ToHtmlStringRGBA(Color.Lerp(Color.yellow,green, curC / Mathf.Clamp(baseC,5,10)));
+        else if (curC==0) newCColor = ColorUtility.ToHtmlStringRGBA(Color.yellow);
+        else newCColor = ColorUtility.ToHtmlStringRGBA(Color.Lerp(Color.yellow,Color.red, Mathf.Abs(curC) / 10));
+        CohesionText.text = $"<color=#{newCColor}>{curC}</color>";
+        
+        float baseA = unit.BaseCharacteristics.Armour;
+        float curA = unit.CurrentUnitCharacteristics.Armour;
+        ArmourText.text = $"{curA}/{baseA}";
+    }
+
+    public void MouseOverAnswer()
+    {
+        Debug.Log("MouseOverAnswer");
     }
 }

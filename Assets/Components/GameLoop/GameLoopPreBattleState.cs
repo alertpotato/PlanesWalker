@@ -15,10 +15,12 @@ public class GameLoopPreBattleState : StateBehaviour
         Config.Battlefield.SetActive(true);
         StartBattleButton.SetActive(true);
         Config.InterfaceUI.UpdateHelpText("Pre battle state","Left click on card you want to pick, then left click again on the field. Right click on any field piece to reset.");
+        
+        //TEST TEST TEST
+        //Config.CreateRandomUnits(Config.PlayerHero.GetComponent<Hero>(),20,Race.Human);
+        
         // Update unit supply
         UpdateUnitSupplies();
-        //TEst
-        Config.CreateRandomUnits(Config.PlayerHero.GetComponent<Hero>(),20,Race.Human);
         // Draw deck space
         Config.DeckManager.SetActive(true);
         Config.DeckManager.GetComponent<Deck>().RebuildDeck();
@@ -30,7 +32,7 @@ public class GameLoopPreBattleState : StateBehaviour
         Config.Battlefield.GetComponent<Battlefield>().RebuildField(Config.PlayerFormation,Config.EnemyFormation);
         Config.Battlefield.GetComponent<Battlefield>().UpdateField();
         // Create and place enemy units
-        Config.CreateRandomUnits(Config.EnemyHero.GetComponent<Hero>(),4,Race.Goblin);
+        Config.CreateRandomUnits(Config.EnemyHero.GetComponent<Hero>(),3,Race.Goblin);
         EnemyUnitAllocation();
         Config.Battlefield.GetComponent<Battlefield>().UpdateField();
     }

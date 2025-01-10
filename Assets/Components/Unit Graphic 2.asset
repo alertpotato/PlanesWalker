@@ -35,19 +35,19 @@ MonoBehaviour:
     Card: {fileID: 808901960, guid: b88cf9c5962bde44faf0729c4fd6f60e, type: 3}
     BattleIcon: {fileID: 63150407, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
   - UnitType: ogre
-    Card: {fileID: 827792109, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+    Card: {fileID: -949726238, guid: b88cf9c5962bde44faf0729c4fd6f60e, type: 3}
     BattleIcon: {fileID: 74608049, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
   - UnitType: goblin_militia
-    Card: {fileID: 122455890, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+    Card: {fileID: 303679177, guid: b88cf9c5962bde44faf0729c4fd6f60e, type: 3}
     BattleIcon: {fileID: -1604203927, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
   - UnitType: goblin_spearman
-    Card: {fileID: -1070660373, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+    Card: {fileID: 1514971619, guid: b88cf9c5962bde44faf0729c4fd6f60e, type: 3}
     BattleIcon: {fileID: 9055929, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
   - UnitType: goblin_skiermisher
-    Card: {fileID: 193465111, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+    Card: {fileID: -1170997281, guid: b88cf9c5962bde44faf0729c4fd6f60e, type: 3}
     BattleIcon: {fileID: 1678730303, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
   - UnitType: available
-    Card: {fileID: 1046290716, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
+    Card: {fileID: 2112613528, guid: b88cf9c5962bde44faf0729c4fd6f60e, type: 3}
     BattleIcon: {fileID: -1285038483, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}
   - UnitType: notavailable
     Card: {fileID: -713104645, guid: cc95258f01802ff4c8733bea0bbb945c, type: 3}

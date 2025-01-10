@@ -17,6 +17,7 @@ public class MeleeCombatAbility : UnitAbility
     }
     public override bool SelectTargets()
     {
+        targets.Clear();
         var onFieldTargetsList = GetPossibleTargets();
         if (onFieldTargetsList.Count > 0)
         {

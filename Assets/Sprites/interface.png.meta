@@ -475,13 +475,34 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: new_field
+      name: arrow
       rect:
         serializedVersion: 2
-        x: 237
-        y: 278
-        width: 100
-        height: 200
+        x: 0
+        y: 253
+        width: 61
+        height: 17
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 10a9de4861202d04abafd0a240487deb
+      internalID: 1241049637
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: arrow_anim
+      rect:
+        serializedVersion: 2
+        x: 66
+        y: 253
+        width: 28
+        height: 17
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -489,8 +510,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: dca82f65d245ebd4a8e549e49f809456
-      internalID: 594742175
+      spriteID: 0141ade0adfceab40877d97b4f29e7b2
+      internalID: 1746506478
       vertices: []
       indices: 
       edges: []
@@ -506,6 +527,8 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
+      arrow: 1241049637
+      arrow_anim: 1746506478
       buttle_round: -292192525
       button: -862173182
       button_battle: -1888006139

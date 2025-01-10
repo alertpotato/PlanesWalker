@@ -6,6 +6,12 @@ public class UnitCardUI : MonoBehaviour
 {
     [Header("Components")]
     public ArmyUnitClass Unit;
+
+    public SpriteRenderer Back;
+    public SpriteRenderer Image;
+    public Canvas UI;
+    [Header("Variables")] 
+    public int startingOrder;
     [Header("Card")]
     public TextMeshProUGUI name;
     public TextMeshProUGUI add;
@@ -23,6 +29,7 @@ public class UnitCardUI : MonoBehaviour
     public TextMeshProUGUI coin;
     public TextMeshProUGUI knowledge;
     [Header("Abilities")] 
+    public List<GameObject> abilities;
     public GameObject AbilityPrefab;
     public GameObject VerticalGroup;
     public OtherGraphic Icons;
@@ -30,6 +37,10 @@ public class UnitCardUI : MonoBehaviour
     public void InitializeUI(ArmyUnitClass unit)
     {
         Unit = unit;
+        abilities = new List<GameObject>();
+        Back.sortingOrder = startingOrder;
+        Image.sortingOrder = startingOrder+10;
+        UI.sortingOrder = startingOrder+20;
     }
 
     public void UpdateAllUI()
@@ -38,13 +49,47 @@ public class UnitCardUI : MonoBehaviour
         UpdateSupply();
         UpdateStats();
     }
+    public void MoveToFront(bool toMove)
+    {
+        int backOrder = startingOrder;
+        int imageOrder = startingOrder+10;
+        int uiOrder = startingOrder+20;
+        if (toMove)
+        {
+            backOrder = startingOrder+21;
+            imageOrder = startingOrder+31;
+            uiOrder = startingOrder+41;
+        }
+        Back.sortingOrder = backOrder;
+        Image.sortingOrder = imageOrder;
+        UI.sortingOrder = uiOrder;
+    }
+
+    public void ShowAbilityUI()
+    {
+        if (abilities.Count == 0)
+        {
+            CreateAbilityUI();
+        }
+    }
+
     public void CreateAbilityUI()
     {
         foreach (var ability in Unit.Abilities)
         {
             var newPanel = Instantiate(AbilityPrefab, VerticalGroup.transform);
             newPanel.GetComponent<AbilityPanelManager>().Initialize(Icons.GetSpriteByName(ability.AbilityName),ability.AbilityName);
+            abilities.Add(newPanel);
         }
+    }
+
+    public void HideAbilityUI()
+    {
+        foreach (var obj in abilities)
+        {
+            Destroy(obj);
+        }
+        abilities.Clear();
     }
 
     private void UpdateCard()
@@ -68,7 +113,7 @@ public class UnitCardUI : MonoBehaviour
     private void UpdateStats()
     {
         var upgrd = Unit.unitUpgrades;
-        var currentChars = Unit.CurrentUnitCharacteristics;
+        var currentChars = Unit.BaseCharacteristics;
         var defaultChars = Unit.FactoryCharacteristics.Characteristics;
         string nupgrd = ""; string hupgrd = ""; string dupgrd = ""; string iupgrd = ""; string cupgrd = ""; string aupgrd = "";
         nupgrd = AddStars(nupgrd, upgrd.NumberOfUnits);
