@@ -351,7 +351,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Choose cards that would be added to your collection
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8b94a999d0ab04f4fa4fe7e7de7c6cf4, type: 2}
   m_sharedMaterial: {fileID: -6485643793536747048, guid: 8b94a999d0ab04f4fa4fe7e7de7c6cf4, type: 2}
@@ -378,7 +378,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 40.15
+  m_fontSize: 36
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -684,7 +684,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1197611737}
         m_TargetAssemblyTypeName: GameLoopRewardState, Assembly-CSharp
-        m_MethodName: GetSupply
+        m_MethodName: GetStartingSupplyReward
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -751,7 +751,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Chosing rewards
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8b94a999d0ab04f4fa4fe7e7de7c6cf4, type: 2}
   m_sharedMaterial: {fileID: -6485643793536747048, guid: 8b94a999d0ab04f4fa4fe7e7de7c6cf4, type: 2}
@@ -778,7 +778,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 32
+  m_fontSize: 42
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2254,7 +2254,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1197611737}
         m_TargetAssemblyTypeName: GameLoopRewardState, Assembly-CSharp
-        m_MethodName: GetSupply
+        m_MethodName: GetStartingSupplyReward
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2306,6 +2306,7 @@ MonoBehaviour:
   DeckManager: {fileID: 71960004}
   StateManager: {fileID: 1197611739}
   RewardParent: {fileID: 1205300919}
+  RewardFactory: {fileID: 11400000, guid: 94b1e1d2ad697274da5d09512f705b5f, type: 2}
   WorldData: {fileID: 11400000, guid: 89360191cfe903b49835eba6db87e99a, type: 2}
   listOfCommonUnits: {fileID: 11400000, guid: 4df28bdcbf64e5241a86717ac39ecdeb, type: 2}
   PlayerHero: {fileID: 1691416272}
@@ -2365,10 +2366,8 @@ MonoBehaviour:
   Config: {fileID: 1197611734}
   SelectButton: {fileID: 1833295223}
   SupplyButtons: {fileID: 1540212828}
-  NumberOfRewards: 5
-  NumberOfCardsToChoose: 6
-  leftNumberOfRewards: 5
-  isChosing: 0
+  NumberOfCardsToChoose: 4
+  RewardCounter: 0
   RewardList: []
   CardList: []
 --- !u!114 &1197611738
@@ -2491,8 +2490,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Config: {fileID: 1197611734}
-  RewardFactory: {fileID: 11400000, guid: 94b1e1d2ad697274da5d09512f705b5f, type: 2}
-  RewardButton: {fileID: 0}
   DecisionUI: {fileID: 403452021}
   DecisionBox: {fileID: 5158013248809635928, guid: 379d97211df769e49aa49660999c435f, type: 3}
   DecisionWindows: []
@@ -3224,7 +3221,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1197611737}
         m_TargetAssemblyTypeName: GameLoopRewardState, Assembly-CSharp
-        m_MethodName: GetSupply
+        m_MethodName: GetStartingSupplyReward
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3370,19 +3367,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1833295226}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1197611737}
-        m_TargetAssemblyTypeName: GameLoopRewardState, Assembly-CSharp
-        m_MethodName: AddRewardToHero
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!1 &1853465911
 GameObject:
   m_ObjectHideFlags: 0

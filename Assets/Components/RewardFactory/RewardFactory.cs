@@ -1,7 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
+
 [System.Serializable]
 public struct RewardWeightsAndAttributes
 {
@@ -19,9 +22,10 @@ public class RewardFactory : ScriptableObject
 {
     [Tooltip("List of possible rewards and their attributes")]
     public List<RewardWeightsAndAttributes> rewardsWeightsAndAttributes = new List<RewardWeightsAndAttributes>();
-    public PlayerData playerData;
+    public PlayerData PlayerData;
+    public FormationField PlayerField;
     
-    public (List<int>,List<RewardWeightsAndAttributes>) GenerateRewardSet(int numberOfRewards)
+    public (List<(int,int)>,List<RewardWeightsAndAttributes>) GenerateRewardSet(int numberOfRewards)
     {
         //Copy current rewards to work only with that copy
         List<RewardWeightsAndAttributes> rewardsList = new List<RewardWeightsAndAttributes>();
@@ -35,7 +39,7 @@ public class RewardFactory : ScriptableObject
             RegenerateRewards(rewardsList);
         }
         //Generate index list of picked rewards
-        List<int> rewardsIds = new List<int>();
+        List<(int,int)> rewardsIds = new List<(int,int)>();
         for (int r = 0; r < numberOfRewards; r++)
         {
             var localListOfWeights = new int[rewardsList.Count()];
@@ -43,7 +47,8 @@ public class RewardFactory : ScriptableObject
                 { localListOfWeights[i] = rewardsList[i].Weight; }
             int indexOfSelectedReward = WeightFunctions.GetRandomWeightedIndex(localListOfWeights);
             SelectReward(rewardsList, indexOfSelectedReward);
-            rewardsIds.Add(indexOfSelectedReward);
+            int indexOfRewardValue = CalculateReward(rewardsList[indexOfSelectedReward].Name);
+            rewardsIds.Add((indexOfSelectedReward,indexOfRewardValue));
         }
         return (rewardsIds, rewardsList);
     }
@@ -65,14 +70,47 @@ public class RewardFactory : ScriptableObject
         }
     }
 
-    private void SupplyReward()
+    private int CalculateReward(String rewardName)
+    {
+        int reward = 0;
+        if (rewardName == "Supply") reward = SupplyReward();
+        else if (rewardName == "HeroUpgrade") reward = HeroReward();
+        else if (rewardName == "FieldUpgrade") reward = FieldReward();
+        return reward;
+    }
+
+    private int SupplyReward()
     {
         //Hardcoded for 3 supplies now - food, weapon, money; 
         var localListOfWeights = new int[3];
         //Weight of supply is {sum of all supplies-supply}
         for (int i = 0; i < 3; i++)
-        { localListOfWeights[i] = playerData.PlayerSupply.Sum() - playerData.PlayerSupply[i]; }
+        { localListOfWeights[i] = Mathf.Clamp(PlayerData.PlayerSupply.Sum() - PlayerData.PlayerSupply[i],1,999); }
         int indexOfSelectedReward = WeightFunctions.GetRandomWeightedIndex(localListOfWeights);
+        return indexOfSelectedReward;
+    }
+    private int HeroReward()
+    {
+        int reward = Random.Range(0, 1);
+        return reward;
+    }
+    private int FieldReward()
+    {
+        var localListOfWeights = new int[5];
+        // front - flank1 - flank2 - support - reserve
+        var fieldsNum = PlayerField.Formation.Count();
+        var front = PlayerField.Formation.Count(comp => comp.Type == FormationType.Frontline );
+        var flank1 = PlayerField.Formation.Count(comp => comp.Type == FormationType.Flank1 );
+        var flank2 = PlayerField.Formation.Count(comp => comp.Type == FormationType.Flank2 );
+        var support = PlayerField.Formation.Count(comp => comp.Type == FormationType.Support );
+        var reserve = PlayerField.Formation.Count(comp => comp.Type == FormationType.Reserve );
+        localListOfWeights[0] = fieldsNum - front * 2;
+        localListOfWeights[1] = fieldsNum - flank1 * 2;
+        localListOfWeights[2] = fieldsNum - flank2 * 2;
+        localListOfWeights[3] = fieldsNum - support * 2;
+        localListOfWeights[4] = fieldsNum - reserve * 3;
+        int indexOfSelectedReward = WeightFunctions.GetRandomWeightedIndex(localListOfWeights);
+        return indexOfSelectedReward;
     }
 
     private void UnitReward()

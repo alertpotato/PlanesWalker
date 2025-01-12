@@ -142,6 +142,18 @@ public class FormationField : ScriptableObject
         }
     }
 
+    public void CreateNewCompany(FormationType formationType)
+    {
+        var sortedCompanies = from comp in Formation
+            where comp.Type == formationType
+            orderby comp.Position descending
+            select comp;
+        int newPosition;
+        if (sortedCompanies.Count() == 0) newPosition = 0;
+        else newPosition = sortedCompanies.First().Position + 1;
+        Formation.Add(new Company(newPosition,formationType,this));
+    }
+
     public void ClearField() // Clear field from all units
     {
         var onField = GetOnFieldcompanies();

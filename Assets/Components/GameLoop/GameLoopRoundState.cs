@@ -47,7 +47,6 @@ public class GameLoopRoundState : StateBehaviour
     {
         if (Config.EnemyFormation.GetOnFieldcompanies().Count == 0)
         {
-            Config.TempRewards();
             Config.Day += 1;
             ChangeState<GameLoopDecisionState>();
         }

@@ -75,8 +75,8 @@ public class Battlefield : MonoBehaviour
         int frontCount = cellList
             .Where(x => x.GetComponent<OnFieldCompanyManager>().Company.Type == FormationType.Frontline)
             .ToList().Count;
-        int middlePosition =(frontCount -1) / 2;
-        
+        int middlePosition = (frontCount -1) / 2;
+
         foreach (GameObject comp in cellList)
         {
             var compMan = comp.GetComponent<OnFieldCompanyManager>();
@@ -95,8 +95,9 @@ public class Battlefield : MonoBehaviour
     private int GetTruePosition(OnFieldCompanyManager comp,int frontCount, int middlePos)
     {
         //Func to make middle of Frontline index = 0, and adjust flanks
+        
         int truePos = comp.Company.Position - middlePos;
-        if (comp.Company.Type == FormationType.Flank1) truePos = truePos - middlePos;
+        if (comp.Company.Type == FormationType.Flank1) truePos = -middlePos-comp.Company.Position-1;
         else if (comp.Company.Type == FormationType.Flank2) truePos = truePos + frontCount;
         return truePos;
     }

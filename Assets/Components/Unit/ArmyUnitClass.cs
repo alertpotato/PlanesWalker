@@ -125,7 +125,7 @@ public class ArmyUnitClass : MonoBehaviour
         return retaliationAbility;
     }
     
-    //-----------Unit stats logic
+    //-----------Unit battle logic
     public void OnRoundEnd() //Must be called at the end of the round
     {
         currentUnitEffectiveness = 1;
@@ -203,6 +203,18 @@ public class ArmyUnitClass : MonoBehaviour
         if (currentSquadHealth <= 0) isAlive = false;
 //        Debug.Log($"{UnitName} HP:{currentSquadHealth} N:{CurrentUnitCharacteristics.NumberOfUnits} IA:{isAlive.ToString()}");
         return isAlive;
+    }
+    public void UpgradeUnit(UnitUpgrades newUpgrade)
+    {
+        UnitUpgrades NewUpgrades = new UnitUpgrades();
+        NewUpgrades.NumberOfUnits = newUpgrade.NumberOfUnits + unitUpgrades.NumberOfUnits;
+        NewUpgrades.Health = newUpgrade.Health + unitUpgrades.Health;
+        NewUpgrades.Damage = newUpgrade.Damage + unitUpgrades.Damage;
+        NewUpgrades.Initiative = newUpgrade.Initiative + unitUpgrades.Initiative;
+        NewUpgrades.Cohesion = newUpgrade.Cohesion + unitUpgrades.Cohesion;
+        NewUpgrades.Armour = newUpgrade.Armour + unitUpgrades.Armour;
+        unitUpgrades = NewUpgrades;
+        RebuildCharacteristics();
     }
 
     public void UpdateEffectiveness(int engagedUnits)

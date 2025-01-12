@@ -21,6 +21,7 @@ public class GameLoopSharedData : MonoBehaviour
     public GameObject DeckManager;
     public StateMachine StateManager;
     public GameObject RewardParent;
+    public RewardFactory RewardFactory;
     [Header("Data")]
     public PlayerData WorldData;
     public ListOfCommonUnits listOfCommonUnits;
@@ -43,6 +44,8 @@ public class GameLoopSharedData : MonoBehaviour
     public GameLoopRewardState RewardState;
     public GameLoopRoundState RoundState;
     public GameLoopDecisionState DecisionState;
+    [Header("StartingParams")]
+    public Dictionary<FormationType, int> startingField = new Dictionary<FormationType, int> { {FormationType.Frontline,3}, {FormationType.Support,1}, {FormationType.Flank1,1}};
     
     private void OnValidate()
     {
@@ -66,6 +69,9 @@ public class GameLoopSharedData : MonoBehaviour
         //Init of Formation scriptable objects
         PlayerFormation.InitializeField(PlayerHero.GetComponent<Hero>());
         EnemyFormation.InitializeField(EnemyHero.GetComponent<Hero>());
+        // Init field
+        PlayerFormation.RebuildField(startingField);
+        EnemyFormation.RebuildField(startingField);
         //-----------????
         DeckManager.GetComponent<Deck>().InitializeDeck(PlayerHero.GetComponent<Hero>(),MainCamera,UnitCard);
         Battlefield.GetComponent<Battlefield>().Initialize(MainCamera,PlayerFormation,EnemyFormation);
@@ -77,13 +83,12 @@ public class GameLoopSharedData : MonoBehaviour
         WorldData.AddSupply(2,1);
         InterfaceUI.UpdateSupply(WorldData.PlayerSupply);
         Day = 1;
+        //Getting 3 new card at start
+        List<(int, int)> rewards = new List<(int, int)>{(1,0),(1,0),(1,0),(99,0)};
+        var StartingDeck = (rewards,RewardFactory.rewardsWeightsAndAttributes);
+        RewardState.Rewards=StartingDeck;
     }
     //TODO .....
-    public void TempRewards()
-    {
-        int newNumberOfRewards = 1;
-        RewardState.NumberOfRewards = newNumberOfRewards;
-    }
 
     private void Update()
     {
@@ -148,15 +153,12 @@ public class GameLoopSharedData : MonoBehaviour
     }
     private void OnAlternateClick(InputValue value)
     {
-        Debug.Log("OnAlternateClick");
         if (StateManager.CurrentState.Equals(PreBattleState))
         {
-            Debug.Log("PreBattleState");
             Ray ray = MainCamera.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit,Mathf.Infinity))
             {
-                Debug.Log("Hit!");
                 if (hit.collider.gameObject.GetComponent<OnFieldCompanyManager>().Company.Field.FieldOwner ==
                     PlayerHero.GetComponent<Hero>() &&
                     hit.collider.gameObject.GetComponent<OnFieldCompanyManager>().Company.Unit != null)
@@ -168,7 +170,6 @@ public class GameLoopSharedData : MonoBehaviour
                 }
             else
             {
-                Debug.Log("Else!");
                 PlayerFormation.ClearField();
                 Battlefield.GetComponent<Battlefield>().UpdateField();
                 Battlefield.GetComponent<BattlefieldLogic>().Order();

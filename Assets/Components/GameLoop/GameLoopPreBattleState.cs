@@ -24,10 +24,6 @@ public class GameLoopPreBattleState : StateBehaviour
         // Draw deck space
         Config.DeckManager.SetActive(true);
         Config.DeckManager.GetComponent<Deck>().RebuildDeck();
-        // Init field
-        var newField = new Dictionary<FormationType, int> { {FormationType.Frontline,3}, {FormationType.Support,1}, {FormationType.Flank1,1}, {FormationType.Flank2,1}};
-        Config.PlayerFormation.RebuildField(newField);
-        Config.EnemyFormation.RebuildField(newField);
         // Draw field
         Config.Battlefield.GetComponent<Battlefield>().RebuildField(Config.PlayerFormation,Config.EnemyFormation);
         Config.Battlefield.GetComponent<Battlefield>().UpdateField();

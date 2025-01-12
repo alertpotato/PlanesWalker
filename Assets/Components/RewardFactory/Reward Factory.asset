@@ -33,4 +33,5 @@ MonoBehaviour:
     Cost: 2
     Regen: 1
     Weight: 1
-  playerData: {fileID: 11400000, guid: 89360191cfe903b49835eba6db87e99a, type: 2}
+  PlayerData: {fileID: 11400000, guid: 89360191cfe903b49835eba6db87e99a, type: 2}
+  PlayerField: {fileID: 11400000, guid: dd0d51573dc070c43834a05bdc0da80f, type: 2}

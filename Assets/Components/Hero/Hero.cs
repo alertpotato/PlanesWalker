@@ -67,4 +67,10 @@ public class Hero : MonoBehaviour
         bannersList.Add(unit);
         unit.transform.SetParent(transform);
     }
+
+    public void UpgradeHero(int index, int value)
+    {
+        if (index==0) modinit+=value;
+        else if (index == 1) modcoh+=value;
+    }
 }

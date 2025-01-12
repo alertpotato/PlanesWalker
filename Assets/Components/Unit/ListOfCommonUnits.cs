@@ -97,31 +97,34 @@ public class ListOfCommonUnits : ScriptableObject
     public (string, UnitUpgrades) GetRandomUnit(Race unitRace)
     {
         List<BaseUnitCharacteristics> localList = new List<BaseUnitCharacteristics>();
-        foreach (BaseUnitCharacteristics _class in UnitList.FindAll(x => x.UnitRace.Equals(unitRace)))
+        foreach (BaseUnitCharacteristics unit in UnitList.FindAll(x => x.UnitRace.Equals(unitRace)))
         {
-            localList.Add(_class);
+            localList.Add(unit);
         }
         var localUnitWeights = new int[localList.Count];
         for (int i = 0; i < localList.Count; i++) { localUnitWeights[i] = localList[i].UnitWeight;}
         int indexOfSelectedUnit = WeightFunctions.GetRandomWeightedIndex(localUnitWeights);
-
-        var localPointsToRandomize = new int[pointsRandomizerList.Count];
-        for (int i = 0; i < pointsRandomizerList.Count; i++) { localPointsToRandomize[i] = pointsRandomizerList[i].weight; }
-        int indexOfNumberOfPoints = WeightFunctions.GetRandomWeightedIndex(localPointsToRandomize);
-
         
-        UnitUpgrades newUnitUpgrades = GetUnitWithRandomizedStats(localList[indexOfSelectedUnit], pointsRandomizerList[indexOfNumberOfPoints].points);
+        UnitUpgrades newUnitUpgrades = UpgradeUnit(localList[indexOfSelectedUnit], GenerateUpgradePoints());
         return (localList[indexOfSelectedUnit].UnitType, newUnitUpgrades);
     }
 
-    public UnitUpgrades GetUnitWithRandomizedStats(BaseUnitCharacteristics unit,int numberOfPointsToRandomize)
+    public int GenerateUpgradePoints()
+    {
+        var localPointsToRandomize = new int[pointsRandomizerList.Count];
+        for (int i = 0; i < pointsRandomizerList.Count; i++) { localPointsToRandomize[i] = pointsRandomizerList[i].weight; }
+        int indexOfNumberOfPoints = WeightFunctions.GetRandomWeightedIndex(localPointsToRandomize);
+        return pointsRandomizerList[indexOfNumberOfPoints].points;
+    }
+
+    public UnitUpgrades UpgradeUnit(BaseUnitCharacteristics unit,int numberOfPointsToRandomize)
     {
         UnitUpgrades unitUpgrades = new UnitUpgrades();
         List<UnitWeightsOfChars> localWeightsOfChars= new List<UnitWeightsOfChars>
             {unit.NumberOfUnitsUpgrade,unit.HealthUpgrade,unit.DamageUpgrade,unit.InitiativeUpgrade,unit.CohesionUpgrade,unit.ArmourUpgrade };
         var localListOfStatWeights = new int[localWeightsOfChars.Count];
         for (int i = 0; i < localWeightsOfChars.Count; i++) { localListOfStatWeights[i] = localWeightsOfChars[i].Weight; }
-
+        //TODO >0 might not work if you have 1 last point and cheapest upgrade >1
         while (numberOfPointsToRandomize > 0)
         {
             int indexOfStat = WeightFunctions.GetRandomWeightedIndex(localListOfStatWeights);
