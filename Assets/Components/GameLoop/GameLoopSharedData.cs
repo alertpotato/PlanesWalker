@@ -11,6 +11,7 @@ using UnityEngine.SceneManagement;
 [RequireComponent(typeof(GameLoopRewardState))]
 [RequireComponent(typeof(GameLoopPreBattleState))]
 [RequireComponent(typeof(GameLoopRoundState))]
+[RequireComponent(typeof(GameLoopDecisionState))]
 public class GameLoopSharedData : MonoBehaviour
 {
     [Header("Components")]
@@ -33,7 +34,7 @@ public class GameLoopSharedData : MonoBehaviour
     [Header("UI")] 
     public SceneInterfaceController InterfaceUI;
     [Header("Variables")]
-    public int BattlesWon;
+    public int Day = 1;
     [Header("Prefabs")]
     public GameObject Unit;
     public GameObject UnitCard;
@@ -41,16 +42,18 @@ public class GameLoopSharedData : MonoBehaviour
     public GameLoopPreBattleState PreBattleState;
     public GameLoopRewardState RewardState;
     public GameLoopRoundState RoundState;
-
-
+    public GameLoopDecisionState DecisionState;
+    
     private void OnValidate()
     {
         PreBattleState = transform.GetComponent<GameLoopPreBattleState>();
         RewardState = transform.GetComponent<GameLoopRewardState>();
         RoundState = transform.GetComponent<GameLoopRoundState>();
+        DecisionState = transform.GetComponent<GameLoopDecisionState>();
         PreBattleState.Config = this;
         RewardState.Config = this;
         RoundState.Config = this;
+        DecisionState.Config = this;
         Battlefield.GetComponent<Battlefield>().Initialize(MainCamera,PlayerFormation,EnemyFormation);
     }
 
@@ -73,7 +76,7 @@ public class GameLoopSharedData : MonoBehaviour
         WorldData.AddSupply(1,1);
         WorldData.AddSupply(2,1);
         InterfaceUI.UpdateSupply(WorldData.PlayerSupply);
-        BattlesWon = 0;
+        Day = 1;
     }
     //TODO .....
     public void TempRewards()

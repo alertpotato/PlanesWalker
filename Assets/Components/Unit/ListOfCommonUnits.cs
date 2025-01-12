@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
+
 [System.Serializable]
 public enum Race { Human, Goblin };
 [System.Serializable]
@@ -102,11 +103,11 @@ public class ListOfCommonUnits : ScriptableObject
         }
         var localUnitWeights = new int[localList.Count];
         for (int i = 0; i < localList.Count; i++) { localUnitWeights[i] = localList[i].UnitWeight;}
-        int indexOfSelectedUnit = GetRandomWeightedIndex(localUnitWeights);
+        int indexOfSelectedUnit = WeightFunctions.GetRandomWeightedIndex(localUnitWeights);
 
         var localPointsToRandomize = new int[pointsRandomizerList.Count];
         for (int i = 0; i < pointsRandomizerList.Count; i++) { localPointsToRandomize[i] = pointsRandomizerList[i].weight; }
-        int indexOfNumberOfPoints = GetRandomWeightedIndex(localPointsToRandomize);
+        int indexOfNumberOfPoints = WeightFunctions.GetRandomWeightedIndex(localPointsToRandomize);
 
         
         UnitUpgrades newUnitUpgrades = GetUnitWithRandomizedStats(localList[indexOfSelectedUnit], pointsRandomizerList[indexOfNumberOfPoints].points);
@@ -123,7 +124,7 @@ public class ListOfCommonUnits : ScriptableObject
 
         while (numberOfPointsToRandomize > 0)
         {
-            int indexOfStat = GetRandomWeightedIndex(localListOfStatWeights);
+            int indexOfStat = WeightFunctions.GetRandomWeightedIndex(localListOfStatWeights);
             if (numberOfPointsToRandomize - localWeightsOfChars[indexOfStat].Cost >= 0)
             {
                 numberOfPointsToRandomize -= localWeightsOfChars[indexOfStat].Cost;
@@ -137,31 +138,6 @@ public class ListOfCommonUnits : ScriptableObject
             }
         }
         return (unitUpgrades);
-    }
-
-    public int GetRandomWeightedIndex(int[] weights)
-    {
-        if (weights == null || weights.Length == 0) return -1;
-
-        int weightSum = 0;
-        int i;
-        for (i = 0; i < weights.Length; i++)
-        {
-            if (weights[i] >= 0) weightSum += weights[i];
-        }
-
-        float r = Random.value;
-        float s = 0f;
-
-        for (i = 0; i < weights.Length; i++)
-        {
-            if (weights[i] <= 0f) continue;
-
-            s += (float)weights[i] / weightSum;
-            if (s >= r) return i;
-        }
-
-        return -1;
     }
     private void OnValidate()
     {

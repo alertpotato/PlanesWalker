@@ -351,7 +351,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Bottom text
+  m_text: Choose cards that would be added to your collection
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8b94a999d0ab04f4fa4fe7e7de7c6cf4, type: 2}
   m_sharedMaterial: {fileID: -6485643793536747048, guid: 8b94a999d0ab04f4fa4fe7e7de7c6cf4, type: 2}
@@ -378,7 +378,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 42
+  m_fontSize: 40.15
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -751,7 +751,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Head text
+  m_text: Chosing rewards
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8b94a999d0ab04f4fa4fe7e7de7c6cf4, type: 2}
   m_sharedMaterial: {fileID: -6485643793536747048, guid: 8b94a999d0ab04f4fa4fe7e7de7c6cf4, type: 2}
@@ -865,6 +865,68 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &403452021
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 403452022}
+  - component: {fileID: 403452023}
+  m_Layer: 0
+  m_Name: DecisionUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &403452022
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 403452021}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1310654627}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 1800, y: 500}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &403452023
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 403452021}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 4
+  m_Spacing: 0
+  m_ChildForceExpandWidth: 1
+  m_ChildForceExpandHeight: 1
+  m_ChildControlWidth: 0
+  m_ChildControlHeight: 0
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0
 --- !u!1 &413429576
 GameObject:
   m_ObjectHideFlags: 0
@@ -1028,7 +1090,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 8.95
+  m_fontSize: 6.2
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1923,7 +1985,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 5
+  m_text: 0
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8b94a999d0ab04f4fa4fe7e7de7c6cf4, type: 2}
   m_sharedMaterial: {fileID: -6485643793536747048, guid: 8b94a999d0ab04f4fa4fe7e7de7c6cf4, type: 2}
@@ -2217,6 +2279,7 @@ GameObject:
   - component: {fileID: 1197611737}
   - component: {fileID: 1197611736}
   - component: {fileID: 1197611735}
+  - component: {fileID: 1197611742}
   - component: {fileID: 1197611741}
   m_Layer: 0
   m_Name: GameLoop
@@ -2250,12 +2313,13 @@ MonoBehaviour:
   PlayerFormation: {fileID: 11400000, guid: dd0d51573dc070c43834a05bdc0da80f, type: 2}
   EnemyFormation: {fileID: 11400000, guid: 0c828fda739f5b04fbf807c6c8d3d18e, type: 2}
   InterfaceUI: {fileID: 1552274955}
-  BattlesWon: 0
+  Day: 1
   Unit: {fileID: 918958474132185176, guid: bf59c730e343e07429aca668f5e86307, type: 3}
   UnitCard: {fileID: 4751710123259907381, guid: 51782c9719bee9146a71b7e0a3e1d136, type: 3}
   PreBattleState: {fileID: 1197611736}
   RewardState: {fileID: 1197611737}
   RoundState: {fileID: 1197611735}
+  DecisionState: {fileID: 1197611742}
 --- !u!114 &1197611735
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2270,7 +2334,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Config: {fileID: 1197611734}
   StartRoundButton: {fileID: 1205412742}
-  CurrentRound: 0
+  CurrentRound: 1
   GameOverScreen: {fileID: 1284975034}
 --- !u!114 &1197611736
 MonoBehaviour:
@@ -2303,7 +2367,7 @@ MonoBehaviour:
   SupplyButtons: {fileID: 1540212828}
   NumberOfRewards: 5
   NumberOfCardsToChoose: 6
-  leftNumberOfRewards: 3
+  leftNumberOfRewards: 5
   isChosing: 0
   RewardList: []
   CardList: []
@@ -2331,7 +2395,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f952477607a88441f9b40ae56665ec89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _currentState: {fileID: 1197611737}
+  _currentState: {fileID: 1197611742}
 --- !u!4 &1197611740
 Transform:
   m_ObjectHideFlags: 0
@@ -2414,6 +2478,24 @@ MonoBehaviour:
   m_DefaultActionMap: MainControls
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 963194227}
+--- !u!114 &1197611742
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1197611733}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4255a83a893dd8740a4d80d4e79f9af2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Config: {fileID: 1197611734}
+  RewardFactory: {fileID: 11400000, guid: 94b1e1d2ad697274da5d09512f705b5f, type: 2}
+  RewardButton: {fileID: 0}
+  DecisionUI: {fileID: 403452021}
+  DecisionBox: {fileID: 5158013248809635928, guid: 379d97211df769e49aa49660999c435f, type: 3}
+  DecisionWindows: []
 --- !u!1 &1205300919
 GameObject:
   m_ObjectHideFlags: 0
@@ -2703,6 +2785,7 @@ RectTransform:
   - {fileID: 1552274954}
   - {fileID: 1068023631}
   - {fileID: 45804885}
+  - {fileID: 403452022}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -2778,6 +2861,7 @@ MonoBehaviour:
   m_DeselectOnBackgroundClick: 1
   m_PointerBehavior: 0
   m_CursorLockBehavior: 0
+  m_ScrollDeltaPerTick: 6
 --- !u!1 &1504221617
 GameObject:
   m_ObjectHideFlags: 0
@@ -2795,7 +2879,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1504221618
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3356,7 +3440,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 2
+  m_text: 1
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8b94a999d0ab04f4fa4fe7e7de7c6cf4, type: 2}
   m_sharedMaterial: {fileID: -6485643793536747048, guid: 8b94a999d0ab04f4fa4fe7e7de7c6cf4, type: 2}
@@ -3583,7 +3667,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1985989997
 Transform:
   m_ObjectHideFlags: 0
@@ -3735,7 +3819,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 8.95
+  m_fontSize: 8.9
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -3795,5 +3879,5 @@ SceneRoots:
   - {fileID: 1691416271}
   - {fileID: 510261287}
   - {fileID: 1504221620}
-  - {fileID: 1310654627}
   - {fileID: 71960006}
+  - {fileID: 1310654627}

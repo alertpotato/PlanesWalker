@@ -12,7 +12,7 @@ public class GameLoopRoundState : StateBehaviour
 {
     public GameLoopSharedData Config;
     public GameObject StartRoundButton;
-    public int CurrentRound = 0;
+    public int CurrentRound = 1;
     public GameObject GameOverScreen;
     public override void OnEnter()
     {
@@ -48,8 +48,8 @@ public class GameLoopRoundState : StateBehaviour
         if (Config.EnemyFormation.GetOnFieldcompanies().Count == 0)
         {
             Config.TempRewards();
-            Config.BattlesWon += 1;
-            ChangeState<GameLoopRewardState>();
+            Config.Day += 1;
+            ChangeState<GameLoopDecisionState>();
         }
         else if (Config.PlayerFormation.GetOnFieldcompanies().Count==0) StartCoroutine(EndGameScreen());
         else StartRoundButton.SetActive(true);

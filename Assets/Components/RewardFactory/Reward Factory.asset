@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5ebd84f32ae854439b034e122150df6, type: 3}
+  m_Name: Reward Factory
+  m_EditorClassIdentifier: 
+  rewardsWeightsAndAttributes:
+  - Name: Supply
+    Cost: 2
+    Regen: 1
+    Weight: 1
+  - Name: Unit
+    Cost: 2
+    Regen: 2
+    Weight: 3
+  - Name: Upgrade
+    Cost: 1
+    Regen: 1
+    Weight: 1
+  - Name: HeroUpgrade
+    Cost: 3
+    Regen: 1
+    Weight: -2
+  - Name: FieldUpgrade
+    Cost: 2
+    Regen: 1
+    Weight: 1
+  playerData: {fileID: 11400000, guid: 89360191cfe903b49835eba6db87e99a, type: 2}
