@@ -60,7 +60,7 @@ public class RewardFactory : ScriptableObject
         rewardsList[indexOfSelectedReward] = selectedReward;
     }
 
-    private void RegenerateRewards(List<RewardWeightsAndAttributes> rewardsToRegen)
+    public void RegenerateRewards(List<RewardWeightsAndAttributes> rewardsToRegen)
     {
         for (int i = 0; i < rewardsToRegen.Count; i++)
         {
@@ -73,19 +73,19 @@ public class RewardFactory : ScriptableObject
     private int CalculateReward(String rewardName)
     {
         int reward = 0;
-        if (rewardName == "Supply") reward = SupplyReward();
+        if (rewardName == "Supply") reward = SupplyReward(PlayerData.PlayerSupply);
         else if (rewardName == "HeroUpgrade") reward = HeroReward();
         else if (rewardName == "FieldUpgrade") reward = FieldReward();
         return reward;
     }
 
-    private int SupplyReward()
+    public int SupplyReward(int[] supply)
     {
         //Hardcoded for 3 supplies now - food, weapon, money; 
         var localListOfWeights = new int[3];
         //Weight of supply is {sum of all supplies-supply}
         for (int i = 0; i < 3; i++)
-        { localListOfWeights[i] = Mathf.Clamp(PlayerData.PlayerSupply.Sum() - PlayerData.PlayerSupply[i],1,999); }
+        { localListOfWeights[i] = Mathf.Clamp(supply.Sum() - supply[i],1,999); }
         int indexOfSelectedReward = WeightFunctions.GetRandomWeightedIndex(localListOfWeights);
         return indexOfSelectedReward;
     }
@@ -104,11 +104,11 @@ public class RewardFactory : ScriptableObject
         var flank2 = PlayerField.Formation.Count(comp => comp.Type == FormationType.Flank2 );
         var support = PlayerField.Formation.Count(comp => comp.Type == FormationType.Support );
         var reserve = PlayerField.Formation.Count(comp => comp.Type == FormationType.Reserve );
-        localListOfWeights[0] = fieldsNum - front * 2;
+        localListOfWeights[0] = fieldsNum - Mathf.CeilToInt(front * 1.5f);
         localListOfWeights[1] = fieldsNum - flank1 * 2;
         localListOfWeights[2] = fieldsNum - flank2 * 2;
         localListOfWeights[3] = fieldsNum - support * 2;
-        localListOfWeights[4] = fieldsNum - reserve * 3;
+        localListOfWeights[4] = fieldsNum - reserve * 6;
         int indexOfSelectedReward = WeightFunctions.GetRandomWeightedIndex(localListOfWeights);
         return indexOfSelectedReward;
     }
@@ -141,10 +141,10 @@ public class RewardFactory : ScriptableObject
         var UpgradeReward = new RewardWeightsAndAttributes("Upgrade",1,1,1);
         rewardsWeightsAndAttributes.Add(UpgradeReward);
         
-        var HeroUpgradeReward = new RewardWeightsAndAttributes("HeroUpgrade",3,1,-2);
+        var HeroUpgradeReward = new RewardWeightsAndAttributes("HeroUpgrade",4,1,-2);
         rewardsWeightsAndAttributes.Add(HeroUpgradeReward);
         
-        var FieldUpgradeReward = new RewardWeightsAndAttributes("FieldUpgrade",2,1,1);
+        var FieldUpgradeReward = new RewardWeightsAndAttributes("FieldUpgrade",3,1,1);
         rewardsWeightsAndAttributes.Add(FieldUpgradeReward);
     }
 }

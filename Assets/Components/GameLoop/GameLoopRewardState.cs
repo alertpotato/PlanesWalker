@@ -39,7 +39,8 @@ public class GameLoopRewardState : StateBehaviour
     private void NextReward()
     {
         RewardCounter++;
-        if (RewardCounter >= Rewards.Item1.Count) ChangeState<GameLoopPreBattleState>();
+        //If there is no rewards left - start end of loop event
+        if (RewardCounter >= Rewards.Item1.Count) Config.EndOfLoopEvents();
         else RewardEngine(Rewards.Item1[RewardCounter]);
     }
 
@@ -108,6 +109,7 @@ public class GameLoopRewardState : StateBehaviour
         UnitUpgrades newUpgrades = Config.listOfCommonUnits.UpgradeUnit(unitToUpgrade.GetComponent<ArmyUnitClass>().FactoryCharacteristics, Config.listOfCommonUnits.GenerateUpgradePoints());
         unitToUpgrade.GetComponent<ArmyUnitClass>().UpgradeUnit(newUpgrades);
         SelectButton.GetComponent<Button>().onClick.RemoveAllListeners();
+        Config.DeckManager.GetComponent<Deck>().WipeCards();
         NextReward();
     }
 

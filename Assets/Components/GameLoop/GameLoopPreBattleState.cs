@@ -69,7 +69,7 @@ public class GameLoopPreBattleState : StateBehaviour
         var enemyUnits = Config.EnemyHero.GetComponent<Hero>().bannersList;
         foreach (var unit in enemyUnits)
         {
-            unit.GetComponent<ArmyUnitClass>().UpdateSupply(Config.WorldData.PlayerSupply);
+            unit.GetComponent<ArmyUnitClass>().UpdateSupply(Config.WorldData.EnemySupply);
         }
         var rangedUnits = enemyUnits.Where(go => go.GetComponent<ArmyUnitClass>().UnitAbilityTags.Contains(AbilityTags.Ranged)).ToList();
         var avaliableSpaces = Config.EnemyFormation.GetAvaliableFields();

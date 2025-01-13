@@ -10,7 +10,6 @@ public class BattlefieldLogic : MonoBehaviour
 {
     public Battlefield Battlefield;
     public List<UnitAbility> AbilitiesOrder = new List<UnitAbility>();
-    public RectTransform AbilityUIBack;
     public GameObject AbilityUI;
     public GameObject AbilityAnimation;
     public GameObject AbilityUIParent;
@@ -21,17 +20,16 @@ public class BattlefieldLogic : MonoBehaviour
     public float pauseBetweenAbilities = 1f;
     IEnumerator PlayAnimations(GameLoopRoundState parent)
     {
-        float YY = -60;
+        float YY = -50;
         int index = 0;
-        var arrowAnim = Instantiate(AbilityAnimation,AbilityUIParent.transform);
+        AbilityAnimation.SetActive(true);
+        AbilityAnimation.transform.localPosition = new Vector3(-150, 0, 0);
         
         foreach (var ability in AbilitiesOrder)
         {
-            
-            
             //Arrow anim
             float YYY = YY * index;
-            arrowAnim.transform.localPosition = new Vector3(-120,YYY,0);
+            AbilityAnimation.transform.localPosition = new Vector3(-150,YYY,0);
             index++;
             
             //Debug target line
@@ -60,7 +58,9 @@ public class BattlefieldLogic : MonoBehaviour
             Battlefield.UpdateField();
             if (answer) yield return new WaitForSeconds(pauseBetweenAbilities); // wait for x sec if ability was applied
         }
-        Destroy(arrowAnim);
+        yield return new WaitForSeconds(pauseBetweenAbilities);
+        AbilityAnimation.SetActive(false);
+        DestroyUI();
         parent.RoundEnd(); // this must be here
     }
     public void ApplyAbilities(GameLoopRoundState parent)
@@ -166,23 +166,17 @@ public class BattlefieldLogic : MonoBehaviour
         }
         //Debug.Log(answer);
         // -------------GRAPHIC
-        float YY = -60;
-        int index = 0;
         foreach (var ability in AbilitiesOrder)
         {
             //Debug.Log($"{ability.UnitSquad.Unit.name} {ability.IsActive.ToString()}");
-            float YYY = YY * index;
             var newUI = Instantiate(AbilityUI,AbilityUIParent.transform);
-            newUI.transform.localPosition = new Vector3(0,YYY,0);
             AbilitiesUI.Add(newUI);
             newUI.GetComponent<AbilityOrderUI>().SetIcons(
                 IconsSprites.GetSpriteByName(ability.AbilityName),
                 UnitSprites.GetIconSpriteByName(ability.UnitCompany.Unit.GetComponent<ArmyUnitClass>().UnitName),
                 UnitSprites.GetIconSpriteByName(ability.targets[0].Unit.GetComponent<ArmyUnitClass>().UnitName)
                 );
-            index++;
         }
-        AbilityUIBack.sizeDelta = new Vector2(AbilityUIBack.rect.width,114*index);
         Battlefield.UpdateField();
     }
     private void DestroyUI()
@@ -191,5 +185,6 @@ public class BattlefieldLogic : MonoBehaviour
         {
             Destroy(ui);
         }
+        AbilityAnimation.transform.localPosition = new Vector3(0, 0, 0);
     }
 }

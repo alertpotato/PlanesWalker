@@ -182,7 +182,7 @@ public class ArmyUnitClass : MonoBehaviour
         int newSupplyMultiplier = 999;
         for (int i = 0;i<4;i++ )
         {
-            if (FactoryCharacteristics.UnitSupplyReq[i]==0) continue;
+            if (FactoryCharacteristics.UnitSupplyReq[i]<=0) continue;
             var x = Mathf.CeilToInt(supply[i] / FactoryCharacteristics.UnitSupplyReq[i]);
             //Debug.Log(UnitName+" "+i+"+"+supply[0]+supply[1]+supply[2]+supply[3]+"|"+FactoryCharacteristics.UnitSupplyReq[0]+FactoryCharacteristics.UnitSupplyReq[1]+FactoryCharacteristics.UnitSupplyReq[2]+FactoryCharacteristics.UnitSupplyReq[3]+"|"+x);
             x = Mathf.Clamp(x, 0, 999);

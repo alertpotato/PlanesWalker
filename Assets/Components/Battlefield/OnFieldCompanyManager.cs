@@ -10,18 +10,20 @@ public class OnFieldCompanyManager : MonoBehaviour
     public SpriteRenderer CompanySprite;
     public SpriteRenderer AbilitySprite;
     [Header("UI")]
-    public GameObject UI;
+    public GameObject StatsUI;
     public TextMeshProUGUI NumberText;
     public TextMeshProUGUI HealthText;
     public TextMeshProUGUI DamageText;
     public TextMeshProUGUI InitiativeText;
     public TextMeshProUGUI CohesionText;
     public TextMeshProUGUI ArmourText;
+    public TextMeshProUGUI EffectivenessText;
+    public TextMeshProUGUI HintText;
     
     public void InitializeCell(Company company)
     {
         Company = company;
-        UI.SetActive(false);
+        HideUI(false);
     }
     public void ChangeSprite(Sprite newSprite)
     {
@@ -30,12 +32,25 @@ public class OnFieldCompanyManager : MonoBehaviour
 
     public void DisableCellText()
     {
-        UI.SetActive(false);
+        HideUI(false);
+        CompanyHint(Company.Type.ToString() + "#" + Company.Position);
+    }
+
+    private void HideUI(bool hide)
+    {
+        StatsUI.SetActive(hide);
+    }
+
+    //If field is empty add Hint text of company Type
+    public void CompanyHint(string newHint="")
+    {
+        HintText.text = newHint;
     }
 
     public void UpdateCellText()
     {
-        UI.SetActive(true);
+        CompanyHint();
+        HideUI(true);
         Color green = new Color(0.062f, 0.729f, 0, 1);
         Color yelow = new Color(0.835f, 0.729f, 0, 1);
         var unit = Company.Unit.GetComponent<ArmyUnitClass>();
@@ -69,6 +84,9 @@ public class OnFieldCompanyManager : MonoBehaviour
         float baseA = unit.BaseCharacteristics.Armour;
         float curA = unit.CurrentUnitCharacteristics.Armour;
         ArmourText.text = $"{curA}/{baseA}";
+        
+        var newEColor = ColorUtility.ToHtmlStringRGBA(Color.Lerp(Color.red,green, Mathf.Clamp(unit.currentUnitEffectiveness,0,1) / 1.0f));
+        EffectivenessText.text = $"<color=#{newEColor}>{Mathf.Ceil(unit.currentUnitEffectiveness*100)}</color>%";
     }
 
     public void MouseOverAnswer()

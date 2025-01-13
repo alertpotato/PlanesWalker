@@ -6,6 +6,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 
 [RequireComponent(typeof(StateBehaviour))]
 [RequireComponent(typeof(GameLoopRewardState))]
@@ -22,6 +23,8 @@ public class GameLoopSharedData : MonoBehaviour
     public StateMachine StateManager;
     public GameObject RewardParent;
     public RewardFactory RewardFactory;
+    [FormerlySerializedAs("Difficulty")] public DifficultyManager difficultyManager;
+    public StateMachine GameLoopState;
     [Header("Data")]
     public PlayerData WorldData;
     public ListOfCommonUnits listOfCommonUnits;
@@ -81,12 +84,17 @@ public class GameLoopSharedData : MonoBehaviour
         WorldData.AddSupply(0,1);
         WorldData.AddSupply(1,1);
         WorldData.AddSupply(2,1);
+        WorldData.AddEnemySupply(0,1);
+        WorldData.AddEnemySupply(1,1);
+        WorldData.AddEnemySupply(2,1);
         InterfaceUI.UpdateSupply(WorldData.PlayerSupply);
-        Day = 1;
+        Day = 0;
         //Getting 3 new card at start
         List<(int, int)> rewards = new List<(int, int)>{(1,0),(1,0),(1,0),(99,0)};
         var StartingDeck = (rewards,RewardFactory.rewardsWeightsAndAttributes);
         RewardState.Rewards=StartingDeck;
+        //Init Difficulty
+        difficultyManager.InitializeDifficulty(0,WorldData,RewardFactory,listOfCommonUnits);
     }
     //TODO .....
 
@@ -182,6 +190,19 @@ public class GameLoopSharedData : MonoBehaviour
     {
         int currentIndex = SceneManager.GetActiveScene().buildIndex;
         SceneManager.LoadScene(currentIndex);
+    }
+
+    public void EndOfLoopEvents()
+    {
+        Day += 1;
+        //Apply changed rewards weights
+        if (RewardState.Rewards.Item1 != null) RewardFactory.rewardsWeightsAndAttributes= RewardState.Rewards.Item2;
+        //End of day reward weights regen
+        RewardFactory.RegenerateRewards(RewardFactory.rewardsWeightsAndAttributes);
+        //Difficulty script
+        difficultyManager.UpdateDifficulty(Day);
+        //Start new loop from new Decision
+        GameLoopState.ChangeState<GameLoopDecisionState>();
     }
 
     public GameObject InstantiateRandomUnit(Race unitRace,GameObject parent)

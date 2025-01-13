@@ -18,11 +18,9 @@ public class GameLoopDecisionState : StateBehaviour
     }
     public override void OnEnter()
     {
-        if (Config.Day == 1) {ChangeState<GameLoopRewardState>(); return;}
         ClearUI();
         Rewards.Clear();
         DecisionUI.gameObject.SetActive(true);
-
         GeneratingDecision();
         UpdateDecisionUI();
     }
@@ -30,7 +28,7 @@ public class GameLoopDecisionState : StateBehaviour
     public void MakeDecision(int value)
     {
         Config.RewardState.Rewards = Rewards[value];
-        ChangeState<GameLoopRewardState>();
+        ChangeState<GameLoopPreBattleState>();
     }
 
     private void GeneratingDecision()

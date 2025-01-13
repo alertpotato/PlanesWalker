@@ -47,8 +47,7 @@ public class GameLoopRoundState : StateBehaviour
     {
         if (Config.EnemyFormation.GetOnFieldcompanies().Count == 0)
         {
-            Config.Day += 1;
-            ChangeState<GameLoopDecisionState>();
+            ChangeState<GameLoopRewardState>();
         }
         else if (Config.PlayerFormation.GetOnFieldcompanies().Count==0) StartCoroutine(EndGameScreen());
         else StartRoundButton.SetActive(true);
