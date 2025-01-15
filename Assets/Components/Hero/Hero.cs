@@ -10,8 +10,8 @@ public class Hero : MonoBehaviour
     public List<GameObject> bannersList = new List<GameObject> { };
     
     [Header("HeroModifiers")]
-    [SerializeField] private int modinit = 0;
-    [SerializeField] private int modcoh = 0;
+    [SerializeField] public int modinit = 0;
+    [SerializeField] public int modcoh = 0;
     private void Awake()
     {
     }
@@ -72,5 +72,6 @@ public class Hero : MonoBehaviour
     {
         if (index==0) modinit+=value;
         else if (index == 1) modcoh+=value;
+        else Debug.LogWarning($"Incorrect index {index} {value}");
     }
 }

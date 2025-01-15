@@ -7,10 +7,11 @@ using UnityEngine.Serialization;
 [System.Serializable]
 public class UnitCharacteristics
 {
-    public int NumberOfUnits; public int Health; public int Damage; public int Initiative; public int Cohesion; public int Armour;
-    public UnitCharacteristics(int num, int h, int d, int init, int coh, int armour)
+    public int NumberOfUnits; public int Health; public int Damage; public int Initiative; public int Cohesion; public int Armour; public float Effectiveness;
+    public UnitCharacteristics(int num, int h, int d, int init, int coh, int armour, float effectiveness)
     {
         NumberOfUnits = num; Health = h; Damage = d; Initiative = init; ; Cohesion = coh; Armour = armour;
+        Effectiveness = effectiveness;
     }
     public UnitCharacteristics(BaseUnitCharacteristics baseCharacteristics ,UnitUpgrades unitUpgrades, int supplyMultiplier)
     {
@@ -21,7 +22,7 @@ public class UnitCharacteristics
         Initiative = baseCharacteristics.Characteristics.Initiative + baseCharacteristics.InitiativeUpgrade.Modifier*unitUpgrades.Initiative;
         Cohesion = baseCharacteristics.Characteristics.Cohesion + baseCharacteristics.CohesionUpgrade.Modifier*unitUpgrades.Cohesion;
         Armour = baseCharacteristics.Characteristics.Armour + baseCharacteristics.ArmourUpgrade.Modifier*unitUpgrades.Armour;
-        
+        Effectiveness = baseCharacteristics.Characteristics.Effectiveness;
     }
 }
 [System.Serializable]
@@ -33,7 +34,7 @@ public struct UnitUpgrades
         NumberOfUnits=numberOfUnits;Health=health;Damage=damage;Initiative=initiative;Cohesion=cohesion; Armour=armour;
     }
 }
-
+[System.Serializable]
 public class UnitBuff
 {
     public UnitCharacteristics Buff; public GameObject BuffParent; public int BuffTurns;
@@ -73,9 +74,7 @@ public class ArmyUnitClass : MonoBehaviour
         UpdateUnitTags();
         Buffs = new List<UnitBuff>();
         SupplyMultiplier = 1;
-        currentUnitEffectiveness = 1;
         unitUpgrades = upgrades;
-        
         RebuildCharacteristics();
     }
     public void RebuildCharacteristics() // Revert to baseline
@@ -84,6 +83,7 @@ public class ArmyUnitClass : MonoBehaviour
         BaseCharacteristics = new UnitCharacteristics(FactoryCharacteristics, unitUpgrades, Mathf.Clamp(SupplyMultiplier,1,999));
         currentSquadHealth = CurrentUnitCharacteristics.NumberOfUnits *
                              CurrentUnitCharacteristics.Health;
+        currentUnitEffectiveness = CurrentUnitCharacteristics.Effectiveness * (1.0f + CurrentUnitCharacteristics.Cohesion*0.05f);
     }
     //-----------Abilities logic
     public void InitializeAbilities(Company newCompany,FormationField field,FormationField opposingField)
@@ -126,17 +126,26 @@ public class ArmyUnitClass : MonoBehaviour
     }
     
     //-----------Unit battle logic
+    public void OnBattleStart(int[] currentSupply,List<UnitBuff> newBuffs,int minimumSupply=0)
+    {
+        //minimumSupply used for AI to cheat
+        Buffs.Clear();
+        UpdateSupply(currentSupply,minimumSupply);
+        ReciveBuffs(newBuffs);
+        ApplyBuffs();
+    }
+
     public void OnRoundEnd() //Must be called at the end of the round
     {
-        currentUnitEffectiveness = 1;
         CheckBuffs();
         ApplyBuffs();
+        currentUnitEffectiveness = CurrentUnitCharacteristics.Effectiveness * (1.0f + CurrentUnitCharacteristics.Cohesion*0.05f);
     }
     public void OnBattleEnd() //Must be called at the end of the battle
     {
-        currentUnitEffectiveness = 1;
         Buffs.Clear();
         RebuildCharacteristics();
+        currentUnitEffectiveness = CurrentUnitCharacteristics.Effectiveness * (1.0f + CurrentUnitCharacteristics.Cohesion*0.05f);
     }
     //-----------Unit buffs logic
     private void CheckBuffs()
@@ -167,17 +176,16 @@ public class ArmyUnitClass : MonoBehaviour
         foreach (var buff in Buffs)
         {
             //TODO Figure out what to do with NumberOfUnits and Health Buffs
-            
             //cur.NumberOfUnits = cur.NumberOfUnits + buff.Buff.NumberOfUnits;
             //cur.Health = cur.Health + buff.Buff.Health;
-            cur.Damage = cur.Damage + buff.Buff.Damage;
-            cur.Initiative = cur.Initiative + buff.Buff.Initiative;
-            cur.Cohesion = cur.Cohesion + buff.Buff.Cohesion;
-            cur.Armour = cur.Armour + buff.Buff.Armour;
+            cur.Damage += buff.Buff.Damage;
+            cur.Initiative += buff.Buff.Initiative;
+            cur.Cohesion += buff.Buff.Cohesion;
+            cur.Armour += buff.Buff.Armour;
         }
     }
     //-----------Unit stats logic
-    public void UpdateSupply(int[] supply)
+    public void UpdateSupply(int[] supply,int minimumSupply=0)
     {
         int newSupplyMultiplier = 999;
         for (int i = 0;i<4;i++ )
@@ -189,7 +197,7 @@ public class ArmyUnitClass : MonoBehaviour
             if (x < newSupplyMultiplier) newSupplyMultiplier = x;
             //Debug.Log(newSupplyMultiplier);
         }
-        if (newSupplyMultiplier == 999) newSupplyMultiplier = 0;
+        if (newSupplyMultiplier == 999) newSupplyMultiplier = minimumSupply;
         
         SupplyMultiplier = newSupplyMultiplier;
         RebuildCharacteristics();
@@ -221,7 +229,7 @@ public class ArmyUnitClass : MonoBehaviour
     {
         // TODO make units get out of the field so that do not happaned
         if (CurrentUnitCharacteristics.NumberOfUnits>0)
-            currentUnitEffectiveness = Mathf.Clamp(currentUnitEffectiveness - (engagedUnits/CurrentUnitCharacteristics.NumberOfUnits)*0.75f, 0, 1);
+            currentUnitEffectiveness = Mathf.Clamp(currentUnitEffectiveness - (engagedUnits/CurrentUnitCharacteristics.NumberOfUnits), 0, 1);
     }
 
     private void UpdateUnitTags()

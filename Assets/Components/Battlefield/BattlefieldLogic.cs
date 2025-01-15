@@ -114,10 +114,17 @@ public class BattlefieldLogic : MonoBehaviour
         {
             if (res.Item2 != -1)
             {
-                string dmgText = (res.Item2-res.Item5.Unit.GetComponent<ArmyUnitClass>().currentSquadHealth).ToString();
-                Color dmgColor = new Color(0.55f, 0, 0, 1);   
-                CreateDamageText(dmgText,dmgColor,res.Item5);
-                if (!res.Item1.GetComponent<ArmyUnitClass>().TakeDamage((res.Item2, res.Item3)))
+                Color dmgColor;
+                string dmgText =
+                    $"{res.Item2 - res.Item5.Unit.GetComponent<ArmyUnitClass>().currentSquadHealth}";
+                if (res.Item5.Field==Battlefield.PlayerFormation) dmgColor = new Color(0.7f, 0, 1, 1);
+                else dmgColor = new Color(0.55f, 0, 0, 1);
+                int deadCount = res.Item5.Unit.GetComponent<ArmyUnitClass>().CurrentUnitCharacteristics.NumberOfUnits -
+                                res.Item3;
+                if (deadCount > 0) dmgText += $"<sprite=\"gameSprites\" index=0 color=#000000>{deadCount}";
+                CreateDamageText(dmgText, dmgColor, res.Item5);
+
+            if (!res.Item1.GetComponent<ArmyUnitClass>().TakeDamage((res.Item2, res.Item3)))
                 {
                     res.Item5.Field.RemoveUnitFromField(res.Item1);
                     continue;
@@ -127,16 +134,16 @@ public class BattlefieldLogic : MonoBehaviour
                 res.Item1.GetComponent<ArmyUnitClass>().UpdateEffectiveness(res.Item4);
         }
     }
-    private void CreateDamageText(string text, Color color,Company comp)
+    private void CreateDamageText(string text, Color color,Company comp,float correction=1)
     {
         var allcells = new List<GameObject>();
         allcells.AddRange(Battlefield.playerFieldList);
         allcells.AddRange(Battlefield.enemyFieldList);
         var targetCell = allcells.Where(cell => cell.GetComponent<OnFieldCompanyManager>().Company == comp)
             .First();
-        Vector3 newPos = new Vector3(targetCell.transform.position.x, targetCell.transform.position.y, targetCell.transform.position.z*1.1f);
+        Vector3 newPos = new Vector3(targetCell.transform.position.x*correction, targetCell.transform.position.y*correction, targetCell.transform.position.z);
         DamageIndicator indicator =
-            Instantiate(DamageIndicator, targetCell.transform.position, Quaternion.identity)
+            Instantiate(DamageIndicator, newPos, Quaternion.identity)
                 .GetComponent<DamageIndicator>();
         indicator.transform.SetParent(targetCell.transform);
         indicator.InitializeIndicator(color,text);

@@ -25,6 +25,11 @@ public class RewardFactory : ScriptableObject
     public PlayerData PlayerData;
     public FormationField PlayerField;
     
+    public void InizializeRewardFactory()
+    {
+        rewardsWeightsAndAttributes = new List<RewardWeightsAndAttributes>();
+        FillListOfRewards();
+    }
     public (List<(int,int)>,List<RewardWeightsAndAttributes>) GenerateRewardSet(int numberOfRewards)
     {
         //Copy current rewards to work only with that copy
@@ -75,7 +80,7 @@ public class RewardFactory : ScriptableObject
         int reward = 0;
         if (rewardName == "Supply") reward = SupplyReward(PlayerData.PlayerSupply);
         else if (rewardName == "HeroUpgrade") reward = HeroReward();
-        else if (rewardName == "FieldUpgrade") reward = FieldReward();
+        else if (rewardName == "FieldUpgrade") reward = FieldReward(PlayerField.Formation);
         return reward;
     }
 
@@ -94,16 +99,16 @@ public class RewardFactory : ScriptableObject
         int reward = Random.Range(0, 1);
         return reward;
     }
-    private int FieldReward()
+    public int FieldReward(List<Company> formation)
     {
         var localListOfWeights = new int[5];
         // front - flank1 - flank2 - support - reserve
-        var fieldsNum = PlayerField.Formation.Count();
-        var front = PlayerField.Formation.Count(comp => comp.Type == FormationType.Frontline );
-        var flank1 = PlayerField.Formation.Count(comp => comp.Type == FormationType.Flank1 );
-        var flank2 = PlayerField.Formation.Count(comp => comp.Type == FormationType.Flank2 );
-        var support = PlayerField.Formation.Count(comp => comp.Type == FormationType.Support );
-        var reserve = PlayerField.Formation.Count(comp => comp.Type == FormationType.Reserve );
+        var fieldsNum = formation.Count();
+        var front = formation.Count(comp => comp.Type == FormationType.Frontline );
+        var flank1 = formation.Count(comp => comp.Type == FormationType.Flank1 );
+        var flank2 = formation.Count(comp => comp.Type == FormationType.Flank2 );
+        var support = formation.Count(comp => comp.Type == FormationType.Support );
+        var reserve = formation.Count(comp => comp.Type == FormationType.Reserve );
         localListOfWeights[0] = fieldsNum - Mathf.CeilToInt(front * 1.5f);
         localListOfWeights[1] = fieldsNum - flank1 * 2;
         localListOfWeights[2] = fieldsNum - flank2 * 2;
@@ -123,12 +128,7 @@ public class RewardFactory : ScriptableObject
         
     }
 
-    private void OnValidate()
-    {
-        rewardsWeightsAndAttributes = new List<RewardWeightsAndAttributes>();
-        FillListOfRewards();
-    }
-
+    
     private void FillListOfRewards()
     {
         rewardsWeightsAndAttributes.Clear();

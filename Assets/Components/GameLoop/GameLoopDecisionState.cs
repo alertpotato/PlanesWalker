@@ -12,6 +12,7 @@ public class GameLoopDecisionState : StateBehaviour
     public GameObject DecisionUI;
     public GameObject DecisionBox;
     public List<(List<(int,int)>,List<RewardWeightsAndAttributes>)> Rewards = new List<(List<(int,int)>,List<RewardWeightsAndAttributes>)>();
+    public List<int> EventIds = new List<int>();
     public List<GameObject> DecisionWindows = new List<GameObject>();
     private void OnValidate()
     {
@@ -23,11 +24,19 @@ public class GameLoopDecisionState : StateBehaviour
         DecisionUI.gameObject.SetActive(true);
         GeneratingDecision();
         UpdateDecisionUI();
+        Config.InterfaceUI.UpdateHelpText("Decision state","Choose your path wisely");
     }
 
     public void MakeDecision(int value)
     {
+        //Saving reward set in REWARD STATE
         Config.RewardState.Rewards = Rewards[value];
+        //Saving unit set in PRE BATTLE STATE
+        Config.PreBattleState.EnemyEventUnits.Clear();
+        Config.PreBattleState.EnemyEventUnits.AddRange(Config.difficultyManager.Units[value]);
+        //TODO cant transfer to PRE BATTLE for some reason
+        Config.EnemyFormation.RebuildField(Config.difficultyManager.Fields[value]);
+        
         ChangeState<GameLoopPreBattleState>();
     }
 
@@ -35,6 +44,14 @@ public class GameLoopDecisionState : StateBehaviour
     {
         Rewards.Add(Config.RewardFactory.GenerateRewardSet(2));
         Rewards.Add(Config.RewardFactory.GenerateRewardSet(2));
+        EventIds = Config.EventFactory.GenerateEventSet(2);
+        Config.difficultyManager.GenerateUnits(EventIds,0);
+        if (Random.Range(0, 3) == 0)
+        {
+            Rewards.Add(Config.RewardFactory.GenerateRewardSet(3));
+            EventIds.AddRange(Config.EventFactory.GenerateEventSet(1));
+            Config.difficultyManager.GenerateUnits(EventIds,1);
+        }
     }
 
     private void UpdateDecisionUI()
@@ -42,14 +59,19 @@ public class GameLoopDecisionState : StateBehaviour
         int decisionIndex = 0;
         foreach (var reward in Rewards)
         {
-            string rewardsText = "Rewards:\n";
+            string eventText = $"<style=\"Title\">{Config.EventFactory.EventWeights[EventIds[decisionIndex]].Name}</style>\nYour scouts spotted:\n";
+            foreach (var unitList in Config.difficultyManager.Units[decisionIndex])
+            {
+                eventText+=$"    -{unitList.GetComponent<ArmyUnitClass>().UnitName}\n";
+            }
+            string rewardsText = "\nRewards:\n";
             foreach (var rew in reward.Item1)
             {
                 //Debug.Log($"{reward.Item2[rew.Item1].Name} {rew.Item2}");
-                rewardsText+=$"*{GenerateRewardText(reward.Item2[rew.Item1].Name,rew.Item2)}\n";
+                rewardsText+=$"    {GenerateRewardText(reward.Item2[rew.Item1].Name,rew.Item2)}\n";
             }
             var newDecisionUI = Instantiate(DecisionBox, DecisionUI.transform);
-            newDecisionUI.GetComponent<DecisionWindow>().UpdateText(rewardsText);
+            newDecisionUI.GetComponent<DecisionWindow>().UpdateText(eventText+rewardsText);
             Button b = newDecisionUI.GetComponent<Button>();
             int indexBuffer = decisionIndex;
             b.onClick.AddListener(() => MakeDecision(indexBuffer));

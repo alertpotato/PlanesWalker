@@ -10,49 +10,55 @@ public class GameLoopPreBattleState : StateBehaviour
 {
     public GameLoopSharedData Config;
     public GameObject StartBattleButton;
+    public List<GameObject> EnemyEventUnits = new List<GameObject>();
+    public Dictionary<FormationType, int> EnemyEventFormation = new Dictionary<FormationType, int>();
     public override void OnEnter()
     {
         Config.Battlefield.SetActive(true);
         StartBattleButton.SetActive(true);
-        Config.InterfaceUI.UpdateHelpText("Pre battle state","Left click on card you want to pick, then left click again on the field. Right click on any field piece to reset.");
+        Config.InterfaceUI.UpdateHelpText("Pre battle state","");
         
         //TEST TEST TEST
         //Config.CreateRandomUnits(Config.PlayerHero.GetComponent<Hero>(),20,Race.Human);
-        
-        // Update unit supply
-        UpdateUnitSupplies();
+        // Create and place enemy units
+        FillEnemyArmy();
+        //Rebuild units, update supply and apply hero modifiers
+        OnBattleStartUnitTriggers();
         // Draw deck space
         Config.DeckManager.SetActive(true);
         Config.DeckManager.GetComponent<Deck>().RebuildDeck();
         // Draw field
         Config.Battlefield.GetComponent<Battlefield>().RebuildField(Config.PlayerFormation,Config.EnemyFormation);
-        Config.Battlefield.GetComponent<Battlefield>().UpdateField();
-        // Create and place enemy units
-        Config.CreateRandomUnits(Config.EnemyHero.GetComponent<Hero>(),3,Race.Goblin);
+        
         EnemyUnitAllocation();
         Config.Battlefield.GetComponent<Battlefield>().UpdateField();
     }
-
-    private void UpdateUnitSupplies()
+    private void OnBattleStartUnitTriggers()
     {
-        List<GameObject> unitList = new List<GameObject>();
-        unitList.AddRange(Config.EnemyHero.GetComponent<Hero>().bannersList);
-        unitList.AddRange(Config.PlayerHero.GetComponent<Hero>().bannersList);
-        foreach (var unit in unitList)
+        var playerHero = Config.PlayerFormation.FieldOwner;
+        var enemyHero = Config.EnemyFormation.FieldOwner;
+        UnitCharacteristics playerBuffs = new UnitCharacteristics(0, 0, 0,playerHero.modinit , playerHero.modcoh, 0,0);
+        UnitCharacteristics enemyBuffs = new UnitCharacteristics(0, 0, 0, enemyHero.modinit , enemyHero.modcoh, 0,0);
+        UnitBuff playerBuff = new UnitBuff(playerBuffs, this.gameObject, 999);
+        UnitBuff enemyBuff = new UnitBuff(enemyBuffs, this.gameObject, 999);
+        List<UnitBuff> playerBuffList = new List<UnitBuff>();
+        playerBuffList.Add(playerBuff);
+        List<UnitBuff> enemyBuffList = new List<UnitBuff>();
+        enemyBuffList.Add(enemyBuff);
+        foreach (var comp in Config.PlayerHero.GetComponent<Hero>().bannersList)
         {
-            unit.GetComponent<ArmyUnitClass>().UpdateSupply(Config.WorldData.PlayerSupply);
+           comp.GetComponent<ArmyUnitClass>().OnBattleStart(Config.WorldData.PlayerSupply,playerBuffList);
+        }
+        foreach (var comp in Config.EnemyHero.GetComponent<Hero>().bannersList)
+        {
+            comp.GetComponent<ArmyUnitClass>().OnBattleStart(Config.WorldData.EnemySupply,enemyBuffList,1);
         }
     }
-
     public override void OnExit()
     {
         StartBattleButton.SetActive(false);
         // Clean deck space
         Config.DeckManager.GetComponent<Deck>().WipeCards();
-    }
-    public override void OnUpdate()
-    {
-        //ChangeState<GameLoopRewardState>();
     }
     public void StartBattle()
     {
@@ -64,13 +70,21 @@ public class GameLoopPreBattleState : StateBehaviour
         Debug.Log("Hello Q");
         Config.ArmyDeck.GetComponent<ArmyDeck>().UpdateDeck();
     }*/
+    public void FillEnemyArmy()
+    {
+        foreach (var unit in Config.EnemyHero.GetComponent<Hero>().bannersList)
+        {
+            Destroy(unit);
+        }
+        Config.EnemyHero.GetComponent<Hero>().bannersList.Clear();
+        foreach (var unit in EnemyEventUnits)
+        {
+            Config.EnemyHero.GetComponent<Hero>().AddBannerList(unit);
+        }
+    }
     public void EnemyUnitAllocation()
     {
         var enemyUnits = Config.EnemyHero.GetComponent<Hero>().bannersList;
-        foreach (var unit in enemyUnits)
-        {
-            unit.GetComponent<ArmyUnitClass>().UpdateSupply(Config.WorldData.EnemySupply);
-        }
         var rangedUnits = enemyUnits.Where(go => go.GetComponent<ArmyUnitClass>().UnitAbilityTags.Contains(AbilityTags.Ranged)).ToList();
         var avaliableSpaces = Config.EnemyFormation.GetAvaliableFields();
         var supportLine = avaliableSpaces.Where(comp => comp.Type == FormationType.Support).ToList();

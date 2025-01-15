@@ -71,7 +71,7 @@ public class GameLoopRoundState : StateBehaviour
     }
     public void TriggerOnFieldUnitsRoundEffects()
     {
-        UnitCharacteristics debuffChar = new UnitCharacteristics(0, 0, 0, 0, -1, 0);
+        UnitCharacteristics debuffChar = new UnitCharacteristics(0, 0, 0, 0, -1, 0,0);
         UnitBuff debuff = new UnitBuff(debuffChar, Config.GameObject(), 999);
         List<UnitBuff> BuffList = new List<UnitBuff>();
         BuffList.Add(debuff);

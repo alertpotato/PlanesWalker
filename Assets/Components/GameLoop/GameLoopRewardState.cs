@@ -137,10 +137,13 @@ public class GameLoopRewardState : StateBehaviour
     
     private void CreateUnits()
     {
+        
         RewardList.Clear();
+        List<Race> humanRaces = new List<Race>();
+        humanRaces.Add(Race.Human);
         for (int i=0; i<NumberOfCardsToChoose; i++)
         {
-            var newUnit = Config.InstantiateRandomUnit(Race.Human,Config.RewardParent);
+            var newUnit = Config.InstantiateRandomUnit(humanRaces,Config.RewardParent);
             RewardList.Add(newUnit);
         }
         CreateCards();

@@ -1,8 +1,4 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -23,6 +19,7 @@ public class GameLoopSharedData : MonoBehaviour
     public StateMachine StateManager;
     public GameObject RewardParent;
     public RewardFactory RewardFactory;
+    public EventFactory EventFactory;
     [FormerlySerializedAs("Difficulty")] public DifficultyManager difficultyManager;
     public StateMachine GameLoopState;
     [Header("Data")]
@@ -65,9 +62,13 @@ public class GameLoopSharedData : MonoBehaviour
 
     private void Start()
     {
+        //INIT FACTORIES 
+        listOfCommonUnits.InizializeUnitFactory();
+        EventFactory.InizializeEventFactory();
+        RewardFactory.InizializeRewardFactory();
         //Init hero
-        PlayerHero.GetComponent<Hero>().modifyHero("Planeswalker", 1, 1);
-        EnemyHero.GetComponent<Hero>().modifyHero("Antagonist", 1, 1);
+        PlayerHero.GetComponent<Hero>().modifyHero("Planeswalker", 0, 0);
+        EnemyHero.GetComponent<Hero>().modifyHero("Antagonist", 0, 0);
         
         //Init of Formation scriptable objects
         PlayerFormation.InitializeField(PlayerHero.GetComponent<Hero>());
@@ -94,7 +95,8 @@ public class GameLoopSharedData : MonoBehaviour
         var StartingDeck = (rewards,RewardFactory.rewardsWeightsAndAttributes);
         RewardState.Rewards=StartingDeck;
         //Init Difficulty
-        difficultyManager.InitializeDifficulty(0,WorldData,RewardFactory,listOfCommonUnits);
+        difficultyManager.InitializeDifficulty(0,WorldData,RewardFactory,EventFactory,listOfCommonUnits);
+        InterfaceUI.UpdateHintText(Day,WorldData.EnemySupply,Battlefield.GetComponent<BattlefieldLogic>().pauseBetweenAbilities);
     }
     //TODO .....
 
@@ -118,7 +120,7 @@ public class GameLoopSharedData : MonoBehaviour
                 {
                     Destroy(unitPreview);
                     mousedOverUnit = newMousedOverUnit;
-                    unitPreview = CreateCard(mousedOverUnit,0.8f,0.5f,3);
+                    unitPreview = CreateCard(mousedOverUnit,0.7f,0.65f,3);
                 }
             }
         else if (mousedOverUnit) {mousedOverUnit = null; Destroy(unitPreview);}
@@ -127,7 +129,7 @@ public class GameLoopSharedData : MonoBehaviour
     public GameObject CreateCard(GameObject unit,float x, float y,float z)
     {
         var pos = MainCamera.ScreenToWorldPoint(new Vector3((Screen.width * x), Screen.height*y, z)); //z = 5 bc its distance between cards and camera
-        GameObject newCard = Instantiate(UnitCard);
+        GameObject newCard = Instantiate(UnitCard,this.gameObject.transform);
         newCard.name = $"{unit.name}_CardInfo";
         newCard.transform.SetParent(unit.transform);
         newCard.GetComponent<UnitCardMain>().SetUnitParameters(MainCamera,unit, pos,Vector3.one,true,61);
@@ -192,6 +194,19 @@ public class GameLoopSharedData : MonoBehaviour
         SceneManager.LoadScene(currentIndex);
     }
 
+    private void OnGameSpeedPlus(InputValue value)
+    {
+        Battlefield.GetComponent<BattlefieldLogic>().pauseBetweenAbilities =
+            Mathf.Clamp(Battlefield.GetComponent<BattlefieldLogic>().pauseBetweenAbilities + 0.25f, 0.25f, 10f);
+        InterfaceUI.UpdateHintText(Day,WorldData.EnemySupply,Battlefield.GetComponent<BattlefieldLogic>().pauseBetweenAbilities);
+    }
+    private void OnGameSpeedMinus(InputValue value)
+    {
+        Battlefield.GetComponent<BattlefieldLogic>().pauseBetweenAbilities =
+            Mathf.Clamp(Battlefield.GetComponent<BattlefieldLogic>().pauseBetweenAbilities - 0.25f, 0.25f, 10f);
+        InterfaceUI.UpdateHintText(Day,WorldData.EnemySupply,Battlefield.GetComponent<BattlefieldLogic>().pauseBetweenAbilities);
+    }
+
     public void EndOfLoopEvents()
     {
         Day += 1;
@@ -203,35 +218,20 @@ public class GameLoopSharedData : MonoBehaviour
         difficultyManager.UpdateDifficulty(Day);
         //Start new loop from new Decision
         GameLoopState.ChangeState<GameLoopDecisionState>();
+        //Temp hint update
+        InterfaceUI.UpdateHintText(Day,WorldData.EnemySupply,Battlefield.GetComponent<BattlefieldLogic>().pauseBetweenAbilities);
     }
 
-    public GameObject InstantiateRandomUnit(Race unitRace,GameObject parent)
+    public GameObject InstantiateRandomUnit(List<Race> unitRace,GameObject parent)
     {
         var newUnitCharacteristics = listOfCommonUnits.GetRandomUnit(unitRace);
         GameObject newUnit = Instantiate(Unit,parent.transform);
         ArmyUnitClass unitClass = newUnit.GetComponent<ArmyUnitClass>();
+        Debug.Log($"---------------UNITS: {unitClass} {newUnitCharacteristics.Item1} {newUnitCharacteristics.Item2}");
         unitClass.InitializeUnit(newUnitCharacteristics.Item1,newUnitCharacteristics.Item2);
+        Debug.Log($"-----------sssssss----UNITS: {unitClass} {newUnitCharacteristics.Item1} {newUnitCharacteristics.Item2}");
         newUnit.name = $"{unitClass.UnitName}_{newUnit.GetInstanceID()}";
         newUnit.transform.position = Vector3.zero;
         return newUnit;
-    }
-    public void CreateRandomUnits(Hero unitOwner,int number, Race race)
-    {
-        //Checks
-        if (number <= 0)
-        {
-            Debug.LogError("Number of new units must be greater than 0");
-            return;
-        }
-        else if (number >= 100)
-        {
-            Debug.LogWarning("Are you sure you want THIS much units?");
-        }
-        
-        for (int i = 0; i < number; i++)
-        {
-            GameObject newEnemyUnit = InstantiateRandomUnit(race,unitOwner.GameObject());
-            unitOwner.AddBannerList(newEnemyUnit);
-        }
     }
 }

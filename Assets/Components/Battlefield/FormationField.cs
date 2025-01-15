@@ -15,7 +15,7 @@ public class Company
     public int Position;
     public FormationType Type;
     public FormationField Field;
-    public Company(int pos,FormationType type,FormationField field) 
+    public Company(int pos,FormationType type,FormationField field=null) 
     {
         Unit = null; 
         Position = pos;

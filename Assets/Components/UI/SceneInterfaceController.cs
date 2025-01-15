@@ -15,6 +15,8 @@ public class SceneInterfaceController : MonoBehaviour
     [Header("HelpText")]
     [SerializeField]private TextMeshProUGUI HeadText;
     [SerializeField]private TextMeshProUGUI BottomText;
+    [Header("TechHint")]
+    [SerializeField]private TextMeshProUGUI HintText;
     
     // Start is called before the first frame update
     public void UpdateSupply(int[] supply)
@@ -31,8 +33,9 @@ public class SceneInterfaceController : MonoBehaviour
         BottomText.text = newBottomText;
     }
 
-    void Start()
+    public void UpdateHintText(int days, int[] supply, float speed)
     {
-        
+        string newHintText = $"Day:{days}\nEnemy supply: {supply[0]} {supply[1]} {supply[2]}\nSpeed: {speed}\nW S to change speed\nR to restart game";
+        HintText.text = newHintText;
     }
 }
