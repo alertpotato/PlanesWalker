@@ -197,7 +197,7 @@ public class ArmyUnitClass : MonoBehaviour
             if (x < newSupplyMultiplier) newSupplyMultiplier = x;
             //Debug.Log(newSupplyMultiplier);
         }
-        if (newSupplyMultiplier == 999) newSupplyMultiplier = minimumSupply;
+        if (newSupplyMultiplier == 999 || newSupplyMultiplier==0) newSupplyMultiplier = minimumSupply;
         
         SupplyMultiplier = newSupplyMultiplier;
         RebuildCharacteristics();

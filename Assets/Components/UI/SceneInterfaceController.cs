@@ -35,7 +35,7 @@ public class SceneInterfaceController : MonoBehaviour
 
     public void UpdateHintText(int days, int[] supply, float speed)
     {
-        string newHintText = $"Day:{days}\nEnemy supply: {supply[0]} {supply[1]} {supply[2]}\nSpeed: {speed}\nW S to change speed\nR to restart game";
+        string newHintText = $"Day:{days}\nEnemy supply: {supply[0]} {supply[1]} {supply[2]}\nR to restart game\nSpacebar to skip animations";
         HintText.text = newHintText;
     }
 }

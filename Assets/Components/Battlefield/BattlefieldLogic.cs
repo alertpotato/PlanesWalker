@@ -140,10 +140,10 @@ public class BattlefieldLogic : MonoBehaviour
         results.Add((opposingCompany.Unit,abilityOwnerResult.Item1,abilityOwnerResult.Item2,abilityOpposingResult.Item3,opposingCompany));
         //CreateDamageText
         var newTextFrom = GenerateDamageText(results[0].Item2, results[0].Item3, results[0].Item5);
-        CreateDamageText(newTextFrom.Item1, newTextFrom.Item2, results[0].Item5);
+        if (results[0].Item2>=0) CreateDamageText(newTextFrom.Item1, newTextFrom.Item2, results[0].Item5);
         var newTextTo = GenerateDamageText(results[1].Item2, results[1].Item3, results[1].Item5);
-        CreateDamageText(newTextTo.Item1, newTextTo.Item2, results[1].Item5);
-        AbilitiesUI[orderIndex].GetComponent<AbilityOrderUI>().UpdateRoundResults(newTextFrom.Item1,newTextTo.Item1);
+        if (results[1].Item2>=0) CreateDamageText(newTextTo.Item1, newTextTo.Item2, results[1].Item5);
+        AbilitiesUI[orderIndex].GetComponent<AbilityOrderUI>().UpdateRoundResults(results[0].Item2>=0 ? newTextFrom.Item1 : "",results[1].Item2>=0 ? newTextTo.Item1 : "");
         // apply -> check for defeted companies
         ApplyResults(results);
         return true;

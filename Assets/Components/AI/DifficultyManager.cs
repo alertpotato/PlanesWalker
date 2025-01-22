@@ -110,7 +110,7 @@ public class DifficultyManager : MonoBehaviour
         var unitRaces = new List<Race>{Race.Human};
         var newUnits = new List<GameObject>();
         //Unit based on difficulty
-        int randomUnits = 3 + Random.Range(-1,2) + difficultyLevel + difficultyModifier;
+        int randomUnits = 3 + Random.Range(-1,1) + difficultyLevel + difficultyModifier;
         for (int i = 0; i < randomUnits; i++)
         {
             var unit = InstantiateRandomUnit(unitRaces, this.gameObject);
@@ -119,7 +119,7 @@ public class DifficultyManager : MonoBehaviour
         Units.Add(newUnits);
         //FORMATION
         Dictionary<FormationType, int> startingField = new Dictionary<FormationType, int> { {FormationType.Frontline,2}, {FormationType.Support,1}, {FormationType.Flank1,1},{FormationType.Flank2,0}};
-        int numberOfAdditionalFields = newUnits.Count-3;
+        int numberOfAdditionalFields = newUnits.Count-2;
         for (int i = 0; i < numberOfAdditionalFields; i++)
         {
             int rnd = Random.Range(0, 10);
@@ -143,7 +143,7 @@ public class DifficultyManager : MonoBehaviour
             newUnits.Add(unit);
         }
         //Additional unit based on difficulty
-        int additionalRandomUnits = 1 + Random.Range(-1,2) + difficultyLevel + difficultyModifier;
+        int additionalRandomUnits = 1 + Random.Range(-1,1) + difficultyLevel + difficultyModifier;
         for (int i = 0; i < additionalRandomUnits; i++)
         {
             var unit = InstantiateRandomUnit(unitRaces, this.gameObject);
@@ -152,7 +152,7 @@ public class DifficultyManager : MonoBehaviour
         Units.Add(newUnits);
         //FORMATION
         Dictionary<FormationType, int> startingField = new Dictionary<FormationType, int> { {FormationType.Frontline,2}, {FormationType.Support,2}, {FormationType.Flank1,0},{FormationType.Flank2,0}};
-        int numberOfAdditionalFields = newUnits.Count-2;
+        int numberOfAdditionalFields = newUnits.Count-1;
         for (int i = 0; i < numberOfAdditionalFields; i++)
         {
             int rnd = Random.Range(0, 10);
@@ -168,7 +168,7 @@ public class DifficultyManager : MonoBehaviour
         var unitRaces = new List<Race>{Race.Human,Race.Goblin};
         var newUnits = new List<GameObject>();
         //Unit based on difficulty
-        int randomUnits = 4 + Random.Range(-1,2) + difficultyLevel + difficultyModifier;
+        int randomUnits = 4 + Random.Range(-1,1) + difficultyLevel + difficultyModifier;
         for (int i = 0; i < randomUnits; i++)
         {
             var unit = InstantiateRandomUnit(unitRaces, this.gameObject);
@@ -177,7 +177,7 @@ public class DifficultyManager : MonoBehaviour
         Units.Add(newUnits);
         //FORMATION
         Dictionary<FormationType, int> startingField = new Dictionary<FormationType, int> { {FormationType.Frontline,2}, {FormationType.Support,1}, {FormationType.Flank1,1},{FormationType.Flank2,1}};
-        int numberOfAdditionalFields = newUnits.Count-3;
+        int numberOfAdditionalFields = newUnits.Count-2;
         for (int i = 0; i < numberOfAdditionalFields; i++)
         {
             int rnd = Random.Range(0, 10);
