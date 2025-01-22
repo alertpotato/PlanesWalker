@@ -39,6 +39,11 @@ public class UnitCardMain : MonoBehaviour
         StartCardScale = newScale;
     }
 
+    public void ChangeStartCardPos(Vector3 newPos)
+    {
+        startCardPos = newPos;
+    }
+
     public void SetUnitParameters(Camera camera,GameObject unit,Vector3 pos,Vector3 startCardScale, bool showMore,int uiOrder)
     {
         MainCamera = camera;

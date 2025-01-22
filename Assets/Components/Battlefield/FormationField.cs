@@ -32,7 +32,7 @@ public class FormationField : ScriptableObject
 
     public void OnRoundEnd() //Must be called at the end of the round
     {
-        FrontShift();
+        //FrontShift();
         //FrontSquash();
     }
     public void OnBattleEnd() //Must be called at the end of the battle
@@ -40,7 +40,7 @@ public class FormationField : ScriptableObject
 
     }
 
-    private void FrontShift() // If front line is empty shift flanks or sup or reserve to front line
+    /*private void FrontShift() // If front line is empty shift flanks or sup or reserve to front line
     {
         var onField = GetOnFieldcompanies();
         var onFieldFront = onField.Where(company => company.Type == FormationType.Frontline).ToList();
@@ -48,7 +48,7 @@ public class FormationField : ScriptableObject
         var onFieldSup = onField.Where(company => company.Type == FormationType.Support).ToList();
         var onFieldRes = onField.Where(company => company.Type == FormationType.Reserve).ToList();
         var frontComps = Formation.Where(company => company.Type == FormationType.Frontline).ToList();
-        
+
         List<Company> compToShift = new List<Company>();
         if (onFieldflank.Count != 0) compToShift = onFieldflank;
         else if (onFieldSup.Count != 0) compToShift = onFieldSup;
@@ -67,7 +67,7 @@ public class FormationField : ScriptableObject
         }
     }
     //TODO Temp stupid solution
-    /*private void FrontSquash()
+    private void FrontSquash()
     {
         var comp1 = Formation[0].Line[1];
         var comp2 = Formation[0].Line[2];

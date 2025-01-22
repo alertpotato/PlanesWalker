@@ -1169,13 +1169,13 @@ MonoBehaviour:
   RelatedUnit: {fileID: 0}
   IsSelected: 0
   cardSpriteSize: {x: 0, y: 0}
-  _cardMoveMultiplier: 3
   cardRotateMultiplier: 10
   startCardPos: {x: 0, y: 0, z: 0}
   StartCardScale: {x: 0, y: 0, z: 0}
   _newCardColor: {r: 1, g: 1, b: 1, a: 1}
   _cardMoveDirection: {x: 0, y: 0, z: -0.1}
   isMouseOff: 1
+  extendInfo: 0
 --- !u!65 &5081028186314948388
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1213,7 +1213,8 @@ MonoBehaviour:
   Back: {fileID: 2365197052401252841}
   Image: {fileID: 1100862839307804552}
   UI: {fileID: 50855272438396926}
-  name: {fileID: 7437060153776220201}
+  startingOrder: 0
+  cardName: {fileID: 7437060153776220201}
   add: {fileID: 5881253176708421401}
   multi: {fileID: 3147229909953689319}
   stat_number: {fileID: 6164170157343323965}
@@ -1226,6 +1227,7 @@ MonoBehaviour:
   weapon: {fileID: 6142429277398594407}
   coin: {fileID: 182331636699256890}
   knowledge: {fileID: 3507333868464878522}
+  abilities: []
   AbilityPrefab: {fileID: 7206457637190699672, guid: 38304c755c34e56468c6782bb4bea088, type: 3}
   VerticalGroup: {fileID: 8968032716923553425}
   Icons: {fileID: 11400000, guid: bca28af3eb0bffb4bb89604fcddbf8a7, type: 2}
@@ -1271,6 +1273,12 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  SelectField:
+    m_PersistentCalls:
+      m_Calls: []
+  DeselectField:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &5239200060363524368
 GameObject:
   m_ObjectHideFlags: 0

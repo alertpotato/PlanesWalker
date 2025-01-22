@@ -10,18 +10,20 @@ public class SelectManager : ScriptableObject
     {
         SelectedEntity = null;
     }
-    public void SelectEntity(GameObject entity)
+    public bool SelectEntity(GameObject entity)
     {
         if (SelectedEntity == entity)
         {
             SelectedEntity.GetComponent<SelectAdapter>()?.Deselect.Invoke();
             SelectedEntity = null;
+            return false;
         }
         else
         {
             if (SelectedEntity!=null) SelectedEntity.GetComponent<SelectAdapter>()?.Deselect.Invoke();
             SelectedEntity = entity;
             SelectedEntity.GetComponent<SelectAdapter>()?.Select.Invoke();
+            return true;
         }
     }
     public void DeSelectEntity()

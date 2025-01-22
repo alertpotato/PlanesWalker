@@ -13,7 +13,9 @@ public class MountedChargeAbility : UnitAbility
         Tags.Add(AbilityTags.Melee);
         Tags.Add(AbilityTags.Mounted);
         AbilityDamageModifier = 1.2f;
+        InitiativeModifier = 0;
         RetaliationTags.Add(AbilityTags.MeleeRetaliation);
+        AbilityDescription = $"Mounted charge [melee][mounted]\n  Damage: {Mathf.Round(AbilityDamageModifier*100)}%\n  Target priority:\nRanged->any other unit";
     }
     public override bool SelectTargets()
     {

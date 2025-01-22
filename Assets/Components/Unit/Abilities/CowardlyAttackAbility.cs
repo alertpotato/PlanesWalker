@@ -10,7 +10,9 @@ public class CowardlyAttackAbility : UnitAbility
         AbilityName = "Cowardly Attack";
         Tags.Add(AbilityTags.Melee);
         AbilityDamageModifier = 1;
+        InitiativeModifier = -1;
         RetaliationTags.Add(AbilityTags.MeleeRetaliation);
+        AbilityDescription = $"Cowardly attack [melee]\n  Damage: {Mathf.Round(AbilityDamageModifier*100)}%\n  Target priority:\nunit with least total damage\n  Additional modifiers:\n{InitiativeModifier} initiative";
     }
     public override bool SelectTargets()
     {
@@ -19,7 +21,7 @@ public class CowardlyAttackAbility : UnitAbility
         if (onFieldTargetsList.Count() > 0)
         {
             var sortedUnits = from comp in onFieldTargetsList
-                orderby comp.Unit.GetComponent<ArmyUnitClass>().currentSquadHealth ascending
+                orderby comp.Unit.GetComponent<ArmyUnitClass>().CurrentUnitCharacteristics.NumberOfUnits*comp.Unit.GetComponent<ArmyUnitClass>().CurrentUnitCharacteristics.Damage ascending
                 select comp;
             targets.Add(sortedUnits.First());
             return true;

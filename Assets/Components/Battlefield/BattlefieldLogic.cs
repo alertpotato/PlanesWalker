@@ -5,75 +5,102 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Assertions.Must;
+[System.Serializable]
+public class UnitInOrder
+{
+    public GameObject FieldManager;
+    public Company UnitCompany;
+    public UnitAbility UnitAbility;
+    public int UnitInitiative;
+    public int OrderIndex;
+    [SerializeField] private string AbilityName; 
+
+    public UnitInOrder(GameObject fieldManager,Company unitCompany)
+    {
+        FieldManager = fieldManager;
+        UnitCompany = unitCompany;
+        CalculateUnitInitiative();
+    }
+
+    public void AssignUnitAbility(UnitAbility unitAbility=null)
+    {
+        UnitAbility = unitAbility;
+        CalculateUnitInitiative();
+        if (unitAbility!=null) AbilityName = UnitAbility.AbilityName;
+        else AbilityName = "";
+    }
+
+    private void CalculateUnitInitiative()
+    {
+        int unitInit = UnitCompany.Unit.GetComponent<ArmyUnitClass>().CurrentUnitCharacteristics.Initiative;
+        if (UnitAbility != null) unitInit += UnitAbility.InitiativeModifier;
+        UnitInitiative = unitInit;
+    }
+}
 
 public class BattlefieldLogic : MonoBehaviour
 {
     public Battlefield Battlefield;
-    public List<UnitAbility> AbilitiesOrder = new List<UnitAbility>();
     public GameObject AbilityUI;
     public GameObject AbilityAnimation;
     public GameObject AbilityUIParent;
-    public List<GameObject> AbilitiesUI;
-    public OtherGraphic IconsSprites;
-    public UnitGraphic UnitSprites;
+    public List<GameObject> AbilitiesUI = new List<GameObject>();
     public GameObject DamageIndicator;
     public float pauseBetweenAbilities = 1f;
+    public List<UnitInOrder> BattlefieldOrder = new List<UnitInOrder>();
+    public List<GameObject> TargetPointers = new List<GameObject>();
+    public GameObject TargetPointerPrefab;
+    public bool isAction=false;
+    public bool ManualAnimations=false;
     IEnumerator PlayAnimations(GameLoopRoundState parent)
     {
         float YY = -50;
         int index = 0;
         AbilityAnimation.SetActive(true);
         AbilityAnimation.transform.localPosition = new Vector3(-150, 0, 0);
-        
-        foreach (var ability in AbilitiesOrder)
+        Battlefield.GetComponent<Battlefield>().DeHighlightUnitUI();
+        foreach (var unit in BattlefieldOrder)
         {
+            float timeSaved = Time.realtimeSinceStartup;
+            yield return new WaitUntil(
+                delegate
+                {
+                    return ManualAnimations ? isAction : Time.realtimeSinceStartup >= timeSaved + pauseBetweenAbilities || (isAction);
+                }
+            );
+            Battlefield.GetComponent<Battlefield>().HighlightUnitUI(unit.UnitCompany.Unit);
             //Arrow anim
             float YYY = YY * index;
             AbilityAnimation.transform.localPosition = new Vector3(-150,YYY,0);
             index++;
             
-            //Debug target line
-            Color lineColor;
-            float xAdj = 0.1f;
-            if (ability.UnitField == Battlefield.PlayerFormation)
+            if (unit.UnitAbility == null || unit.UnitCompany.Unit.GetComponent<ArmyUnitClass>().currentSquadHealth <= 0)
             {
-                lineColor = Color.red;
-                xAdj = -xAdj;
+                string dmgText = "skip";
+                Color dmgColor = new Color(0.8f, 0.7f, 0.3f, 0.66f);
+                CreateDamageText(dmgText,dmgColor,unit.UnitCompany);
             }
-            else
-            {
-                lineColor = Color.blue;
-            }
-            Vector3 startPos = Battlefield.GetFieldByUnit(ability.UnitCompany.Unit).transform.position;
-            Vector3 endPos = Battlefield.GetFieldByUnit(ability.targets[0].Unit).transform.position;
-            
-            //Logic
-            bool answer = ApplyAbility(ability);
-            
-            if (answer)
-            {
-                Debug.DrawLine(new Vector3(startPos.x+xAdj,startPos.y,startPos.z),new Vector3(endPos.x+xAdj,endPos.y,endPos.z) , lineColor, pauseBetweenAbilities*2);
-            }
-            //Logic
+            else ApplyAbility(unit.UnitAbility,unit.OrderIndex);
+
             Battlefield.UpdateField();
-            if (answer) yield return new WaitForSeconds(pauseBetweenAbilities); // wait for x sec if ability was applied
+            isAction=false;
         }
-        yield return new WaitForSeconds(pauseBetweenAbilities);
+
+        parent.ButtonEndRound();
         AbilityAnimation.SetActive(false);
-        DestroyUI();
-        parent.RoundEnd(); // this must be here
     }
     public void ApplyAbilities(GameLoopRoundState parent)
     {
         StartCoroutine(PlayAnimations(parent));
     }
-    private bool ApplyAbility(UnitAbility ability)
+    private bool ApplyAbility(UnitAbility ability,int orderIndex)
     {
-        if (ability.UnitCompany.Unit==null) return false;
+        if (ability.UnitCompany.Unit==null)
+        {Debug.LogWarning($"ability.UnitCompany.Unit=null {ability.UnitCompany}");return false;}
         var cycleAbility = ability;
         // check target again -> calculate damage -> calculate retaliate damage -> apply -> check for defeted companies
         // check target again 
-        if (!cycleAbility.SelectTargets())
+        /*if (!cycleAbility.SelectTargets())
         {
             var newPossibleAbility = cycleAbility.UnitCompany.Unit.GetComponent<ArmyUnitClass>().GetPossibleAbility();
             if (newPossibleAbility != null) cycleAbility = newPossibleAbility;
@@ -85,6 +112,14 @@ public class BattlefieldLogic : MonoBehaviour
                 CreateDamageText(dmgText,dmgColor,ability.UnitCompany);
                 return false;
             }
+        }*/
+        if (cycleAbility.targets.Count == 0 || cycleAbility.targets[0]?.Unit.GetComponent<ArmyUnitClass>().currentSquadHealth <= 0 )
+        {
+            Debug.Log($"{ability.UnitCompany.Unit.name} does not have targets");
+            string dmgText = "skip";
+            Color dmgColor = new Color(0.8f, 0.7f, 0.3f, 1);
+            CreateDamageText(dmgText,dmgColor,ability.UnitCompany);
+            return false;
         }
         List<(GameObject, int, int, int,Company)> results = new List<(GameObject, int, int, int,Company)>();
         // calculate damage
@@ -103,6 +138,12 @@ public class BattlefieldLogic : MonoBehaviour
         // create list of combat results
         results.Add((cycleAbility.UnitCompany.Unit,abilityOpposingResult.Item1,abilityOpposingResult.Item2,abilityOwnerResult.Item3,cycleAbility.UnitCompany));
         results.Add((opposingCompany.Unit,abilityOwnerResult.Item1,abilityOwnerResult.Item2,abilityOpposingResult.Item3,opposingCompany));
+        //CreateDamageText
+        var newTextFrom = GenerateDamageText(results[0].Item2, results[0].Item3, results[0].Item5);
+        CreateDamageText(newTextFrom.Item1, newTextFrom.Item2, results[0].Item5);
+        var newTextTo = GenerateDamageText(results[1].Item2, results[1].Item3, results[1].Item5);
+        CreateDamageText(newTextTo.Item1, newTextTo.Item2, results[1].Item5);
+        AbilitiesUI[orderIndex].GetComponent<AbilityOrderUI>().UpdateRoundResults(newTextFrom.Item1,newTextTo.Item1);
         // apply -> check for defeted companies
         ApplyResults(results);
         return true;
@@ -114,26 +155,39 @@ public class BattlefieldLogic : MonoBehaviour
         {
             if (res.Item2 != -1)
             {
-                Color dmgColor;
-                string dmgText =
-                    $"{res.Item2 - res.Item5.Unit.GetComponent<ArmyUnitClass>().currentSquadHealth}";
-                if (res.Item5.Field==Battlefield.PlayerFormation) dmgColor = new Color(0.7f, 0, 1, 1);
-                else dmgColor = new Color(0.55f, 0, 0, 1);
-                int deadCount = res.Item5.Unit.GetComponent<ArmyUnitClass>().CurrentUnitCharacteristics.NumberOfUnits -
-                                res.Item3;
-                if (deadCount > 0) dmgText += $"<sprite=\"gameSprites\" index=0 color=#000000>{deadCount}";
-                CreateDamageText(dmgText, dmgColor, res.Item5);
-
-            if (!res.Item1.GetComponent<ArmyUnitClass>().TakeDamage((res.Item2, res.Item3)))
-                {
-                    res.Item5.Field.RemoveUnitFromField(res.Item1);
-                    continue;
-                }
+                res.Item1.GetComponent<ArmyUnitClass>().TakeDamage((res.Item2, res.Item3));
             }
-            if (res.Item4 != -1) 
+            if (res.Item4 > 0)
                 res.Item1.GetComponent<ArmyUnitClass>().UpdateEffectiveness(res.Item4);
         }
     }
+    public void RemoveDeadUnits()
+    {
+        List<Company> deadCompanies = new List<Company>();
+        foreach (var unit in BattlefieldOrder)
+        {
+            if (unit.UnitCompany.Unit.GetComponent<ArmyUnitClass>().currentSquadHealth <= 0) deadCompanies.Add(unit.UnitCompany);
+        }
+
+        foreach (var comp in deadCompanies)
+        {
+            Battlefield.RemoveUnitFromFormationLogic(comp,Battlefield.GetFieldByCompany(comp).GetComponent<OnFieldCompanyManager>());
+        }
+    }
+
+    private (string,Color) GenerateDamageText(int newSquadHealth, int newSquadNumber, Company comp)
+    {
+        Color dmgColor;
+        string dmgText =
+            $"{newSquadHealth - comp.Unit.GetComponent<ArmyUnitClass>().currentSquadHealth}";
+        if (comp.Field==Battlefield.PlayerFormation) dmgColor = new Color(0.7f, 0, 1, 1);
+        else dmgColor = new Color(0.55f, 0, 0, 1);
+        int deadCount = comp.Unit.GetComponent<ArmyUnitClass>().CurrentUnitCharacteristics.NumberOfUnits -
+                        newSquadNumber;
+        if (deadCount > 0) dmgText += $"<sprite=\"gameSprites\" index=0 color=#000000>{deadCount}";
+        return (dmgText,dmgColor);
+    }
+
     private void CreateDamageText(string text, Color color,Company comp,float correction=1)
     {
         var allcells = new List<GameObject>();
@@ -152,46 +206,177 @@ public class BattlefieldLogic : MonoBehaviour
     public void Order()
     {
         DestroyUI();
-        AbilitiesUI = new List<GameObject>();
-        AbilitiesOrder.Clear();
         List<Company> onFieldUnits = new List<Company>();
-
+        //Get all active units
         var onFieldPlayerCompanies = Battlefield.PlayerFormation.GetOnFieldcompanies();
         var onFieldEnemyCompanies = Battlefield.EnemyFormation.GetOnFieldcompanies();
-
         onFieldUnits.AddRange(onFieldPlayerCompanies);
         onFieldUnits.AddRange(onFieldEnemyCompanies);
-        var sortedUnits = from comp in onFieldUnits
-            orderby comp.Unit.GetComponent<ArmyUnitClass>().CurrentUnitCharacteristics.Initiative descending
-            select comp;
-        string answer = "";
-        foreach (var comp in sortedUnits)
+        //Check if any units was removed from the field that are still in the BattlefieldOrder
+        var removedUnits = new List<UnitInOrder>();
+        removedUnits.AddRange(BattlefieldOrder.Where(x => x.UnitCompany.Unit == null));
+        foreach (var unit in removedUnits) BattlefieldOrder.Remove(unit);
+
+        //Add new units to the BattlefieldOrder
+        foreach (var comp in onFieldUnits)
         {
-            answer = $"{answer} -> {comp.Unit.gameObject.name}[{comp.Unit.GetComponent<ArmyUnitClass>().CurrentUnitCharacteristics.Initiative}]";
-            var ab = comp.Unit.GetComponent<ArmyUnitClass>().GetPossibleAbility();
-            if (ab!=null) AbilitiesOrder.Add(ab);
+            if (!BattlefieldOrder.Any(i => i.UnitCompany.Equals(comp)))
+            {
+                var newUnitInOrder = new UnitInOrder(Battlefield.GetFieldByCompany(comp),comp);
+                BattlefieldOrder.Add(newUnitInOrder);
+                var ab = comp.Unit.GetComponent<ArmyUnitClass>().GetPossibleAbility();
+                newUnitInOrder.AssignUnitAbility(ab);
+                if (ab!=null) newUnitInOrder.FieldManager.GetComponent<OnFieldCompanyManager>().SelectAbility(comp.Unit.GetComponent<ArmyUnitClass>().Abilities.FindIndex(abl=>abl==ab));
+            }
         }
+        //Check if targets of previous abilities was removed and assign new ability
+        foreach (var unit in BattlefieldOrder.Where(x => x.UnitAbility != null))
+        {
+            if (unit.UnitAbility.targets[0].Unit == null)
+            {
+                var ab = unit.UnitCompany.Unit.GetComponent<ArmyUnitClass>().GetPossibleAbility();
+                unit.AssignUnitAbility(ab);
+                Battlefield.GetFieldByCompany(unit.UnitCompany).GetComponent<OnFieldCompanyManager>().SelectAbility(-1);
+                if (ab!=null) Battlefield.GetFieldByCompany(unit.UnitCompany).GetComponent<OnFieldCompanyManager>().SelectAbility(unit.UnitCompany.Unit.GetComponent<ArmyUnitClass>().Abilities.FindIndex(abl=>abl==ab));
+            }
+        }
+        //Check if unit had no ability before and try add new one
+        foreach (var unit in BattlefieldOrder.Where(x => x.UnitAbility == null))
+        {
+            var ab = unit.UnitCompany.Unit.GetComponent<ArmyUnitClass>().GetPossibleAbility();
+            unit.AssignUnitAbility(ab);
+            if (ab!=null) Battlefield.GetFieldByCompany(unit.UnitCompany).GetComponent<OnFieldCompanyManager>().SelectAbility(unit.UnitCompany.Unit.GetComponent<ArmyUnitClass>().Abilities.FindIndex(abl=>abl==ab));
+        }
+        //Enemy units only logic
+        foreach (var unit in BattlefieldOrder.Where(x => x.UnitCompany.Field ==Battlefield.EnemyFormation))
+        {
+            var ab = unit.UnitCompany.Unit.GetComponent<ArmyUnitClass>().GetPossibleAbility();
+            unit.AssignUnitAbility(ab);
+            if (ab!=null) unit.FieldManager.GetComponent<OnFieldCompanyManager>().SelectAbility(unit.UnitCompany.Unit.GetComponent<ArmyUnitClass>().Abilities.FindIndex(abl=>abl==ab));
+        }
+        BattlefieldOrder.Sort((a, b) => b.UnitInitiative.CompareTo(a.UnitInitiative));
+        int orderIndex = 0;
+        foreach (var unit in BattlefieldOrder)
+        {
+            unit.OrderIndex = orderIndex;
+            orderIndex += 1;
+        }
+
         //Debug.Log(answer);
         // -------------GRAPHIC
-        foreach (var ability in AbilitiesOrder)
+        foreach (var unit in BattlefieldOrder)
         {
-            //Debug.Log($"{ability.UnitSquad.Unit.name} {ability.IsActive.ToString()}");
-            var newUI = Instantiate(AbilityUI,AbilityUIParent.transform);
+            var newUI = Instantiate(AbilityUI, AbilityUIParent.transform);
             AbilitiesUI.Add(newUI);
-            newUI.GetComponent<AbilityOrderUI>().SetIcons(
-                IconsSprites.GetSpriteByName(ability.AbilityName),
-                UnitSprites.GetIconSpriteByName(ability.UnitCompany.Unit.GetComponent<ArmyUnitClass>().UnitName),
-                UnitSprites.GetIconSpriteByName(ability.targets[0].Unit.GetComponent<ArmyUnitClass>().UnitName)
-                );
+            //Make background of AbilityOrderUI based on unit owner
+            Color heroColor = new Color(0, 0.125f, 0.55f, 0.78f);
+            if (unit.UnitCompany.Field == Battlefield.PlayerFormation) heroColor=new Color(0.5f, 0, 0.1f,0.78f);
+
+            newUI.GetComponent<AbilityOrderUI>().InitializeUI(unit,heroColor,unit.OrderIndex+1);
+        }
+        //Create list of units with only active Abilities
+        List<UnitInOrder> activeUnitList = new List<UnitInOrder>();
+        activeUnitList.AddRange(BattlefieldOrder.Where(x => x.UnitAbility != null));
+        if (activeUnitList.Count > 0)
+        {
+            //Rank all units by their TARGET X coord
+            var rankedList = activeUnitList
+                .OrderBy(x => Battlefield.GetFieldByCompany(x.UnitAbility.targets[0]).transform.position.x).Select(
+                    (x, i) => new
+                    {
+                        Item = x, Rank = Battlefield.GetFieldByCompany(x.UnitAbility.targets[0]).transform.position.x
+                    });
+            //For each distinct field target for each unit create target pointer
+            var distinctRankes = rankedList.Select(u => u.Rank).Distinct().ToList();
+            foreach (var rank in distinctRankes)
+            {
+                var listXX = rankedList.Where(x => x.Rank == rank)
+                    .OrderBy(x => x.Item.FieldManager.transform.position.x).ToList();
+                for (int i = 0; i < listXX.Count; i++)
+                {
+                    float shooterAdjustment = -1;
+                    float targetAdjustment = 1;
+                    Color startColor = new Color(0.1f, 0.5f, 0.85f,0.8f);
+                    Color endColor = new Color(0,0.125f, 0.55f,1f);
+                    if (listXX[i].Item.UnitCompany.Field == Battlefield.PlayerFormation)
+                    {
+                        shooterAdjustment = 1;
+                        targetAdjustment = -1;
+                        startColor = new Color(0.8f, 0, 0,0.8f);
+                        endColor = new Color(0.557f, 0, 0,1f);
+                    }
+
+                    Vector3 initShooterPos = listXX[i].Item.FieldManager.transform.position;
+                    Vector3 initTargetPos = Battlefield.GetFieldByCompany(listXX[i].Item.UnitAbility.targets[0])
+                        .GetComponent<OnFieldCompanyManager>().transform.position;
+                    float xAdjustment = -1.05f + 2.1f / listXX.Count * (i+0.5f);
+                    Vector3 shooterPos = new Vector3(initShooterPos.x + xAdjustment, initShooterPos.y + shooterAdjustment * 0.75f,
+                        initShooterPos.z);
+                    Vector3 targetPos = new Vector3(initTargetPos.x + xAdjustment,
+                        initTargetPos.y + targetAdjustment * 0.8f, initTargetPos.z);
+
+                    var newTargetPointer = Instantiate(TargetPointerPrefab, listXX[i].Item.FieldManager.transform);
+                    newTargetPointer.GetComponent<TargetPointerManager>().SetPositinsAndColors(shooterPos, targetPos,startColor, endColor);
+                    TargetPointers.Add(newTargetPointer);
+                }
+            }
         }
         Battlefield.UpdateField();
     }
-    private void DestroyUI()
+    public void FrontShift(FormationField field) // If front line is empty shift flanks or sup or reserve to front line
+    {
+        var onField = field.GetOnFieldcompanies();
+        var onFieldFront = onField.Where(company => company.Type == FormationType.Frontline).ToList();
+        var onFieldflank = onField.Where(company => company.Type == FormationType.Flank1||company.Type == FormationType.Flank2).ToList();
+        var onFieldSup = onField.Where(company => company.Type == FormationType.Support).ToList();
+        //var onFieldRes = onField.Where(company => company.Type == FormationType.Reserve).ToList();
+        var frontComps = field.Formation.Where(company => company.Type == FormationType.Frontline).ToList();
+        
+        List<Company> compToShift = new List<Company>();
+        if (onFieldflank.Count != 0) compToShift = onFieldflank;
+        else if (onFieldSup.Count != 0) compToShift = onFieldSup;
+        //else if (onFieldRes.Count != 0) compToShift = onFieldRes;
+        if (onFieldFront.Count == 0 && compToShift.Count!=0)
+        {
+            Debug.Log("Front shifting");
+            foreach (var company in frontComps)
+            {
+                var unitToShift = compToShift.First().Unit;
+                Battlefield.RemoveUnitFromFormationLogic(compToShift.First(),Battlefield.GetFieldByCompany(compToShift.First()).GetComponent<OnFieldCompanyManager>());
+                Battlefield.AddUnitToFormationLogic(unitToShift,company,Battlefield.GetFieldByCompany(company).GetComponent<OnFieldCompanyManager>(),field.FieldOwner.gameObject);
+                compToShift.Remove(compToShift.First());
+                if (compToShift.Count == 0) break;
+            }
+        }
+    }
+    public void SelectAbility(int index,GameObject onFieldManager)
+    {
+        if (onFieldManager.GetComponent<OnFieldCompanyManager>().Company.Unit.GetComponent<ArmyUnitClass>()
+            .Abilities[index]
+            .SelectTargets())
+        {
+            UnitInOrder unitInOrder = BattlefieldOrder.Where(x => x.UnitCompany == onFieldManager.GetComponent<OnFieldCompanyManager>().Company).First();
+            unitInOrder.AssignUnitAbility(onFieldManager.GetComponent<OnFieldCompanyManager>().Company.Unit
+                .GetComponent<ArmyUnitClass>()
+                .Abilities[index]);
+            onFieldManager.GetComponent<OnFieldCompanyManager>().SelectAbility(index);
+            Order();
+        }
+        else Debug.LogWarning("No target found for this ability");
+    }
+
+    public void DestroyUI()
     {
         foreach (var ui in AbilitiesUI)
         {
             Destroy(ui);
         }
         AbilityAnimation.transform.localPosition = new Vector3(0, 0, 0);
+        AbilitiesUI.Clear();
+        foreach (var targetPointer in TargetPointers)
+        {
+            Destroy(targetPointer);
+        }
+        TargetPointers.Clear();
     }
 }

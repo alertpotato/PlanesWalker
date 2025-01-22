@@ -84,7 +84,8 @@ public class GameLoopPreBattleState : StateBehaviour
     }
     public void EnemyUnitAllocation()
     {
-        var enemyUnits = Config.EnemyHero.GetComponent<Hero>().bannersList;
+        var enemyUnits = new List<GameObject>();
+        enemyUnits.AddRange(Config.EnemyHero.GetComponent<Hero>().bannersList);
         var rangedUnits = enemyUnits.Where(go => go.GetComponent<ArmyUnitClass>().UnitAbilityTags.Contains(AbilityTags.Ranged)).ToList();
         var avaliableSpaces = Config.EnemyFormation.GetAvaliableFields();
         var supportLine = avaliableSpaces.Where(comp => comp.Type == FormationType.Support).ToList();
@@ -95,8 +96,8 @@ public class GameLoopPreBattleState : StateBehaviour
         {
             if (supportLine.Count > 0 && rangedUnits.Count > 0)
             {
-                if (Config.EnemyFormation.AddUnitToFormation(supportLine[0], rangedUnits[0],
-                        Config.PlayerFormation))
+                var compMan =Config.Battlefield.GetComponent<Battlefield>().GetFieldByCompany(supportLine[0]);
+                if (Config.Battlefield.GetComponent<Battlefield>().AddUnitToFormationLogic(rangedUnits[0],supportLine[0],compMan.GetComponent<OnFieldCompanyManager>(),Config.EnemyHero))
                 {
                     enemyUnits.Remove(rangedUnits[0]);
                     rangedUnits.Remove(rangedUnits[0]);
@@ -116,8 +117,8 @@ public class GameLoopPreBattleState : StateBehaviour
         {
             if (avaliableSpaces.Count > 0 && enemyUnits.Count > 0)
             {
-                if (Config.EnemyFormation.AddUnitToFormation(avaliableSpaces[0], enemyUnits[0],
-                        Config.PlayerFormation))
+                var compMan =Config.Battlefield.GetComponent<Battlefield>().GetFieldByCompany(avaliableSpaces[0]);
+                if (Config.Battlefield.GetComponent<Battlefield>().AddUnitToFormationLogic(enemyUnits[0],avaliableSpaces[0],compMan.GetComponent<OnFieldCompanyManager>(),Config.EnemyHero))
                 {
                     enemyUnits.Remove(enemyUnits[0]);
                     avaliableSpaces.Remove(avaliableSpaces[0]);

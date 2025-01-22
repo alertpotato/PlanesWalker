@@ -189,7 +189,7 @@ TextureImporter:
         width: 210
         height: 150
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -210,7 +210,7 @@ TextureImporter:
         width: 64
         height: 90
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -231,7 +231,7 @@ TextureImporter:
         width: 16
         height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -239,6 +239,48 @@ TextureImporter:
       bones: []
       spriteID: e4c4b255240b87e41b4b2d04d11b8bc3
       internalID: -992130292
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: arrow1
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 42
+        width: 13
+        height: 13
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9bc36418f5760294798d6d875404dda0
+      internalID: -851165084
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: arrow2
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 42
+        width: 19
+        height: 13
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5df8b1f8d987c084b989717a4ba90bf2
+      internalID: 1477377839
       vertices: []
       indices: 
       edges: []
@@ -256,6 +298,8 @@ TextureImporter:
     nameFileIdTable:
       ability_back: -992130292
       ability_panel: -1126414204
+      arrow1: -851165084
+      arrow2: 1477377839
       card_back: -2123571295
       card_stats: -770728179
       card_supply: 700682774

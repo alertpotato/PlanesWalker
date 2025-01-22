@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(StateBehaviour))]
 [RequireComponent(typeof(GameLoopRewardState))]
@@ -30,10 +32,11 @@ public class GameLoopSharedData : MonoBehaviour
     public GameObject EnemyHero;
     public FormationField PlayerFormation;
     public FormationField EnemyFormation;
-    private GameObject mousedOverUnit;
+    private GameObject mousedOverObject;
     private GameObject unitPreview;
     [Header("UI")] 
     public SceneInterfaceController InterfaceUI;
+    public HintManager HintManager;
     [Header("Variables")]
     public int Day = 1;
     [Header("Prefabs")]
@@ -46,6 +49,8 @@ public class GameLoopSharedData : MonoBehaviour
     public GameLoopDecisionState DecisionState;
     [Header("StartingParams")]
     public Dictionary<FormationType, int> startingField = new Dictionary<FormationType, int> { {FormationType.Frontline,3}, {FormationType.Support,1}, {FormationType.Flank1,1}};
+    public EventSystem eventSystem;
+    public GraphicRaycaster graphicRaycaster;
     
     private void OnValidate()
     {
@@ -58,6 +63,8 @@ public class GameLoopSharedData : MonoBehaviour
         RoundState.Config = this;
         DecisionState.Config = this;
         Battlefield.GetComponent<Battlefield>().Initialize(MainCamera,PlayerFormation,EnemyFormation);
+        //Test UI
+        eventSystem = FindObjectOfType<EventSystem>();
     }
 
     private void Start()
@@ -102,37 +109,88 @@ public class GameLoopSharedData : MonoBehaviour
 
     private void Update()
     {
-        Ray ray = MainCamera.ScreenPointToRay(Input.mousePosition);
+        //TEST TEST TEST
+        // Check if the left mouse button is pressed
+        if (Input.GetMouseButtonDown(0))
+        {
+            // Create PointerEventData
+            PointerEventData eventData = new PointerEventData(eventSystem);
+            
+            // Set the position to the mouse position
+            eventData.position = Input.mousePosition;
+
+            // Create a list to store the results
+            List<RaycastResult> results = new List<RaycastResult>();
+
+            // Perform the raycast
+            graphicRaycaster.Raycast(eventData, results);
+
+            // Check if anything was hit
+            if (results.Count > 0)
+            {
+                // Print the name of the hit UI element
+                Debug.Log($"Hit UI element: {results[0].gameObject.name}");
+                
+                // You can also get the RectTransform of the hit element
+                // RectTransform hitRectTransform = results[0].GetComponent<RectTransform>();
+            }
+        }
+        //----------------------------------
+        
+        var mousePos = Input.mousePosition;
+        Ray ray = MainCamera.ScreenPointToRay(mousePos);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit, Mathf.Infinity))
         {
         }
         else
         {
-            if (mousedOverUnit) {mousedOverUnit = null; Destroy(unitPreview);}
+            if (mousedOverObject) {mousedOverObject = null; Destroy(unitPreview);HintManager.HideHint();Battlefield.GetComponent<Battlefield>().DeHighlightUnitUI();}
             return;
         }
-        
+        //Unit preview logic
         if (hit.collider.gameObject.GetComponent<OnFieldCompanyManager>())
             {
                 GameObject newMousedOverUnit = hit.collider.gameObject.GetComponent<OnFieldCompanyManager>().Company.Unit;
-                if (mousedOverUnit != newMousedOverUnit & newMousedOverUnit)
+                if (newMousedOverUnit == null) return;
+                mousePos.z = hit.collider.transform.position.z;
+                Vector3 worldPos = MainCamera.ScreenToWorldPoint(mousePos);
+                float xAdjust = -5f;
+                if (mousePos.x < Screen.width / 2) xAdjust = 5;
+                Vector3 cardPos = new Vector3(worldPos.x+xAdjust, worldPos.y/3, hit.collider.transform.position.z);
+                if (mousedOverObject != newMousedOverUnit & newMousedOverUnit)
                 {
                     Destroy(unitPreview);
-                    mousedOverUnit = newMousedOverUnit;
-                    unitPreview = CreateCard(mousedOverUnit,0.7f,0.65f,3);
+                    mousedOverObject = newMousedOverUnit;
+                    unitPreview = CreateCard(mousedOverObject,Vector3.zero);
+                    Battlefield.GetComponent<Battlefield>().HighlightUnitUI(newMousedOverUnit);
                 }
+                unitPreview.GetComponent<UnitCardMain>().SetNewPosition(cardPos,new Vector3(3,3,3));
             }
-        else if (mousedOverUnit) {mousedOverUnit = null; Destroy(unitPreview);}
+        //Hint logic
+        if (hit.collider.gameObject.GetComponent<FieldCompanyAbilityButtonManager>())
+        {
+            GameObject newMousedOverAbilityButton = hit.collider.gameObject;
+            if (newMousedOverAbilityButton == null) return;
+            mousePos.x += 50;
+            if (mousedOverObject != newMousedOverAbilityButton & newMousedOverAbilityButton)
+            {
+                mousedOverObject = newMousedOverAbilityButton;
+                int index = newMousedOverAbilityButton.GetComponent<FieldCompanyAbilityButtonManager>().CurrentIndex;
+                string hintText = newMousedOverAbilityButton.GetComponent<FieldCompanyAbilityButtonManager>()
+                    .FieldCompany.GetComponent<OnFieldCompanyManager>().Company.Unit.GetComponent<ArmyUnitClass>()
+                    .Abilities[index].AbilityDescription;
+                HintManager.ShowHint(hintText,mousePos);
+            }
+        }
     }
 
-    public GameObject CreateCard(GameObject unit,float x, float y,float z)
+    public GameObject CreateCard(GameObject unit,Vector3 newPos)
     {
-        var pos = MainCamera.ScreenToWorldPoint(new Vector3((Screen.width * x), Screen.height*y, z)); //z = 5 bc its distance between cards and camera
         GameObject newCard = Instantiate(UnitCard,this.gameObject.transform);
         newCard.name = $"{unit.name}_CardInfo";
         newCard.transform.SetParent(unit.transform);
-        newCard.GetComponent<UnitCardMain>().SetUnitParameters(MainCamera,unit, pos,Vector3.one,true,61);
+        newCard.GetComponent<UnitCardMain>().SetUnitParameters(MainCamera,unit, newPos,Vector3.one,true,61);
         return newCard;
     }
 
@@ -145,19 +203,21 @@ public class GameLoopSharedData : MonoBehaviour
         {
         }
         else return;
+        
         if (hit.collider.gameObject.GetComponent<UnitCardMain>())
         {
-            SelectedUnits.SelectEntity(hit.collider.gameObject);
+            if (SelectedUnits.SelectEntity(hit.collider.gameObject))
+            {
+                Battlefield.GetComponent<Battlefield>().HighlightUnitUI(hit.collider.gameObject.GetComponent<UnitCardMain>().RelatedUnit);   
+            }
+            else Battlefield.GetComponent<Battlefield>().DeHighlightUnitUI();
         }
         if (StateManager.CurrentState.Equals(PreBattleState))
         {
-            if (hit.collider.gameObject.GetComponent<OnFieldCompanyManager>().Company.Field.FieldOwner==PlayerHero.GetComponent<Hero>() & SelectedUnits.IsEntitySelected())
+            if (SelectedUnits.IsEntitySelected())
             {
-                if (PlayerFormation.AddUnitToFormation(hit.collider.gameObject.GetComponent<OnFieldCompanyManager>().Company,
-                        SelectedUnits.SelectedEntity.GetComponent<UnitCardMain>().RelatedUnit,EnemyFormation))
-                {
-                    Battlefield.GetComponent<BattlefieldLogic>().Order();
-                }
+                GameObject selectedUnit = SelectedUnits.SelectedEntity.GetComponent<UnitCardMain>().RelatedUnit;
+                hit.collider.gameObject.GetComponent<SelectAdapter>()?.SelectField.Invoke(selectedUnit,PlayerHero);
             }
         }
     }
@@ -169,24 +229,17 @@ public class GameLoopSharedData : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit,Mathf.Infinity))
             {
-                if (hit.collider.gameObject.GetComponent<OnFieldCompanyManager>().Company.Field.FieldOwner ==
-                    PlayerHero.GetComponent<Hero>() &&
-                    hit.collider.gameObject.GetComponent<OnFieldCompanyManager>().Company.Unit != null)
-                {
-                    PlayerFormation.RemoveUnitFromField(hit.collider.gameObject.GetComponent<OnFieldCompanyManager>()
-                        .Company.Unit);
-                    Battlefield.GetComponent<Battlefield>().UpdateField();
-                    Battlefield.GetComponent<BattlefieldLogic>().Order();
-                }
-            else
-            {
-                PlayerFormation.ClearField();
-                Battlefield.GetComponent<Battlefield>().UpdateField();
-                Battlefield.GetComponent<BattlefieldLogic>().Order();
-            }
+                hit.collider.gameObject.GetComponent<SelectAdapter>()?.DeselectField.Invoke(PlayerHero);
             }
         }
-        else SelectedUnits.DeSelectEntity();
+        else
+        {
+            GameObject selectedUnit = SelectedUnits.SelectedEntity.GetComponent<UnitCardMain>().RelatedUnit;
+            Battlefield.GetComponent<Battlefield>().DeHighlightUnitUI();
+            SelectedUnits.DeSelectEntity();
+        }
+
+        
     }
     private void OnRestartGame(InputValue value)
     {
@@ -205,6 +258,14 @@ public class GameLoopSharedData : MonoBehaviour
         Battlefield.GetComponent<BattlefieldLogic>().pauseBetweenAbilities =
             Mathf.Clamp(Battlefield.GetComponent<BattlefieldLogic>().pauseBetweenAbilities - 0.25f, 0.25f, 10f);
         InterfaceUI.UpdateHintText(Day,WorldData.EnemySupply,Battlefield.GetComponent<BattlefieldLogic>().pauseBetweenAbilities);
+    }
+
+    private void OnAction(InputValue value)
+    {
+        if (StateManager.CurrentState.Equals(RoundState))
+        {
+            RoundState.RoundButtonAction();
+        }
     }
 
     public void EndOfLoopEvents()
@@ -227,9 +288,7 @@ public class GameLoopSharedData : MonoBehaviour
         var newUnitCharacteristics = listOfCommonUnits.GetRandomUnit(unitRace);
         GameObject newUnit = Instantiate(Unit,parent.transform);
         ArmyUnitClass unitClass = newUnit.GetComponent<ArmyUnitClass>();
-        Debug.Log($"---------------UNITS: {unitClass} {newUnitCharacteristics.Item1} {newUnitCharacteristics.Item2}");
         unitClass.InitializeUnit(newUnitCharacteristics.Item1,newUnitCharacteristics.Item2);
-        Debug.Log($"-----------sssssss----UNITS: {unitClass} {newUnitCharacteristics.Item1} {newUnitCharacteristics.Item2}");
         newUnit.name = $"{unitClass.UnitName}_{newUnit.GetInstanceID()}";
         newUnit.transform.position = Vector3.zero;
         return newUnit;

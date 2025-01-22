@@ -6,6 +6,8 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
+using UnityEngine.UIElements;
+using Button = UnityEngine.UI.Button;
 
 [RequireComponent(typeof(GameLoopSharedData))]
 public class GameLoopRoundState : StateBehaviour
@@ -19,14 +21,14 @@ public class GameLoopRoundState : StateBehaviour
         Config.InterfaceUI.UpdateHelpText("Battle started!","");
         StartRoundButton.SetActive(true);
         CurrentRound = 1;
+        ButtonStartRound();
     }
     public void StartRound()
     {
-        StartRoundButton.SetActive(false);
+        ButtonSkipAnimation();
         Debug.Log($"Entered round {CurrentRound}!");
         Config.InterfaceUI.UpdateHelpText($"Round {CurrentRound}, every army cohesion reduced by {CurrentRound-1}.","");
         var Logic = Config.Battlefield.GetComponent<BattlefieldLogic>();
-        Logic.Order();
         Logic.ApplyAbilities(this);
     }
     public void RoundEnd()
@@ -34,10 +36,11 @@ public class GameLoopRoundState : StateBehaviour
         Debug.Log($"Round {CurrentRound} ended!");
         // Round ending logic
         CurrentRound += 1;
+        Config.Battlefield.GetComponent<Battlefield>().logic.RemoveDeadUnits();
         TriggerOnFieldUnitsRoundEffects();
         // Formation Round ending effects
-        Config.PlayerFormation.OnRoundEnd();
-        Config.EnemyFormation.OnRoundEnd();
+        Config.Battlefield.GetComponent<Battlefield>().logic.FrontShift(Config.PlayerFormation);
+        Config.Battlefield.GetComponent<Battlefield>().logic.FrontShift(Config.EnemyFormation);
         // Update field graphic
         Config.Battlefield.GetComponent<Battlefield>().UpdateField();
         CheckWinCondition();
@@ -50,7 +53,7 @@ public class GameLoopRoundState : StateBehaviour
             ChangeState<GameLoopRewardState>();
         }
         else if (Config.PlayerFormation.GetOnFieldcompanies().Count==0) StartCoroutine(EndGameScreen());
-        else StartRoundButton.SetActive(true);
+        else ButtonStartRound();
     }
     IEnumerator EndGameScreen()
     {
@@ -62,7 +65,7 @@ public class GameLoopRoundState : StateBehaviour
 
     public override void OnExit()
     {
-        Config.Battlefield.GetComponent<Battlefield>().DestroyField();
+        Config.Battlefield.GetComponent<Battlefield>().OnBattleEnd();
         Config.Battlefield.SetActive(false);
         StartRoundButton.SetActive(false);
         TriggerAllUnitsBattleEndEffects();
@@ -75,7 +78,7 @@ public class GameLoopRoundState : StateBehaviour
         UnitBuff debuff = new UnitBuff(debuffChar, Config.GameObject(), 999);
         List<UnitBuff> BuffList = new List<UnitBuff>();
         BuffList.Add(debuff);
-        
+
         foreach (var comp in Config.PlayerFormation.GetOnFieldcompanies())
         {
             if (CurrentRound > 1) comp.Unit.GetComponent<ArmyUnitClass>().ReciveBuffs(BuffList);
@@ -97,5 +100,32 @@ public class GameLoopRoundState : StateBehaviour
         {
             unit.GetComponent<ArmyUnitClass>().OnBattleEnd();
         }
+    }
+
+    public void ButtonStartRound()
+    {
+        StartRoundButton.GetComponent<Button>().onClick.RemoveAllListeners();
+        StartRoundButton.GetComponent<Button>().onClick.AddListener(()=> StartRound());
+        StartRoundButton.GetComponent<ButtonManager>().ChangeButtonText($"Start round {CurrentRound}");
+    }
+    public void ButtonSkipAnimation()
+    {
+        StartRoundButton.GetComponent<Button>().onClick.RemoveAllListeners();
+        StartRoundButton.GetComponent<Button>().onClick.AddListener(()=> OnButtonClickSkip());
+        StartRoundButton.GetComponent<ButtonManager>().ChangeButtonText($"Next unit action");
+    }
+    public void ButtonEndRound()
+    {
+        StartRoundButton.GetComponent<Button>().onClick.RemoveAllListeners();
+        StartRoundButton.GetComponent<Button>().onClick.AddListener(()=> RoundEnd());
+        StartRoundButton.GetComponent<ButtonManager>().ChangeButtonText($"End round {CurrentRound}");
+    }
+    private void OnButtonClickSkip()
+    {
+        Config.Battlefield.GetComponent<Battlefield>().logic.isAction=true;
+    }
+    public void RoundButtonAction()
+    {
+        StartRoundButton.GetComponent<Button>().onClick.Invoke();
     }
 }

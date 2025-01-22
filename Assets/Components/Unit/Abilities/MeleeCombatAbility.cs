@@ -13,7 +13,9 @@ public class MeleeCombatAbility : UnitAbility
         Tags.Add(AbilityTags.Melee);
         Tags.Add(AbilityTags.MeleeRetaliation);
         AbilityDamageModifier = 1;
+        InitiativeModifier = 0;
         RetaliationTags.Add(AbilityTags.MeleeRetaliation);
+        AbilityDescription = $"Melee combat [melee][melee retaliation]\n  Damage: {Mathf.Round(AbilityDamageModifier*100)}%\n  Target priority:\nopposite unit first";
     }
     public override bool SelectTargets()
     {

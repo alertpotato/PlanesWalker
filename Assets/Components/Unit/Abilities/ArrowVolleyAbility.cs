@@ -13,6 +13,8 @@ public class ArrowVolleyAbility : UnitAbility
         Tags.Add(AbilityTags.Ranged);
         AbilityDamageModifier = 0.8f;
         RetaliationTags.Add(AbilityTags.RangedRetaliation);
+        InitiativeModifier = 0;
+        AbilityDescription = $"Arrow volley [ranged]\n  Damage: {Mathf.Round(AbilityDamageModifier*100)}%\n  Hits any unit on the frontline or flanks\n  Target priority:\nMounted->Ranged->Melee";
     }
     public override bool SelectTargets()
     {

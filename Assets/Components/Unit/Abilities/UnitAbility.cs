@@ -8,10 +8,11 @@ using AbilityFactory = System.Func<UnitAbility>;
 public enum AbilityTags { Melee, Ranged, MeleeRetaliation, RangedRetaliation, Mounted  };
 
 
-[Serializable]
+[System.Serializable]
 public abstract class UnitAbility
 {
     public string AbilityName = "Default ability name";
+    public string AbilityDescription = "Default ability description";
     public List<Company> targets = new List<Company>();
     public List<AbilityTags> Tags = new List<AbilityTags>();
     public List<AbilityTags> RetaliationTags = new List<AbilityTags>();
@@ -19,6 +20,7 @@ public abstract class UnitAbility
     public FormationField UnitField;
     public FormationField OpposingField;
     public float AbilityDamageModifier;
+    public int InitiativeModifier = 0;
     public abstract bool SelectTargets();
     public (int,int,int) GetAbilityImpact()
     {

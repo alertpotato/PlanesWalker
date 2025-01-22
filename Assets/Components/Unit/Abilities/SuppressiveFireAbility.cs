@@ -12,7 +12,9 @@ public class SuppressiveFireAbility : UnitAbility
         AbilityName = "Suppressive Fire";
         Tags.Add(AbilityTags.Ranged);
         AbilityDamageModifier = 0.6f;
+        InitiativeModifier = 1;
         RetaliationTags.Add(AbilityTags.RangedRetaliation);
+        AbilityDescription = $"Suppressive fire [ranged]\n  Damage: {Mathf.Round(AbilityDamageModifier*100)}%\n  Hits any unit on the frontline or flanks.\n  Target priority:\nMelee->Mounted->Ranged\n  Additional modifiers:\n+{InitiativeModifier} initiative";
     }
     public override bool SelectTargets()
     {

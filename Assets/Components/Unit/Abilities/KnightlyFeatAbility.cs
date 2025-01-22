@@ -10,8 +10,10 @@ public class KnightlyFeatAbility : UnitAbility
     {
         AbilityName = "Knightly Feat";
         Tags.Add(AbilityTags.Melee);
-        AbilityDamageModifier = 1;
+        AbilityDamageModifier = 1.2f;
+        InitiativeModifier = 0;
         RetaliationTags.Add(AbilityTags.MeleeRetaliation);
+        AbilityDescription = $"Knightly feat [melee]\n  Damage: {Mathf.Round(AbilityDamageModifier*100)}%\n  Target priority:\nunit with most total health";
     }
     public override bool SelectTargets()
     {

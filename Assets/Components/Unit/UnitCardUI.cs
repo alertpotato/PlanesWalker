@@ -13,7 +13,7 @@ public class UnitCardUI : MonoBehaviour
     [Header("Variables")] 
     public int startingOrder;
     [Header("Card")]
-    public TextMeshProUGUI name;
+    public TextMeshProUGUI cardName;
     public TextMeshProUGUI add;
     public TextMeshProUGUI multi;
     [Header("Stats")]
@@ -94,7 +94,7 @@ public class UnitCardUI : MonoBehaviour
 
     private void UpdateCard()
     {
-        name.text = Unit.UnitName;
+        cardName.text = Unit.UnitName;
         add.text = $"{Unit.FactoryCharacteristics.UnitRace.ToString()}\n{Unit.UnitAbilityTags[0].ToString()}";
         multi.text = $"x{Unit.SupplyMultiplier.ToString()}";
     }

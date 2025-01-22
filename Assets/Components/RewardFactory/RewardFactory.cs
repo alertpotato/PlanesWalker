@@ -96,7 +96,7 @@ public class RewardFactory : ScriptableObject
     }
     private int HeroReward()
     {
-        int reward = Random.Range(0, 1);
+        int reward = Random.Range(0, 2);
         return reward;
     }
     public int FieldReward(List<Company> formation)
