@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class UnitCardUI : MonoBehaviour
 {
     [Header("Components")]
-    public ArmyUnitClass Unit;
+    public ArmyUnitClass unitClass;
 
     public SpriteRenderer Back;
     public SpriteRenderer Image;
@@ -36,7 +37,7 @@ public class UnitCardUI : MonoBehaviour
 
     public void InitializeUI(ArmyUnitClass unit)
     {
-        Unit = unit;
+        unitClass = unit;
         abilities = new List<GameObject>();
         Back.sortingOrder = startingOrder;
         Image.sortingOrder = startingOrder+10;
@@ -46,7 +47,7 @@ public class UnitCardUI : MonoBehaviour
     public void UpdateAllUI()
     {
         UpdateCard();
-        UpdateSupply();
+        //UpdateSupply();
         UpdateStats();
     }
     public void MoveToFront(bool toMove)
@@ -75,7 +76,7 @@ public class UnitCardUI : MonoBehaviour
 
     public void CreateAbilityUI()
     {
-        foreach (var ability in Unit.Abilities)
+        foreach (var ability in unitClass.unit.CurrentUnitAttributes.SquadAbilities)
         {
             var newPanel = Instantiate(AbilityPrefab, VerticalGroup.transform);
             newPanel.GetComponent<AbilityPanelManager>().Initialize(Icons.GetSpriteByName(ability.AbilityName),ability.AbilityName);
@@ -94,41 +95,21 @@ public class UnitCardUI : MonoBehaviour
 
     private void UpdateCard()
     {
-        cardName.text = Unit.UnitName;
-        add.text = $"{Unit.FactoryCharacteristics.UnitRace.ToString()}\n{Unit.UnitAbilityTags[0].ToString()}";
-        multi.text = $"x{Unit.SupplyMultiplier.ToString()}";
-    }
-    private void UpdateSupply()
-    {
-        List<TextMeshProUGUI> supplys = new List<TextMeshProUGUI>(){food,weapon,coin,knowledge};
-        int i = 0;
-        foreach (var sup in supplys)
-        {
-            var req = Unit.FactoryCharacteristics.UnitSupplyReq[i];
-            if (req == 0) sup.text = $"<color=#939393>{req}</color>";
-            else sup.text = req.ToString();
-            i++;
-        }
+        cardName.text = unitClass.squadName;
+        add.text = $"{unitClass.unit.UnitRace.ToString()}\n{unitClass.UnitAbilityTags[0].ToString()}";
+        multi.text = $"x1";
     }
     private void UpdateStats()
     {
-        var upgrd = Unit.unitUpgrades;
-        var currentChars = Unit.BaseCharacteristics;
-        var defaultChars = Unit.FactoryCharacteristics.Characteristics;
-        string nupgrd = ""; string hupgrd = ""; string dupgrd = ""; string iupgrd = ""; string cupgrd = ""; string aupgrd = "";
-        nupgrd = AddStars(nupgrd, upgrd.NumberOfUnits);
-        hupgrd = AddStars(hupgrd, upgrd.Health);
-        dupgrd = AddStars(dupgrd, upgrd.Damage);
-        iupgrd = AddStars(iupgrd, upgrd.Initiative);
-        cupgrd = AddStars(cupgrd, upgrd.Cohesion);
-        aupgrd = AddStars(aupgrd, upgrd.Armour);
+        var currentChars = unitClass.unit.CurrentUnitAttributes;
+        var defaultChars = unitClass.unit.SavedUnitAttributes;
 
-        stat_number.text = $"{currentChars.NumberOfUnits}({defaultChars.NumberOfUnits}){nupgrd}";
-        stat_health.text = $"{currentChars.Health}({defaultChars.Health}){hupgrd}";
-        stat_damage.text = $"{currentChars.Damage}({defaultChars.Damage}){dupgrd}";
-        stat_init.text = $"{currentChars.Initiative}({defaultChars.Initiative}){iupgrd}";
-        stat_coh.text = $"{currentChars.Cohesion}({defaultChars.Cohesion}){cupgrd}";
-        stat_armour.text = $"{currentChars.Armour}({defaultChars.Armour}){aupgrd}";
+        stat_number.text = $"{currentChars.SquadSize}({defaultChars.SquadSize})";
+        stat_health.text = $"{currentChars.Health}({defaultChars.Health})";
+        stat_damage.text = $"0";
+        stat_init.text = $"0";
+        stat_coh.text = $"{currentChars.Cohesion}({defaultChars.Cohesion})";
+        stat_armour.text = $"0";
     }
 
     private string AddStars(string starsToAdd, int numOfTimes)

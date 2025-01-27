@@ -131,7 +131,7 @@ public class Battlefield : MonoBehaviour
         }
         else
         {
-            comp.ChangeSprite(UnitSprites.GetCardSpriteByName(comp.Company.Unit.GetComponent<ArmyUnitClass>().UnitName));
+            comp.ChangeSprite(UnitSprites.GetCardSpriteByName(comp.Company.Unit.GetComponent<ArmyUnitClass>().squadName));
             comp.UpdateCellText();
         }
     }
@@ -161,7 +161,7 @@ public class Battlefield : MonoBehaviour
         else return answer;
         compMan.ResetAbilityButtons();
         int index = 0;
-        foreach (var ability in comp.Unit.GetComponent<ArmyUnitClass>().Abilities)
+        foreach (var ability in comp.Unit.GetComponent<ArmyUnitClass>().unit.CurrentUnitAttributes.SquadAbilities)
         {
             compMan.CreateAbilityButton(index, logic, IconSprites.GetSpriteByName(ability.AbilityName),activateAbilityButtons);
             index++;

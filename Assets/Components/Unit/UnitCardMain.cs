@@ -51,7 +51,7 @@ public class UnitCardMain : MonoBehaviour
         extendInfo = showMore;
         RelatedUnit = unit;
         ArmyUnitClass RelatedUnitClass = RelatedUnit.GetComponent<ArmyUnitClass>();
-        SetSpriteByName(RelatedUnitClass.UnitName);
+        SetSpriteByName(RelatedUnitClass.squadName);
         cardSpriteSize = cardSprite.size;
         cardCollider.size = new Vector3(cardSprite.size.x, cardSprite.size.y, 0.1f);
         transform.position = pos;

@@ -88,33 +88,27 @@ public class OnFieldCompanyManager : MonoBehaviour
 
     public void UpdateCellText()
     {
-
         CompanyHint();
         HideUI(true);
         Color green = new Color(0.062f, 0.729f, 0, 1);
         Color yelow = new Color(0.835f, 0.729f, 0, 1);
-        var unit = Company.Unit.GetComponent<ArmyUnitClass>();
-        float baseH = unit.BaseCharacteristics.Health * unit.BaseCharacteristics.NumberOfUnits;
-        float curH = unit.currentSquadHealth;
+        var unitClass = Company.Unit.GetComponent<ArmyUnitClass>();
+        float baseH = unitClass.unit.BaseUnitAttributes.Health * unitClass.unit.BaseUnitAttributes.SquadSize;
+        float curH = unitClass.currentSquadHealth;
         var newHColor = ColorUtility.ToHtmlStringRGBA(Color.Lerp(yelow, green, curH / baseH));
         if (curH / baseH < 0.5f) newHColor = ColorUtility.ToHtmlStringRGBA(Color.Lerp(Color.red, yelow, curH / baseH));
         HealthText.text = $"<color=#{newHColor}>{curH}</color>";
 
-        float baseN = unit.BaseCharacteristics.NumberOfUnits;
-        float curN = unit.CurrentUnitCharacteristics.NumberOfUnits;
+        float baseN = unitClass.unit.BaseUnitAttributes.SquadSize;
+        float curN = unitClass.unit.CurrentUnitAttributes.SquadSize;
         var newNColor = ColorUtility.ToHtmlStringRGBA(Color.Lerp(Color.red, green, curN / baseN));
         NumberText.text = $"<color=#{newNColor}>{curN}</color>";
+        
+        DamageText.text = $"0/0";
+        InitiativeText.text = $"0/0";
 
-        float baseD = unit.BaseCharacteristics.Damage;
-        float curD = unit.CurrentUnitCharacteristics.Damage;
-        DamageText.text = $"{curD}/{baseD}";
-
-        float baseI = unit.BaseCharacteristics.Initiative;
-        float curI = unit.CurrentUnitCharacteristics.Initiative;
-        InitiativeText.text = $"{curI}/{baseI}";
-
-        float baseC = unit.BaseCharacteristics.Cohesion;
-        float curC = unit.CurrentUnitCharacteristics.Cohesion;
+        float baseC = unitClass.unit.BaseUnitAttributes.Cohesion;
+        float curC = unitClass.unit.CurrentUnitAttributes.Cohesion;
         string newCColor;
         if (curC > 0)
             newCColor = ColorUtility.ToHtmlStringRGBA(Color.Lerp(Color.yellow, green,
@@ -122,16 +116,12 @@ public class OnFieldCompanyManager : MonoBehaviour
         else if (curC == 0) newCColor = ColorUtility.ToHtmlStringRGBA(Color.yellow);
         else newCColor = ColorUtility.ToHtmlStringRGBA(Color.Lerp(Color.yellow, Color.red, Mathf.Abs(curC) / 10));
         CohesionText.text = $"<color=#{newCColor}>{curC}</color>";
-
-        float baseA = unit.BaseCharacteristics.Armour;
-        float curA = unit.CurrentUnitCharacteristics.Armour;
-        ArmourText.text = $"{curA}/{baseA}";
-
-        var newEColor = ColorUtility.ToHtmlStringRGBA(Color.Lerp(Color.red, green,
-            Mathf.Clamp(unit.currentUnitEffectiveness, 0, 1) / 1.0f));
-        EffectivenessText.text = $"<color=#{newEColor}>{Mathf.Ceil(unit.currentUnitEffectiveness * 100)}</color>%";
+        
+        ArmourText.text = $"0/0";
+        
+        EffectivenessText.text = $"0%";
         //Indicator that unit is dead
-        if (unit.currentSquadHealth <= 0)
+        if (unitClass.currentSquadHealth <= 0)
         {
             DeadIcon.SetActive(true);
             ChangeSprite(null);

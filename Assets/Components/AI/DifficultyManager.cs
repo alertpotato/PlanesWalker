@@ -8,18 +8,18 @@ public class DifficultyManager : MonoBehaviour
     PlayerData PlayerData;
     RewardFactory RewardFactory;
     EventFactory EventFactory;
-    ListOfCommonUnits UnitsFactory;
+    UnitFactory unitFactory;
     public GameObject UnitPrefab;
     [SerializeField]private int RarityMultiplier = 100;
     public List<List<GameObject>> Units = new List<List<GameObject>>();
     public List<Dictionary<FormationType, int>> Fields = new List<Dictionary<FormationType, int>>();
-    public void InitializeDifficulty(int startingDifficulty, PlayerData playerData, RewardFactory rewardFactory,EventFactory eventFactory,ListOfCommonUnits unitsFactory)
+    public void InitializeDifficulty(int startingDifficulty, PlayerData playerData, RewardFactory rewardFactory,EventFactory eventFactory,UnitFactory unitsFactory)
     {
         difficultyLevel = startingDifficulty;
         PlayerData = playerData;
         RewardFactory = rewardFactory;
         EventFactory = eventFactory;
-        UnitsFactory = unitsFactory;
+        unitFactory = unitsFactory;
     }
 
     public void UpdateDifficulty(int gameDay)
@@ -35,7 +35,7 @@ public class DifficultyManager : MonoBehaviour
     public void IncreaseCardRarity(int increaseMulti)
     {
         List<PointsToRandomuzeUnitWeights> newList = new List<PointsToRandomuzeUnitWeights>();
-        var pointsList = UnitsFactory.pointsRandomizerList;
+        var pointsList = unitFactory.pointsRandomizerList;
         int maxW=0;
         int minW=999999;
         foreach (var point in pointsList)
@@ -53,7 +53,7 @@ public class DifficultyManager : MonoBehaviour
             string logger = $"{point.weight} {multiPower} {newW}";
             newList.Add(new PointsToRandomuzeUnitWeights(point.points,Mathf.FloorToInt(newW)));
         }
-        UnitsFactory.pointsRandomizerList = newList;
+        unitFactory.pointsRandomizerList = newList;
     }
     public void GenerateUnits(List<int> events,int additionalDifficulty)
     {
@@ -191,13 +191,13 @@ public class DifficultyManager : MonoBehaviour
     
     public GameObject InstantiateRandomUnit(List<Race> unitRace,GameObject parent,List<string> unitType=null)
     {
-        var newUnitCharacteristics = UnitsFactory.GetRandomUnit(unitRace,unitType);
-        GameObject newUnit = Instantiate(UnitPrefab,parent.transform);
-        ArmyUnitClass unitClass = newUnit.GetComponent<ArmyUnitClass>();
-        unitClass.InitializeUnit(newUnitCharacteristics.Item1,newUnitCharacteristics.Item2);
-        newUnit.name = $"{unitClass.UnitName}_{newUnit.GetInstanceID()}";
-        newUnit.transform.position = Vector3.zero;
-        return newUnit;
+        var newUnit = unitFactory.GetRandomUnit();
+        GameObject newUnitObject = Instantiate(UnitPrefab,parent.transform);
+        ArmyUnitClass unitClass = newUnitObject.GetComponent<ArmyUnitClass>();
+        unitClass.InitializeUnit(newUnit);
+        newUnitObject.name = $"{unitClass.squadName}_{newUnitObject.GetInstanceID()}";
+        newUnitObject.transform.position = Vector3.zero;
+        return newUnitObject;
     }
     private void ResetUnitSets()
     {

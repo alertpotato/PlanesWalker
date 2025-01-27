@@ -2476,7 +2476,7 @@ MonoBehaviour:
   difficultyManager: {fileID: 1884239326}
   GameLoopState: {fileID: 1197611739}
   WorldData: {fileID: 11400000, guid: 89360191cfe903b49835eba6db87e99a, type: 2}
-  listOfCommonUnits: {fileID: 11400000, guid: 4df28bdcbf64e5241a86717ac39ecdeb, type: 2}
+  unitFactory: {fileID: 11400000, guid: 6da38e5e188052243b95bd72392e4be9, type: 2}
   PlayerHero: {fileID: 1691416272}
   EnemyHero: {fileID: 510261288}
   PlayerFormation: {fileID: 11400000, guid: dd0d51573dc070c43834a05bdc0da80f, type: 2}
@@ -2484,7 +2484,6 @@ MonoBehaviour:
   InterfaceUI: {fileID: 1552274955}
   HintManager: {fileID: 23025979}
   Day: 1
-  Unit: {fileID: 918958474132185176, guid: bf59c730e343e07429aca668f5e86307, type: 3}
   UnitCard: {fileID: 4751710123259907381, guid: 51782c9719bee9146a71b7e0a3e1d136, type: 3}
   PreBattleState: {fileID: 1197611736}
   RewardState: {fileID: 1197611737}

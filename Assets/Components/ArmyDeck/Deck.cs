@@ -42,26 +42,26 @@ public class Deck : MonoBehaviour
             Debug.LogWarning("No cards in list!");return;
         }
         float stepX = -1.5f*scaleMulti; float stepY = 0;
-        string prevCardName = cardListSorted[0].GetComponent<UnitCardMain>().RelatedUnit.GetComponent<ArmyUnitClass>().UnitName;
+        string prevCardName = cardListSorted[0].GetComponent<UnitCardMain>().RelatedUnit.GetComponent<ArmyUnitClass>().squadName;
         int maxCardsCount = 0;
         foreach (var card in cardListSorted)
         {
             var unit = card.GetComponent<UnitCardMain>().RelatedUnit.GetComponent<ArmyUnitClass>();
-            if (unit.UnitName != prevCardName) { stepY -= 2.1f*scaleMulti; stepX = 0; maxCardsCount = 0;}
+            if (unit.squadName != prevCardName) { stepY -= 2.1f*scaleMulti; stepX = 0; maxCardsCount = 0;}
             else { stepX += 1.5f*scaleMulti;}
             if (maxCardsCount==MaxCardsInRow) { stepY -= 2.1f*scaleMulti; stepX = 0;
                 maxCardsCount = 0; 
             }
             var newPos = new Vector3( stepX, stepY, 0 );
             card.GetComponent<UnitCardMain>().SetNewPosition(newPos,Vector3.one*scaleMulti);
-            prevCardName = unit.UnitName;
+            prevCardName = unit.squadName;
             maxCardsCount++;
         }
     }
     private List<GameObject> CreateSortList()
     {
         var sortList = cards;
-        sortList = sortList.OrderBy(x => x.GetComponent<UnitCardMain>().RelatedUnit.GetComponent<ArmyUnitClass>().UnitName).ToList();
+        sortList = sortList.OrderBy(x => x.GetComponent<UnitCardMain>().RelatedUnit.GetComponent<ArmyUnitClass>().squadName).ToList();
         return sortList;
     }
     private void CreateCards()

@@ -62,7 +62,7 @@ public class GameLoopDecisionState : StateBehaviour
             string eventText = $"<style=\"Title\">{Config.EventFactory.EventWeights[EventIds[decisionIndex]].Name}</style>\nYour scouts spotted:\n";
             foreach (var unitList in Config.difficultyManager.Units[decisionIndex])
             {
-                eventText+=$"    -{unitList.GetComponent<ArmyUnitClass>().UnitName}\n";
+                eventText+=$"    -{unitList.GetComponent<ArmyUnitClass>().squadName}\n";
             }
             string rewardsText = "\nRewards:\n";
             foreach (var rew in reward.Item1)

@@ -74,6 +74,8 @@ public class GameLoopRoundState : StateBehaviour
     }
     public void TriggerOnFieldUnitsRoundEffects()
     {
+        //TODO new debuff logic needed
+        /*
         UnitCharacteristics debuffChar = new UnitCharacteristics(0, 0, 0, 0, -1, 0,0);
         UnitBuff debuff = new UnitBuff(debuffChar, Config.GameObject(), 999);
         List<UnitBuff> BuffList = new List<UnitBuff>();
@@ -89,6 +91,7 @@ public class GameLoopRoundState : StateBehaviour
             if (CurrentRound > 1) comp.Unit.GetComponent<ArmyUnitClass>().ReciveBuffs(BuffList);
             comp.Unit.GetComponent<ArmyUnitClass>().OnRoundEnd();
         }
+        */
     }
     public void TriggerAllUnitsBattleEndEffects()
     {

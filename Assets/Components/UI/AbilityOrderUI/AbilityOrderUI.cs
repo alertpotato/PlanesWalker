@@ -23,13 +23,13 @@ public class AbilityOrderUI : MonoBehaviour
         Unit = unit;
         Back.color = backColor;
         OrderIndex.text = index.ToString();
-        FromIcon.sprite = UnitSprites.GetIconSpriteByName(Unit.UnitCompany.Unit.GetComponent<ArmyUnitClass>().UnitName);
+        FromIcon.sprite = UnitSprites.GetIconSpriteByName(Unit.UnitCompany.Unit.GetComponent<ArmyUnitClass>().squadName);
         if (Unit.UnitAbility != null)
         {
             AbilityIcon.sprite = IconsSprites.GetSpriteByName(Unit.UnitAbility.AbilityName);
             ToIcon.sprite =
                 UnitSprites.GetIconSpriteByName(
-                    (Unit.UnitAbility.targets[0].Unit.GetComponent<ArmyUnitClass>().UnitName));
+                    (Unit.UnitAbility.targets[0].Unit.GetComponent<ArmyUnitClass>().squadName));
         }
     }
 

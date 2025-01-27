@@ -37,14 +37,8 @@ public class GameLoopPreBattleState : StateBehaviour
     {
         var playerHero = Config.PlayerFormation.FieldOwner;
         var enemyHero = Config.EnemyFormation.FieldOwner;
-        UnitCharacteristics playerBuffs = new UnitCharacteristics(0, 0, 0,playerHero.modinit , playerHero.modcoh, 0,0);
-        UnitCharacteristics enemyBuffs = new UnitCharacteristics(0, 0, 0, enemyHero.modinit , enemyHero.modcoh, 0,0);
-        UnitBuff playerBuff = new UnitBuff(playerBuffs, this.gameObject, 999);
-        UnitBuff enemyBuff = new UnitBuff(enemyBuffs, this.gameObject, 999);
         List<UnitBuff> playerBuffList = new List<UnitBuff>();
-        playerBuffList.Add(playerBuff);
         List<UnitBuff> enemyBuffList = new List<UnitBuff>();
-        enemyBuffList.Add(enemyBuff);
         foreach (var comp in Config.PlayerHero.GetComponent<Hero>().bannersList)
         {
            comp.GetComponent<ArmyUnitClass>().OnBattleStart(Config.WorldData.PlayerSupply,playerBuffList);

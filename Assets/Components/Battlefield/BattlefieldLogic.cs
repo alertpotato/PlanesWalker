@@ -32,9 +32,8 @@ public class UnitInOrder
 
     private void CalculateUnitInitiative()
     {
-        int unitInit = UnitCompany.Unit.GetComponent<ArmyUnitClass>().CurrentUnitCharacteristics.Initiative;
-        if (UnitAbility != null) unitInit += UnitAbility.InitiativeModifier;
-        UnitInitiative = unitInit;
+        //TODO Remove init??
+        UnitInitiative = 0;
     }
 }
 
@@ -157,8 +156,6 @@ public class BattlefieldLogic : MonoBehaviour
             {
                 res.Item1.GetComponent<ArmyUnitClass>().TakeDamage((res.Item2, res.Item3));
             }
-            if (res.Item4 > 0)
-                res.Item1.GetComponent<ArmyUnitClass>().UpdateEffectiveness(res.Item4);
         }
     }
     public void RemoveDeadUnits()
@@ -182,7 +179,7 @@ public class BattlefieldLogic : MonoBehaviour
             $"{newSquadHealth - comp.Unit.GetComponent<ArmyUnitClass>().currentSquadHealth}";
         if (comp.Field==Battlefield.PlayerFormation) dmgColor = new Color(0.7f, 0, 1, 1);
         else dmgColor = new Color(0.55f, 0, 0, 1);
-        int deadCount = comp.Unit.GetComponent<ArmyUnitClass>().CurrentUnitCharacteristics.NumberOfUnits -
+        int deadCount = comp.Unit.GetComponent<ArmyUnitClass>().unit.CurrentUnitAttributes.SquadSize -
                         newSquadNumber;
         if (deadCount > 0) dmgText += $"<sprite=\"gameSprites\" index=0 color=#000000>{deadCount}";
         return (dmgText,dmgColor);
@@ -226,7 +223,7 @@ public class BattlefieldLogic : MonoBehaviour
                 BattlefieldOrder.Add(newUnitInOrder);
                 var ab = comp.Unit.GetComponent<ArmyUnitClass>().GetPossibleAbility();
                 newUnitInOrder.AssignUnitAbility(ab);
-                if (ab!=null) newUnitInOrder.FieldManager.GetComponent<OnFieldCompanyManager>().SelectAbility(comp.Unit.GetComponent<ArmyUnitClass>().Abilities.FindIndex(abl=>abl==ab));
+                if (ab!=null) newUnitInOrder.FieldManager.GetComponent<OnFieldCompanyManager>().SelectAbility(comp.Unit.GetComponent<ArmyUnitClass>().unit.CurrentUnitAttributes.SquadAbilities.FindIndex(abl=>abl==ab));
             }
         }
         //Check if targets of previous abilities was removed and assign new ability
@@ -237,7 +234,7 @@ public class BattlefieldLogic : MonoBehaviour
                 var ab = unit.UnitCompany.Unit.GetComponent<ArmyUnitClass>().GetPossibleAbility();
                 unit.AssignUnitAbility(ab);
                 Battlefield.GetFieldByCompany(unit.UnitCompany).GetComponent<OnFieldCompanyManager>().SelectAbility(-1);
-                if (ab!=null) Battlefield.GetFieldByCompany(unit.UnitCompany).GetComponent<OnFieldCompanyManager>().SelectAbility(unit.UnitCompany.Unit.GetComponent<ArmyUnitClass>().Abilities.FindIndex(abl=>abl==ab));
+                if (ab!=null) Battlefield.GetFieldByCompany(unit.UnitCompany).GetComponent<OnFieldCompanyManager>().SelectAbility(unit.UnitCompany.Unit.GetComponent<ArmyUnitClass>().unit.CurrentUnitAttributes.SquadAbilities.FindIndex(abl=>abl==ab));
             }
         }
         //Check if unit had no ability before and try add new one
@@ -245,14 +242,14 @@ public class BattlefieldLogic : MonoBehaviour
         {
             var ab = unit.UnitCompany.Unit.GetComponent<ArmyUnitClass>().GetPossibleAbility();
             unit.AssignUnitAbility(ab);
-            if (ab!=null) Battlefield.GetFieldByCompany(unit.UnitCompany).GetComponent<OnFieldCompanyManager>().SelectAbility(unit.UnitCompany.Unit.GetComponent<ArmyUnitClass>().Abilities.FindIndex(abl=>abl==ab));
+            if (ab!=null) Battlefield.GetFieldByCompany(unit.UnitCompany).GetComponent<OnFieldCompanyManager>().SelectAbility(unit.UnitCompany.Unit.GetComponent<ArmyUnitClass>().unit.CurrentUnitAttributes.SquadAbilities.FindIndex(abl=>abl==ab));
         }
         //Enemy units only logic
         foreach (var unit in BattlefieldOrder.Where(x => x.UnitCompany.Field ==Battlefield.EnemyFormation))
         {
             var ab = unit.UnitCompany.Unit.GetComponent<ArmyUnitClass>().GetPossibleAbility();
             unit.AssignUnitAbility(ab);
-            if (ab!=null) unit.FieldManager.GetComponent<OnFieldCompanyManager>().SelectAbility(unit.UnitCompany.Unit.GetComponent<ArmyUnitClass>().Abilities.FindIndex(abl=>abl==ab));
+            if (ab!=null) unit.FieldManager.GetComponent<OnFieldCompanyManager>().SelectAbility(unit.UnitCompany.Unit.GetComponent<ArmyUnitClass>().unit.CurrentUnitAttributes.SquadAbilities.FindIndex(abl=>abl==ab));
         }
         BattlefieldOrder.Sort((a, b) => b.UnitInitiative.CompareTo(a.UnitInitiative));
         int orderIndex = 0;
@@ -352,13 +349,13 @@ public class BattlefieldLogic : MonoBehaviour
     public void SelectAbility(int index,GameObject onFieldManager)
     {
         if (onFieldManager.GetComponent<OnFieldCompanyManager>().Company.Unit.GetComponent<ArmyUnitClass>()
-            .Abilities[index]
+            .unit.CurrentUnitAttributes.SquadAbilities[index]
             .SelectTargets())
         {
             UnitInOrder unitInOrder = BattlefieldOrder.Where(x => x.UnitCompany == onFieldManager.GetComponent<OnFieldCompanyManager>().Company).First();
             unitInOrder.AssignUnitAbility(onFieldManager.GetComponent<OnFieldCompanyManager>().Company.Unit
                 .GetComponent<ArmyUnitClass>()
-                .Abilities[index]);
+                .unit.CurrentUnitAttributes.SquadAbilities[index]);
             onFieldManager.GetComponent<OnFieldCompanyManager>().SelectAbility(index);
             Order();
         }

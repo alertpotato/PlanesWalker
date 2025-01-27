@@ -104,10 +104,13 @@ public class GameLoopRewardState : StateBehaviour
 
     public void UpgradeCard()
     {
+        //TODO New system needed
+        /*
         if (!Config.SelectedUnits.IsEntitySelected()) return;
         GameObject unitToUpgrade = Config.SelectedUnits.SelectedEntity.GetComponent<UnitCardMain>().RelatedUnit;
         UnitUpgrades newUpgrades = Config.listOfCommonUnits.UpgradeUnit(unitToUpgrade.GetComponent<ArmyUnitClass>().FactoryCharacteristics, Config.listOfCommonUnits.GenerateUpgradePoints());
         unitToUpgrade.GetComponent<ArmyUnitClass>().UpgradeUnit(newUpgrades);
+        */
         SelectButton.GetComponent<Button>().onClick.RemoveAllListeners();
         Config.DeckManager.GetComponent<Deck>().WipeCards();
         NextReward();
@@ -143,7 +146,7 @@ public class GameLoopRewardState : StateBehaviour
         humanRaces.Add(Race.Human);
         for (int i=0; i<NumberOfCardsToChoose; i++)
         {
-            var newUnit = Config.InstantiateRandomUnit(humanRaces,Config.RewardParent);
+            var newUnit = Config.difficultyManager.InstantiateRandomUnit(humanRaces,Config.RewardParent);
             RewardList.Add(newUnit);
         }
         CreateCards();

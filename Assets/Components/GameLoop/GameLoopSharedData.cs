@@ -26,7 +26,7 @@ public class GameLoopSharedData : MonoBehaviour
     public StateMachine GameLoopState;
     [Header("Data")]
     public PlayerData WorldData;
-    public ListOfCommonUnits listOfCommonUnits;
+    public UnitFactory unitFactory;
     [Header("Entities")]
     public GameObject PlayerHero;
     public GameObject EnemyHero;
@@ -40,7 +40,6 @@ public class GameLoopSharedData : MonoBehaviour
     [Header("Variables")]
     public int Day = 1;
     [Header("Prefabs")]
-    public GameObject Unit;
     public GameObject UnitCard;
     [Header("States")]
     public GameLoopPreBattleState PreBattleState;
@@ -70,7 +69,7 @@ public class GameLoopSharedData : MonoBehaviour
     private void Start()
     {
         //INIT FACTORIES 
-        listOfCommonUnits.InizializeUnitFactory();
+        unitFactory.InizializeUnitFactory();
         EventFactory.InizializeEventFactory();
         RewardFactory.InizializeRewardFactory();
         //Init hero
@@ -102,7 +101,7 @@ public class GameLoopSharedData : MonoBehaviour
         var StartingDeck = (rewards,RewardFactory.rewardsWeightsAndAttributes);
         RewardState.Rewards=StartingDeck;
         //Init Difficulty
-        difficultyManager.InitializeDifficulty(0,WorldData,RewardFactory,EventFactory,listOfCommonUnits);
+        difficultyManager.InitializeDifficulty(0,WorldData,RewardFactory,EventFactory,unitFactory);
         InterfaceUI.UpdateHintText(Day,WorldData.EnemySupply,Battlefield.GetComponent<BattlefieldLogic>().pauseBetweenAbilities);
     }
     //TODO .....
@@ -179,7 +178,7 @@ public class GameLoopSharedData : MonoBehaviour
                 int index = newMousedOverAbilityButton.GetComponent<FieldCompanyAbilityButtonManager>().CurrentIndex;
                 string hintText = newMousedOverAbilityButton.GetComponent<FieldCompanyAbilityButtonManager>()
                     .FieldCompany.GetComponent<OnFieldCompanyManager>().Company.Unit.GetComponent<ArmyUnitClass>()
-                    .Abilities[index].AbilityDescription;
+                    .unit.CurrentUnitAttributes.SquadAbilities[index].AbilityDescription;
                 HintManager.ShowHint(hintText,mousePos);
             }
         }
@@ -281,16 +280,5 @@ public class GameLoopSharedData : MonoBehaviour
         GameLoopState.ChangeState<GameLoopDecisionState>();
         //Temp hint update
         InterfaceUI.UpdateHintText(Day,WorldData.EnemySupply,Battlefield.GetComponent<BattlefieldLogic>().pauseBetweenAbilities);
-    }
-
-    public GameObject InstantiateRandomUnit(List<Race> unitRace,GameObject parent)
-    {
-        var newUnitCharacteristics = listOfCommonUnits.GetRandomUnit(unitRace);
-        GameObject newUnit = Instantiate(Unit,parent.transform);
-        ArmyUnitClass unitClass = newUnit.GetComponent<ArmyUnitClass>();
-        unitClass.InitializeUnit(newUnitCharacteristics.Item1,newUnitCharacteristics.Item2);
-        newUnit.name = $"{unitClass.UnitName}_{newUnit.GetInstanceID()}";
-        newUnit.transform.position = Vector3.zero;
-        return newUnit;
     }
 }

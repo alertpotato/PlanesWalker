@@ -44,55 +44,46 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0203ba4d96f60b245be07a3f296d2266, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DefaultUnitCharacteristics:
-    UnitType: 
+  squadName: 
+  unit:
+    UnitName: 
     UnitRace: 0
-    Characteristics:
-      NumberOfUnits: 0
+    CurrentUnitAttributes:
+      AttributesName: 
+      AttributesDescription: 
       Health: 0
-      Damage: 0
-      Initiative: 0
+      CombatProficiency: 0
       Cohesion: 0
-      Armour: 0
-    NumberOfUnitsUpgrade:
-      Cost: 0
-      Modifier: 0
-      Weight: 0
-    HealthUpgrade:
-      Cost: 0
-      Modifier: 0
-      Weight: 0
-    DamageUpgrade:
-      Cost: 0
-      Modifier: 0
-      Weight: 0
-    InitiativeUpgrade:
-      Cost: 0
-      Modifier: 0
-      Weight: 0
-    CohesionUpgrade:
-      Cost: 0
-      Modifier: 0
-      Weight: 0
-    ArmourUpgrade:
-      Cost: 0
-      Modifier: 0
-      Weight: 0
-    UnitWeight: 0
-  CurrentUnitCharacteristics:
-    NumberOfUnits: 0
-    Health: 0
-    Damage: 0
-    Initiative: 0
-    Cohesion: 0
-    Armour: 0
+      SquadSize: 0
+      CostOfDeployment: 
+    SavedUnitAttributes:
+      AttributesName: 
+      AttributesDescription: 
+      Health: 0
+      CombatProficiency: 0
+      Cohesion: 0
+      SquadSize: 0
+      CostOfDeployment: 
+    BaseUnitAttributes:
+      AttributesName: 
+      AttributesDescription: 
+      Health: 0
+      CombatProficiency: 0
+      Cohesion: 0
+      SquadSize: 0
+      CostOfDeployment: 
+    UnitUpgrades: []
+    armour:
+      armourName: 
+      armourType: 0
+      armourCost: 
+      pierceLevel: 0
+      slashLevel: 0
+      bluntLevel: 0
+    weapons: []
   currentSquadHealth: 0
-  unitUpgrades:
-    NumberOfUnits: 0
-    Health: 0
-    Damage: 0
-    Initiative: 0
-    Cohesion: 0
-    Armour: 0
-  UnitName: 
-  UnitFactory: {fileID: 11400000, guid: 4df28bdcbf64e5241a86717ac39ecdeb, type: 2}
+  currentHeat: 0
+  advantage: 0
+  Buffs: []
+  UnitAbilityTags: 
+  unitFactory: {fileID: 11400000, guid: 6da38e5e188052243b95bd72392e4be9, type: 2}

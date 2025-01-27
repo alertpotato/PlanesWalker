@@ -5,40 +5,10 @@ using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Serialization;
 [System.Serializable]
-public class UnitCharacteristics
-{
-    public int NumberOfUnits; public int Health; public int Damage; public int Initiative; public int Cohesion; public int Armour; public float Effectiveness;
-    public UnitCharacteristics(int num, int h, int d, int init, int coh, int armour, float effectiveness)
-    {
-        NumberOfUnits = num; Health = h; Damage = d; Initiative = init; ; Cohesion = coh; Armour = armour;
-        Effectiveness = effectiveness;
-    }
-    public UnitCharacteristics(BaseUnitCharacteristics baseCharacteristics ,UnitUpgrades unitUpgrades, int supplyMultiplier)
-    {
-        //TODO figure out how to apply supplyMultiplier to different stats with different scaling options
-        NumberOfUnits = ( baseCharacteristics.Characteristics.NumberOfUnits + baseCharacteristics.NumberOfUnitsUpgrade.Modifier*unitUpgrades.NumberOfUnits ) * supplyMultiplier;
-        Health = baseCharacteristics.Characteristics.Health + baseCharacteristics.HealthUpgrade.Modifier*unitUpgrades.Health;
-        Damage = baseCharacteristics.Characteristics.Damage + baseCharacteristics.DamageUpgrade.Modifier*unitUpgrades.Damage;
-        Initiative = baseCharacteristics.Characteristics.Initiative + baseCharacteristics.InitiativeUpgrade.Modifier*unitUpgrades.Initiative;
-        Cohesion = baseCharacteristics.Characteristics.Cohesion + baseCharacteristics.CohesionUpgrade.Modifier*unitUpgrades.Cohesion;
-        Armour = baseCharacteristics.Characteristics.Armour + baseCharacteristics.ArmourUpgrade.Modifier*unitUpgrades.Armour;
-        Effectiveness = baseCharacteristics.Characteristics.Effectiveness;
-    }
-}
-[System.Serializable]
-public struct UnitUpgrades
-{
-    public int NumberOfUnits; public int Health; public int Damage; public int Initiative; public int Cohesion; public int Armour;
-    UnitUpgrades(int numberOfUnits, int health, int damage, int initiative, int cohesion, int armour)
-    {
-        NumberOfUnits=numberOfUnits;Health=health;Damage=damage;Initiative=initiative;Cohesion=cohesion; Armour=armour;
-    }
-}
-[System.Serializable]
 public class UnitBuff
 {
-    public UnitCharacteristics Buff; public GameObject BuffParent; public int BuffTurns;
-    public UnitBuff(UnitCharacteristics buff, GameObject buffParent, int buffTurns)
+    public UnitAttributes Buff; public GameObject BuffParent; public int BuffTurns;
+    public UnitBuff(UnitAttributes buff, GameObject buffParent, int buffTurns)
     {
         Buff = buff;
         BuffParent = buffParent;
@@ -48,54 +18,46 @@ public class UnitBuff
 
 public class ArmyUnitClass : MonoBehaviour
 {
-    public BaseUnitCharacteristics FactoryCharacteristics;
-    public UnitCharacteristics BaseCharacteristics;
-    public UnitCharacteristics CurrentUnitCharacteristics;
-    public int currentSquadHealth;
-    public float currentUnitEffectiveness;
-    public UnitUpgrades unitUpgrades;
-    public List<UnitAbility> Abilities = new List<UnitAbility>();
-    public List<UnitBuff> Buffs;
-    public List<AbilityTags> UnitAbilityTags;
-    public string UnitName;
-    public ListOfCommonUnits UnitFactory;
-    public int SupplyMultiplier;
+    public string squadName;
+    public Unit unit;
+    public float currentSquadHealth;
+    public int currentHeat;
+    public int advantage;
+    public List<UnitBuff> Buffs = new List<UnitBuff>();
+    public List<AbilityTags> UnitAbilityTags = new List<AbilityTags>();
+    public UnitFactory unitFactory;
     
     //-----------Initialization logic
-    public void InitializeUnit(string unitName, UnitUpgrades upgrades)
+    public void InitializeUnit(Unit newUnit)
     {
-        FactoryCharacteristics = UnitFactory.UnitList.Find(x => x.UnitType.Equals(unitName));
-        UnitName = unitName;
-        foreach (var ability in FactoryCharacteristics.UnitAbilities)
-        {
-            Abilities.Add(ability());
-        }
+        unit = newUnit;
+        squadName = unit.UnitName;
         //TODO TEMP solution dnt know what to do
         UpdateUnitTags();
-        Buffs = new List<UnitBuff>();
-        SupplyMultiplier = 1;
-        unitUpgrades = upgrades;
-        RebuildCharacteristics();
+        RebuildUnit();
     }
-    public void RebuildCharacteristics() // Revert to baseline
+
+    private void RebuildUnit()
     {
-        CurrentUnitCharacteristics = new UnitCharacteristics(FactoryCharacteristics,unitUpgrades, SupplyMultiplier);
-        BaseCharacteristics = new UnitCharacteristics(FactoryCharacteristics, unitUpgrades, Mathf.Clamp(SupplyMultiplier,1,999));
-        currentSquadHealth = CurrentUnitCharacteristics.NumberOfUnits *
-                             CurrentUnitCharacteristics.Health;
-        currentUnitEffectiveness = CurrentUnitCharacteristics.Effectiveness * (1.0f + CurrentUnitCharacteristics.Cohesion*0.05f);
+        unit.RebuildCurrentUnitAttributes();
+        currentSquadHealth = unit.CurrentUnitAttributes.Health*unit.CurrentUnitAttributes.SquadSize;
+        currentHeat = 0;
+        advantage = 0;
+        Buffs.Clear();
     }
+    
+
     //-----------Abilities logic
     public void InitializeAbilities(Company newCompany,FormationField field,FormationField opposingField)
     {
-        foreach (var ability in Abilities)
+        foreach (var ability in unit.CurrentUnitAttributes.SquadAbilities)
         {
             ability.InitAbility(newCompany,field,opposingField);
         }
     }
     public void InitializeAbilities(Company newCompany)
     {
-        foreach (var ability in Abilities)
+        foreach (var ability in unit.CurrentUnitAttributes.SquadAbilities)
         {
             ability.ChangeCompany(newCompany);
         }
@@ -105,7 +67,7 @@ public class ArmyUnitClass : MonoBehaviour
     public UnitAbility GetPossibleAbility() //used to get ability that would be used by this unit next round
     {
         UnitAbility activeAbility = null;
-        foreach (var ability in Abilities)
+        foreach (var ability in unit.CurrentUnitAttributes.SquadAbilities)
         {
             if (ability.SelectTargets()) return ability;
         }
@@ -115,7 +77,7 @@ public class ArmyUnitClass : MonoBehaviour
     public UnitAbility GetRetaliationAbility(List<AbilityTags> retaliationTags) //used to get ability to retaliate attack
     {
         UnitAbility retaliationAbility = null;
-        foreach (var ability in Abilities)
+        foreach (var ability in unit.CurrentUnitAttributes.SquadAbilities)
         {
             foreach (var tag in retaliationTags)
             {
@@ -130,7 +92,6 @@ public class ArmyUnitClass : MonoBehaviour
     {
         //minimumSupply used for AI to cheat
         Buffs.Clear();
-        UpdateSupply(currentSupply,minimumSupply);
         ReciveBuffs(newBuffs);
         ApplyBuffs();
     }
@@ -139,13 +100,12 @@ public class ArmyUnitClass : MonoBehaviour
     {
         CheckBuffs();
         ApplyBuffs();
-        currentUnitEffectiveness = CurrentUnitCharacteristics.Effectiveness * (1.0f + CurrentUnitCharacteristics.Cohesion*0.05f);
     }
     public void OnBattleEnd() //Must be called at the end of the battle
     {
         Buffs.Clear();
-        RebuildCharacteristics();
-        currentUnitEffectiveness = CurrentUnitCharacteristics.Effectiveness * (1.0f + CurrentUnitCharacteristics.Cohesion*0.05f);
+        RebuildUnit();
+
     }
     //-----------Unit buffs logic
     private void CheckBuffs()
@@ -167,74 +127,28 @@ public class ArmyUnitClass : MonoBehaviour
 
     private void ApplyBuffs() // Reverting to baseline and then applying buffs
     {
-        var bc = BaseCharacteristics;
-        var cur = CurrentUnitCharacteristics;
-        cur.Damage = bc.Damage;
-        cur.Initiative = bc.Initiative;
-        cur.Cohesion = bc.Cohesion;
-        cur.Armour = bc.Armour;
-        foreach (var buff in Buffs)
-        {
-            //TODO Figure out what to do with NumberOfUnits and Health Buffs
-            //cur.NumberOfUnits = cur.NumberOfUnits + buff.Buff.NumberOfUnits;
-            //cur.Health = cur.Health + buff.Buff.Health;
-            cur.Damage += buff.Buff.Damage;
-            cur.Initiative += buff.Buff.Initiative;
-            cur.Cohesion += buff.Buff.Cohesion;
-            cur.Armour += buff.Buff.Armour;
-        }
+        //TODO do do
     }
     //-----------Unit stats logic
-    public void UpdateSupply(int[] supply,int minimumSupply=0)
-    {
-        int newSupplyMultiplier = 999;
-        for (int i = 0;i<4;i++ )
-        {
-            if (FactoryCharacteristics.UnitSupplyReq[i]<=0) continue;
-            var x = Mathf.CeilToInt(supply[i] / FactoryCharacteristics.UnitSupplyReq[i]);
-            //Debug.Log(UnitName+" "+i+"+"+supply[0]+supply[1]+supply[2]+supply[3]+"|"+FactoryCharacteristics.UnitSupplyReq[0]+FactoryCharacteristics.UnitSupplyReq[1]+FactoryCharacteristics.UnitSupplyReq[2]+FactoryCharacteristics.UnitSupplyReq[3]+"|"+x);
-            x = Mathf.Clamp(x, 0, 999);
-            if (x < newSupplyMultiplier) newSupplyMultiplier = x;
-            //Debug.Log(newSupplyMultiplier);
-        }
-        if (newSupplyMultiplier == 999 || newSupplyMultiplier==0) newSupplyMultiplier = minimumSupply;
-        
-        SupplyMultiplier = newSupplyMultiplier;
-        RebuildCharacteristics();
-    }
     public bool TakeDamage((int, int) statsToChange)
     {
         bool isAlive = true;
         currentSquadHealth = statsToChange.Item1;
-        CurrentUnitCharacteristics.NumberOfUnits = statsToChange.Item2;
+        unit.CurrentUnitAttributes.SquadSize = statsToChange.Item2;
         // TODO is it ok? maybe check for NumberOfUnits >0
         if (currentSquadHealth <= 0) isAlive = false;
 //        Debug.Log($"{UnitName} HP:{currentSquadHealth} N:{CurrentUnitCharacteristics.NumberOfUnits} IA:{isAlive.ToString()}");
         return isAlive;
     }
-    public void UpgradeUnit(UnitUpgrades newUpgrade)
+    public void UpgradeUnit(UnitAttributes newUpgrade)
     {
-        UnitUpgrades NewUpgrades = new UnitUpgrades();
-        NewUpgrades.NumberOfUnits = newUpgrade.NumberOfUnits + unitUpgrades.NumberOfUnits;
-        NewUpgrades.Health = newUpgrade.Health + unitUpgrades.Health;
-        NewUpgrades.Damage = newUpgrade.Damage + unitUpgrades.Damage;
-        NewUpgrades.Initiative = newUpgrade.Initiative + unitUpgrades.Initiative;
-        NewUpgrades.Cohesion = newUpgrade.Cohesion + unitUpgrades.Cohesion;
-        NewUpgrades.Armour = newUpgrade.Armour + unitUpgrades.Armour;
-        unitUpgrades = NewUpgrades;
-        RebuildCharacteristics();
-    }
-
-    public void UpdateEffectiveness(int engagedUnits)
-    {
-        // TODO make units get out of the field so that do not happaned
-        if (CurrentUnitCharacteristics.NumberOfUnits>0)
-            currentUnitEffectiveness = Mathf.Clamp(currentUnitEffectiveness - (engagedUnits/CurrentUnitCharacteristics.NumberOfUnits), 0, 1);
+        unit.UnitUpgrades.Add(newUpgrade);
+        RebuildUnit();
     }
 
     private void UpdateUnitTags()
     {
-        foreach (var ability in Abilities)
+        foreach (var ability in unit.CurrentUnitAttributes.SquadAbilities)
         {
             UnitAbilityTags.AddRange(ability.Tags);
         }

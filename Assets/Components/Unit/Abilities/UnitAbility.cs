@@ -24,6 +24,7 @@ public abstract class UnitAbility
     public abstract bool SelectTargets();
     public (int,int,int) GetAbilityImpact()
     {
+        /*
         //TODO temp solution for targets[0] - figure out what to do here - maybe predifined list?
         var opposingUnit = targets[0];
         var yourUnit = UnitCompany.Unit.GetComponent<ArmyUnitClass>();
@@ -43,6 +44,9 @@ public abstract class UnitAbility
         var calculationResult = CalculateDamage(enemyUnit,yourUnitAllDamage,yourUnitDamage,yourUnit.name);
 
         return (calculationResult.Item1,calculationResult.Item2,engagedUnitNumber);
+        */
+        //TODO TEMP
+        return (0, 0, 0);
     }
     public void AssignTargetForRetaliation(Company comp)
     {
@@ -62,6 +66,7 @@ public abstract class UnitAbility
     
     public (int newSquadHealth, int newNumberOfUnits) CalculateDamage(ArmyUnitClass unit,int incdamage, int incunitdmg, string enemyunitname)
     {
+        /*
         // Local Variables
         int cohdamage = Mathf.Clamp(incunitdmg/unit.CurrentUnitCharacteristics.Health - 1,0,20); // for each time opposing unit attack is higher - lose 1 coh in that engagement
         int desserts = 0; 
@@ -117,6 +122,9 @@ public abstract class UnitAbility
         //Debug.Log(battlelog + additionallog);
         
         return (newSquadHealth,newNumberOfUnits );
+        */
+        //TODO TEMP
+        return (0,0);
     }
     public List<Company> GetAbilityTargets()
     {
