@@ -98,7 +98,7 @@ public class GameLoopRewardState : StateBehaviour
         else if (value == 3) newCompanyType = FormationType.Support;
         else if (value == 4) newCompanyType = FormationType.Reserve;
         else newCompanyType = FormationType.Frontline;
-        Config.PlayerFormation.CreateNewCompany(newCompanyType);
+        //TODO RIP
         NextReward();
     }
 

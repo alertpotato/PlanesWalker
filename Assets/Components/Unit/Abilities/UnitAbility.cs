@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using AbilityFactory = System.Func<UnitAbility>;
 
@@ -17,8 +18,7 @@ public abstract class UnitAbility
     public List<AbilityTags> Tags = new List<AbilityTags>();
     public List<AbilityTags> RetaliationTags = new List<AbilityTags>();
     public Company UnitCompany;
-    public FormationField UnitField;
-    public FormationField OpposingField;
+    public FormationManager formation;
     public float AbilityDamageModifier;
     public int InitiativeModifier = 0;
     public abstract bool SelectTargets();
@@ -53,11 +53,10 @@ public abstract class UnitAbility
         targets.Clear();
         targets.Add(comp);
     }
-    public void InitAbility(Company unitCompany, FormationField unitField,FormationField opposingField)
+    public void InitAbility(Company unitCompany, FormationManager formation)
     {
         UnitCompany = unitCompany;
-        UnitField = unitField;
-        OpposingField = opposingField;
+        formation = formation;
     }
     public void ChangeCompany(Company unitCompany)
     {
@@ -133,59 +132,6 @@ public abstract class UnitAbility
 
     public List<Company> GetPossibleTargets()
     {
-        var onFieldcompanies = OpposingField.GetOnFieldcompanies();
-        List<Company> possibleComp = new List<Company>();
-        if (UnitCompany.Type == FormationType.Frontline)
-        {
-            possibleComp.AddRange(onFieldcompanies.Where(comp => comp.Type==FormationType.Frontline));
-            if (UnitCompany.Unit.GetComponent<ArmyUnitClass>().UnitAbilityTags.Contains(AbilityTags.Mounted))
-            {
-                possibleComp.AddRange(onFieldcompanies.Where(comp => comp.Type==FormationType.Flank1 || comp.Type==FormationType.Flank2));
-            }
-        }
-        
-        else if (UnitCompany.Type == FormationType.Flank1)
-        {
-            possibleComp.AddRange(onFieldcompanies.Where(comp => comp.Type==FormationType.Flank1));
-            if (onFieldcompanies.Where(comp => comp.Type == FormationType.Flank1).Count() == 0)
-            {
-                possibleComp.AddRange(onFieldcompanies.Where(comp => comp.Type==FormationType.Frontline));
-                if (UnitCompany.Unit.GetComponent<ArmyUnitClass>().UnitAbilityTags.Contains(AbilityTags.Mounted))
-                {
-                    possibleComp.AddRange(onFieldcompanies.Where(comp => comp.Type==FormationType.Support));
-                }
-            }
-        }
-        else if (UnitCompany.Type == FormationType.Flank2)
-        {
-            possibleComp.AddRange(onFieldcompanies.Where(comp => comp.Type==FormationType.Flank2));
-            if (onFieldcompanies.Where(comp => comp.Type == FormationType.Flank2).Count() == 0)
-            {
-                possibleComp.AddRange(onFieldcompanies.Where(comp => comp.Type==FormationType.Frontline));
-                if (UnitCompany.Unit.GetComponent<ArmyUnitClass>().UnitAbilityTags.Contains(AbilityTags.Mounted))
-                {
-                    possibleComp.AddRange(onFieldcompanies.Where(comp => comp.Type==FormationType.Support));
-                }
-            }
-        }
-        else if (UnitCompany.Type == FormationType.Support)
-        {
-            if (UnitCompany.Unit.GetComponent<ArmyUnitClass>().UnitAbilityTags.Contains(AbilityTags.Ranged))
-            {
-                possibleComp.AddRange(onFieldcompanies.Where(comp => comp.Type==FormationType.Frontline));
-                possibleComp.AddRange(onFieldcompanies.Where(comp => comp.Type==FormationType.Flank1));
-                possibleComp.AddRange(onFieldcompanies.Where(comp => comp.Type==FormationType.Flank2));
-            }
-            else if (UnitCompany.Unit.GetComponent<ArmyUnitClass>().UnitAbilityTags.Contains(AbilityTags.Mounted))
-            {
-                possibleComp.AddRange(onFieldcompanies.Where(comp => comp.Type==FormationType.Flank1 || comp.Type==FormationType.Flank2));
-                if (onFieldcompanies.Where(comp => comp.Type == FormationType.Flank2).Count() == 0 ||
-                    onFieldcompanies.Where(comp => comp.Type == FormationType.Flank1).Count() == 0)
-                {
-                    possibleComp.AddRange(onFieldcompanies.Where(comp => comp.Type==FormationType.Frontline));
-                }
-            }
-        }
-        return possibleComp;
+        return formation.GetNeighbouringCompanies(UnitCompany);
     }
 }

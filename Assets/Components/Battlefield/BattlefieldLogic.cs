@@ -177,7 +177,7 @@ public class BattlefieldLogic : MonoBehaviour
         Color dmgColor;
         string dmgText =
             $"{newSquadHealth - comp.Unit.GetComponent<ArmyUnitClass>().currentSquadHealth}";
-        if (comp.Field==Battlefield.PlayerFormation) dmgColor = new Color(0.7f, 0, 1, 1);
+        if (comp.unitOwner==Battlefield.Formation.PlayerHero) dmgColor = new Color(0.7f, 0, 1, 1);
         else dmgColor = new Color(0.55f, 0, 0, 1);
         int deadCount = comp.Unit.GetComponent<ArmyUnitClass>().unit.CurrentUnitAttributes.SquadSize -
                         newSquadNumber;
@@ -205,8 +205,8 @@ public class BattlefieldLogic : MonoBehaviour
         DestroyUI();
         List<Company> onFieldUnits = new List<Company>();
         //Get all active units
-        var onFieldPlayerCompanies = Battlefield.PlayerFormation.GetOnFieldcompanies();
-        var onFieldEnemyCompanies = Battlefield.EnemyFormation.GetOnFieldcompanies();
+        var onFieldPlayerCompanies = Battlefield.Formation.GetDeployedCompanies(Battlefield.Formation.PlayerHero);
+        var onFieldEnemyCompanies = Battlefield.Formation.GetDeployedCompanies(Battlefield.Formation.EnemyHero);
         onFieldUnits.AddRange(onFieldPlayerCompanies);
         onFieldUnits.AddRange(onFieldEnemyCompanies);
         //Check if any units was removed from the field that are still in the BattlefieldOrder
@@ -245,7 +245,7 @@ public class BattlefieldLogic : MonoBehaviour
             if (ab!=null) Battlefield.GetFieldByCompany(unit.UnitCompany).GetComponent<OnFieldCompanyManager>().SelectAbility(unit.UnitCompany.Unit.GetComponent<ArmyUnitClass>().unit.CurrentUnitAttributes.SquadAbilities.FindIndex(abl=>abl==ab));
         }
         //Enemy units only logic
-        foreach (var unit in BattlefieldOrder.Where(x => x.UnitCompany.Field ==Battlefield.EnemyFormation))
+        foreach (var unit in BattlefieldOrder.Where(x => x.UnitCompany.unitOwner ==Battlefield.Formation.EnemyHero))
         {
             var ab = unit.UnitCompany.Unit.GetComponent<ArmyUnitClass>().GetPossibleAbility();
             unit.AssignUnitAbility(ab);
@@ -267,8 +267,7 @@ public class BattlefieldLogic : MonoBehaviour
             AbilitiesUI.Add(newUI);
             //Make background of AbilityOrderUI based on unit owner
             Color heroColor = new Color(0, 0.125f, 0.55f, 0.78f);
-            if (unit.UnitCompany.Field == Battlefield.PlayerFormation) heroColor=new Color(0.5f, 0, 0.1f,0.78f);
-
+            if (unit.UnitCompany.unitOwner == Battlefield.Formation.PlayerHero) heroColor=new Color(0.5f, 0, 0.1f,0.78f);
             newUI.GetComponent<AbilityOrderUI>().InitializeUI(unit,heroColor,unit.OrderIndex+1);
         }
         //Create list of units with only active Abilities
@@ -295,7 +294,7 @@ public class BattlefieldLogic : MonoBehaviour
                     float targetAdjustment = 1;
                     Color startColor = new Color(0.1f, 0.5f, 0.85f,0.8f);
                     Color endColor = new Color(0,0.125f, 0.55f,1f);
-                    if (listXX[i].Item.UnitCompany.Field == Battlefield.PlayerFormation)
+                    if (listXX[i].Item.UnitCompany.unitOwner == Battlefield.Formation.PlayerHero)
                     {
                         shooterAdjustment = 1;
                         targetAdjustment = -1;
@@ -319,32 +318,6 @@ public class BattlefieldLogic : MonoBehaviour
             }
         }
         Battlefield.UpdateField();
-    }
-    public void FrontShift(FormationField field) // If front line is empty shift flanks or sup or reserve to front line
-    {
-        var onField = field.GetOnFieldcompanies();
-        var onFieldFront = onField.Where(company => company.Type == FormationType.Frontline).ToList();
-        var onFieldflank = onField.Where(company => company.Type == FormationType.Flank1||company.Type == FormationType.Flank2).ToList();
-        var onFieldSup = onField.Where(company => company.Type == FormationType.Support).ToList();
-        //var onFieldRes = onField.Where(company => company.Type == FormationType.Reserve).ToList();
-        var frontComps = field.Formation.Where(company => company.Type == FormationType.Frontline).ToList();
-        
-        List<Company> compToShift = new List<Company>();
-        if (onFieldflank.Count != 0) compToShift = onFieldflank;
-        else if (onFieldSup.Count != 0) compToShift = onFieldSup;
-        //else if (onFieldRes.Count != 0) compToShift = onFieldRes;
-        if (onFieldFront.Count == 0 && compToShift.Count!=0)
-        {
-            Debug.Log("Front shifting");
-            foreach (var company in frontComps)
-            {
-                var unitToShift = compToShift.First().Unit;
-                Battlefield.RemoveUnitFromFormationLogic(compToShift.First(),Battlefield.GetFieldByCompany(compToShift.First()).GetComponent<OnFieldCompanyManager>());
-                Battlefield.AddUnitToFormationLogic(unitToShift,company,Battlefield.GetFieldByCompany(company).GetComponent<OnFieldCompanyManager>(),field.FieldOwner.gameObject);
-                compToShift.Remove(compToShift.First());
-                if (compToShift.Count == 0) break;
-            }
-        }
     }
     public void SelectAbility(int index,GameObject onFieldManager)
     {

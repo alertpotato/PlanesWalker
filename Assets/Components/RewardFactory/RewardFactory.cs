@@ -23,10 +23,12 @@ public class RewardFactory : ScriptableObject
     [Tooltip("List of possible rewards and their attributes")]
     public List<RewardWeightsAndAttributes> rewardsWeightsAndAttributes = new List<RewardWeightsAndAttributes>();
     public PlayerData PlayerData;
-    public FormationField PlayerField;
+    public FormationManager Formation;
     
-    public void InizializeRewardFactory()
+    public void InizializeRewardFactory(PlayerData playerData, FormationManager formation)
     {
+        PlayerData = playerData;
+        Formation = formation;
         rewardsWeightsAndAttributes = new List<RewardWeightsAndAttributes>();
         FillListOfRewards();
     }
@@ -80,7 +82,7 @@ public class RewardFactory : ScriptableObject
         int reward = 0;
         if (rewardName == "Supply") reward = SupplyReward(PlayerData.PlayerSupply);
         else if (rewardName == "HeroUpgrade") reward = HeroReward();
-        else if (rewardName == "FieldUpgrade") reward = FieldReward(PlayerField.Formation);
+        else if (rewardName == "FieldUpgrade") reward = FieldReward(Formation.GetDeployedCompanies(Formation.PlayerHero));
         return reward;
     }
 

@@ -2479,8 +2479,7 @@ MonoBehaviour:
   unitFactory: {fileID: 11400000, guid: 6da38e5e188052243b95bd72392e4be9, type: 2}
   PlayerHero: {fileID: 1691416272}
   EnemyHero: {fileID: 510261288}
-  PlayerFormation: {fileID: 11400000, guid: dd0d51573dc070c43834a05bdc0da80f, type: 2}
-  EnemyFormation: {fileID: 11400000, guid: 0c828fda739f5b04fbf807c6c8d3d18e, type: 2}
+  Formation: {fileID: 11400000, guid: 403bd610071db4e4481cf0a6f0e3e388, type: 2}
   InterfaceUI: {fileID: 1552274955}
   HintManager: {fileID: 23025979}
   Day: 1
@@ -3073,8 +3072,7 @@ MonoBehaviour:
   UnitSprites: {fileID: 11400000, guid: d6e64d7b762dfc64c96e321f620f1139, type: 2}
   IconSprites: {fileID: 11400000, guid: bca28af3eb0bffb4bb89604fcddbf8a7, type: 2}
   logic: {fileID: 1504221619}
-  PlayerFormation: {fileID: 11400000, guid: dd0d51573dc070c43834a05bdc0da80f, type: 2}
-  EnemyFormation: {fileID: 11400000, guid: 0c828fda739f5b04fbf807c6c8d3d18e, type: 2}
+  Formation: {fileID: 0}
   PlayerFieldParent: {fileID: 841156622}
   EnemyFieldParent: {fileID: 1002038120}
   HighlitedUnit: {fileID: 0}

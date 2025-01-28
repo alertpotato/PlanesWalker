@@ -30,8 +30,7 @@ public class GameLoopSharedData : MonoBehaviour
     [Header("Entities")]
     public GameObject PlayerHero;
     public GameObject EnemyHero;
-    public FormationField PlayerFormation;
-    public FormationField EnemyFormation;
+    public FormationManager Formation;
     private GameObject mousedOverObject;
     private GameObject unitPreview;
     [Header("UI")] 
@@ -51,7 +50,7 @@ public class GameLoopSharedData : MonoBehaviour
     public EventSystem eventSystem;
     public GraphicRaycaster graphicRaycaster;
     
-    private void OnValidate()
+    private void Awake()
     {
         PreBattleState = transform.GetComponent<GameLoopPreBattleState>();
         RewardState = transform.GetComponent<GameLoopRewardState>();
@@ -61,7 +60,7 @@ public class GameLoopSharedData : MonoBehaviour
         RewardState.Config = this;
         RoundState.Config = this;
         DecisionState.Config = this;
-        Battlefield.GetComponent<Battlefield>().Initialize(MainCamera,PlayerFormation,EnemyFormation);
+        Battlefield.GetComponent<Battlefield>().Initialize(MainCamera,Formation);
         //Test UI
         eventSystem = FindObjectOfType<EventSystem>();
     }
@@ -71,20 +70,16 @@ public class GameLoopSharedData : MonoBehaviour
         //INIT FACTORIES 
         unitFactory.InizializeUnitFactory();
         EventFactory.InizializeEventFactory();
-        RewardFactory.InizializeRewardFactory();
+        RewardFactory.InizializeRewardFactory(WorldData,Formation);
         //Init hero
         PlayerHero.GetComponent<Hero>().modifyHero("Planeswalker", 0, 0);
         EnemyHero.GetComponent<Hero>().modifyHero("Antagonist", 0, 0);
         
         //Init of Formation scriptable objects
-        PlayerFormation.InitializeField(PlayerHero.GetComponent<Hero>());
-        EnemyFormation.InitializeField(EnemyHero.GetComponent<Hero>());
-        // Init field
-        PlayerFormation.RebuildField(startingField);
-        EnemyFormation.RebuildField(startingField);
+        Formation.InitializeField(PlayerHero.GetComponent<Hero>(),EnemyHero.GetComponent<Hero>());
         //-----------????
         DeckManager.GetComponent<Deck>().InitializeDeck(PlayerHero.GetComponent<Hero>(),MainCamera,UnitCard);
-        Battlefield.GetComponent<Battlefield>().Initialize(MainCamera,PlayerFormation,EnemyFormation);
+        Battlefield.GetComponent<Battlefield>().Initialize(MainCamera,Formation);
         
         //Supply
         WorldData.Reset();

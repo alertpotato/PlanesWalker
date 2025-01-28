@@ -35,8 +35,6 @@ public class GameLoopDecisionState : StateBehaviour
         Config.PreBattleState.EnemyEventUnits.Clear();
         Config.PreBattleState.EnemyEventUnits.AddRange(Config.difficultyManager.Units[value]);
         //TODO cant transfer to PRE BATTLE for some reason
-        Config.EnemyFormation.RebuildField(Config.difficultyManager.Fields[value]);
-        
         ChangeState<GameLoopPreBattleState>();
     }
 

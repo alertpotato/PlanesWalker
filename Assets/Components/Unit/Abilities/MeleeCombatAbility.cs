@@ -23,20 +23,9 @@ public class MeleeCombatAbility : UnitAbility
         var onFieldTargetsList = GetPossibleTargets();
         if (onFieldTargetsList.Count > 0)
         {
-            if (onFieldTargetsList.Where(comp => comp.Type == UnitCompany.Type && comp.Position == UnitCompany.Position)
-                    .Count() == 1)
-            {
-                targets.Add(onFieldTargetsList.Where(comp => comp.Type == UnitCompany.Type && comp.Position == UnitCompany.Position).First());
-                return true;
-            }
-            else
-            {
-                Random rand = new Random();
-                int index = rand.Next(onFieldTargetsList.Count);
-                targets.Add(onFieldTargetsList[index]);
-                return true;
-            }
+            targets.Add(onFieldTargetsList[0]);
+            return true;
         }
-        return false;
+        else return false;
     }
 }

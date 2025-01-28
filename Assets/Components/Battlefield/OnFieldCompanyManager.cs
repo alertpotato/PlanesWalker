@@ -43,7 +43,7 @@ public class OnFieldCompanyManager : MonoBehaviour
     public void DisableCellText()
     {
         HideUI(false);
-        CompanyHint(Company.Type.ToString() + "#" + Company.Position);
+        CompanyHint(Company.Type.ToString() + "#" + Company.occupiedPositions[0]);
     }
 
     private void HideUI(bool hide)
@@ -145,7 +145,7 @@ public void SelectField(GameObject newUnit,GameObject unitOwner)
 
     public void DeselectField(GameObject unitOwner)
     {
-        if (Company.Field.FieldOwner != unitOwner.GetComponent<Hero>()) return;
+        if (Company.unitOwner != unitOwner.GetComponent<Hero>()) return;
         Battlefield.RemoveUnitFromFormationLogic(Company,this);
     }
 }

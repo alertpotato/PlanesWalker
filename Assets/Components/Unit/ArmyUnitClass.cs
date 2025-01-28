@@ -48,11 +48,11 @@ public class ArmyUnitClass : MonoBehaviour
     
 
     //-----------Abilities logic
-    public void InitializeAbilities(Company newCompany,FormationField field,FormationField opposingField)
+    public void InitializeAbilities(Company newCompany,FormationManager newFormationManager)
     {
         foreach (var ability in unit.CurrentUnitAttributes.SquadAbilities)
         {
-            ability.InitAbility(newCompany,field,opposingField);
+            ability.InitAbility(newCompany,newFormationManager);
         }
     }
     public void InitializeAbilities(Company newCompany)

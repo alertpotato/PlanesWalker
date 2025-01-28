@@ -39,8 +39,8 @@ public class GameLoopRoundState : StateBehaviour
         Config.Battlefield.GetComponent<Battlefield>().logic.RemoveDeadUnits();
         TriggerOnFieldUnitsRoundEffects();
         // Formation Round ending effects
-        Config.Battlefield.GetComponent<Battlefield>().logic.FrontShift(Config.PlayerFormation);
-        Config.Battlefield.GetComponent<Battlefield>().logic.FrontShift(Config.EnemyFormation);
+        //Config.Battlefield.GetComponent<Battlefield>().logic.FrontShift(Config.PlayerFormation);
+        //Config.Battlefield.GetComponent<Battlefield>().logic.FrontShift(Config.EnemyFormation);
         // Update field graphic
         Config.Battlefield.GetComponent<Battlefield>().UpdateField();
         CheckWinCondition();
@@ -48,11 +48,11 @@ public class GameLoopRoundState : StateBehaviour
 
     private void CheckWinCondition()
     {
-        if (Config.EnemyFormation.GetOnFieldcompanies().Count == 0)
+        if (Config.Formation.GetDeployedCompanies(Config.EnemyHero.GetComponent<Hero>()).Count == 0)
         {
             ChangeState<GameLoopRewardState>();
         }
-        else if (Config.PlayerFormation.GetOnFieldcompanies().Count==0) StartCoroutine(EndGameScreen());
+        else if (Config.Formation.GetDeployedCompanies(Config.PlayerHero.GetComponent<Hero>()).Count==0) StartCoroutine(EndGameScreen());
         else ButtonStartRound();
     }
     IEnumerator EndGameScreen()

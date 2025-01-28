@@ -28,15 +28,15 @@ public class GameLoopPreBattleState : StateBehaviour
         Config.DeckManager.SetActive(true);
         Config.DeckManager.GetComponent<Deck>().RebuildDeck();
         // Draw field
-        Config.Battlefield.GetComponent<Battlefield>().RebuildField(Config.PlayerFormation,Config.EnemyFormation);
+        Config.Battlefield.GetComponent<Battlefield>().RebuildField();
         
         EnemyUnitAllocation();
         Config.Battlefield.GetComponent<Battlefield>().UpdateField();
     }
     private void OnBattleStartUnitTriggers()
     {
-        var playerHero = Config.PlayerFormation.FieldOwner;
-        var enemyHero = Config.EnemyFormation.FieldOwner;
+        var playerHero = Config.PlayerHero;
+        var enemyHero = Config.EnemyHero;
         List<UnitBuff> playerBuffList = new List<UnitBuff>();
         List<UnitBuff> enemyBuffList = new List<UnitBuff>();
         foreach (var comp in Config.PlayerHero.GetComponent<Hero>().bannersList)
@@ -78,49 +78,6 @@ public class GameLoopPreBattleState : StateBehaviour
     }
     public void EnemyUnitAllocation()
     {
-        var enemyUnits = new List<GameObject>();
-        enemyUnits.AddRange(Config.EnemyHero.GetComponent<Hero>().bannersList);
-        var rangedUnits = enemyUnits.Where(go => go.GetComponent<ArmyUnitClass>().UnitAbilityTags.Contains(AbilityTags.Ranged)).ToList();
-        var avaliableSpaces = Config.EnemyFormation.GetAvaliableFields();
-        var supportLine = avaliableSpaces.Where(comp => comp.Type == FormationType.Support).ToList();
-
-        int safeIndex = 0;
-        bool rangedToBackLine = true;
-        while (rangedToBackLine == true)
-        {
-            if (supportLine.Count > 0 && rangedUnits.Count > 0)
-            {
-                var compMan =Config.Battlefield.GetComponent<Battlefield>().GetFieldByCompany(supportLine[0]);
-                if (Config.Battlefield.GetComponent<Battlefield>().AddUnitToFormationLogic(rangedUnits[0],supportLine[0],compMan.GetComponent<OnFieldCompanyManager>(),Config.EnemyHero))
-                {
-                    enemyUnits.Remove(rangedUnits[0]);
-                    rangedUnits.Remove(rangedUnits[0]);
-                    avaliableSpaces.Remove(supportLine[0]);
-                    supportLine.Remove(supportLine[0]);
-                }
-            }
-            else rangedToBackLine = false;
-
-            safeIndex++;
-            if (safeIndex>99) rangedToBackLine = false;
-        }
-
-        safeIndex = 0;
-        bool otherPlaces = true;
-        while (otherPlaces == true)
-        {
-            if (avaliableSpaces.Count > 0 && enemyUnits.Count > 0)
-            {
-                var compMan =Config.Battlefield.GetComponent<Battlefield>().GetFieldByCompany(avaliableSpaces[0]);
-                if (Config.Battlefield.GetComponent<Battlefield>().AddUnitToFormationLogic(enemyUnits[0],avaliableSpaces[0],compMan.GetComponent<OnFieldCompanyManager>(),Config.EnemyHero))
-                {
-                    enemyUnits.Remove(enemyUnits[0]);
-                    avaliableSpaces.Remove(avaliableSpaces[0]);
-                }
-            }
-            else otherPlaces = false;
-            safeIndex++;
-            if (safeIndex>99) otherPlaces = false;
-        }
+        //TODO Make new logic here
     }
 }

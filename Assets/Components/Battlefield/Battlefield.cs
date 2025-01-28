@@ -18,8 +18,7 @@ public class Battlefield : MonoBehaviour
     public UnitGraphic UnitSprites;
     public OtherGraphic IconSprites;
     public BattlefieldLogic logic;
-    public FormationField PlayerFormation;
-    public FormationField EnemyFormation;
+    public FormationManager Formation;
     public GameObject PlayerFieldParent;
     public GameObject EnemyFieldParent;
     public GameObject HighlitedUnit;
@@ -28,32 +27,30 @@ public class Battlefield : MonoBehaviour
     public float companyHeight = 2f;
     public float fieldZPos = -3.5f;
 
-    public void Initialize(Camera camera,FormationField playerFormation,FormationField enemyFormation)
+    public void Initialize(Camera camera,FormationManager formation)
     {
         MainCamera = camera;
         logic = transform.GetComponent<BattlefieldLogic>();
         logic.Battlefield = this;
-        PlayerFormation = playerFormation;
-        EnemyFormation = enemyFormation;
+        Formation = formation;
     }
-    public void RebuildField(FormationField playerFormation, FormationField enemyFormation)
+    public void RebuildField()
     {
-        InitializeField(playerFormation, playerFieldList,PlayerFieldParent);
-        InitializeField(enemyFormation, enemyFieldList,EnemyFieldParent);
-        PlayerFormation = playerFormation;
-        EnemyFormation = enemyFormation;
+        InitializeField(Formation.PlayerHero, playerFieldList,PlayerFieldParent);
+        InitializeField(Formation.EnemyHero, enemyFieldList,EnemyFieldParent);
     }
-    private void InitializeField(FormationField formation, List<GameObject> cellList,GameObject parent)
+    private void InitializeField(Hero owner, List<GameObject> cellList,GameObject parent)
     {
         cellList.Clear();
-        foreach (var comp in formation.Formation)
+        var companies = Formation.GetDeployedCompanies(owner);
+        foreach (var comp in companies)
         {
             GameObject cell = Instantiate(OnFieldCompanyPrefab,parent.transform);
             //Mirror abilities interface position
             float AbilitiesPosMod = -75;
-            if (formation==EnemyFormation) AbilitiesPosMod = 125;
+            if (parent==EnemyFieldParent) AbilitiesPosMod = 125;
             cell.GetComponent<OnFieldCompanyManager>().InitializeCell(comp,this,AbilitiesPosMod);
-            cell.name = $"{formation.FieldOwner.heroName}_{comp.Type.ToString()}_{comp.Position}";
+            cell.name = $"{owner.heroName}_{comp.Type.ToString()}_{comp.occupiedPositions[0].ToString()}";
             cellList.Add(cell);
         }
     }
@@ -61,65 +58,18 @@ public class Battlefield : MonoBehaviour
     {
         PlayerFieldParent.transform.position = new Vector3(0, -1.5f, fieldZPos);
         EnemyFieldParent.transform.position = new Vector3(0, 1.5f, fieldZPos);
-        int frontCountPlayer = playerFieldList
-            .Where(x => x.GetComponent<OnFieldCompanyManager>().Company.Type == FormationType.Frontline)
-            .ToList().Count;
-        //Centering both fields
-        int middlePosition = (frontCountPlayer -1) / 2;
-        UpdateField(playerFieldList,middlePosition,-1);
-        UpdateField(enemyFieldList,middlePosition,1);
-        /*
-        foreach (var ability in logic.AbilitiesOrder)
-        {
-            List<List<GameObject>> cellList;
-            if (ability.YourHero == YourHero)
-            {
-                cellList = enemyCellList;
-                foreach (var target in ability.AbilityTargets())
-                {
-                    cellList[target[0]][target[1]].GetComponent<ArmyCellScript>().GetAttackedFromLeft();
-                }
-            }
-            else
-            {
-                cellList = yourCellList;
-                foreach (var target in ability.AbilityTargets())
-                {
-                    cellList[target[0]][target[1]].GetComponent<ArmyCellScript>().GetAttackedFromRight();
-                }
-            }
-        }*/
+        UpdateField(playerFieldList,-1);
+        UpdateField(enemyFieldList,1);
     }
-    private void UpdateField(List<GameObject> cellList,int middlePos,float sine)
+    private void UpdateField(List<GameObject> cellList,float sine)
     {
-        //calc front width and middle index
-        int frontCount = cellList
-            .Where(x => x.GetComponent<OnFieldCompanyManager>().Company.Type == FormationType.Frontline)
-            .ToList().Count;
-
         foreach (GameObject comp in cellList)
         {
             var compMan = comp.GetComponent<OnFieldCompanyManager>();
-            var truePos = GetTruePosition(compMan,frontCount, middlePos);
-            //x adjustment for flanks and reserve
-            float stepY = 0;
-            if (compMan.Company.Type == FormationType.Flank1 || compMan.Company.Type == FormationType.Flank2)
-                stepY = companyHeight / 2;
-            if (compMan.Company.Type == FormationType.Support) stepY = companyHeight *1.5f;
-            else if (compMan.Company.Type == FormationType.Reserve) stepY = companyHeight *3.5f;
-            comp.transform.localPosition = new Vector3(-truePos * (companySpacing+companyHeight),stepY*sine,0);
+            var tempPos = compMan.Company.occupiedPositions[0];
+            comp.transform.localPosition = new Vector3(tempPos.X*(companySpacing+companyHeight),tempPos.Y*companyHeight,0);
             UpdateCompanySprite(compMan);
         }
-    }
-
-    private int GetTruePosition(OnFieldCompanyManager comp,int frontCount, int middlePos)
-    {
-        //Func to make middle of Frontline index = 0, and adjust flanks
-        
-        int truePos = comp.Company.Position - middlePos;
-        if (comp.Company.Type == FormationType.Flank1) truePos = -middlePos-comp.Company.Position-1;
-        else if (comp.Company.Type == FormationType.Flank2) truePos = truePos + frontCount;
-        return truePos;
     }
 
     private void UpdateCompanySprite(OnFieldCompanyManager comp)
@@ -138,7 +88,7 @@ public class Battlefield : MonoBehaviour
     
     public bool AddUnitToFormationLogic(GameObject newUnit, Company comp, OnFieldCompanyManager compMan,GameObject unitOwner)
     {
-        if (unitOwner.GetComponent<Hero>()!=comp.Field.FieldOwner) return false;
+        //if (unitOwner.GetComponent<Hero>()!=comp.Field.FieldOwner) return false;
         if (AddUnitToFormation(newUnit, comp, compMan))
         {
             logic.Order();
@@ -150,11 +100,10 @@ public class Battlefield : MonoBehaviour
     }
     public bool AddUnitToFormation(GameObject newUnit, Company comp, OnFieldCompanyManager compMan)
     {
-        FormationField opposingFormation = PlayerFormation;
         bool activateAbilityButtons = false;
-        if (comp.Field == PlayerFormation) {opposingFormation = EnemyFormation; activateAbilityButtons=true;}
+        if (comp.unitOwner == Formation.PlayerHero) {activateAbilityButtons=true;}
         bool answer = false;
-        if (comp.Field.AddUnitToFormation(comp, newUnit, opposingFormation))
+        if (Formation.AddUnitToFormation(comp, newUnit))
         {
             answer=true;
         }
@@ -192,7 +141,7 @@ public class Battlefield : MonoBehaviour
 
     public void RemoveUnitFromFormation(Company comp,OnFieldCompanyManager compMan)
     {
-        comp.Field.RemoveUnitFromField(comp.Unit);
+        Formation.RemoveUnitFromField(comp.Unit);
         compMan.ResetAbilityButtons();
         compMan.DeHighlightField();
     }
@@ -201,7 +150,7 @@ public class Battlefield : MonoBehaviour
     {
         DestroyField();
         logic.BattlefieldOrder.Clear();
-        PlayerFormation.ClearField();
+        Formation.ClearField();
         logic.DestroyUI();
     }
 
