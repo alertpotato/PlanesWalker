@@ -24,6 +24,9 @@ public class MeleeCombatAbility : UnitAbility
         if (onFieldTargetsList.Count > 0)
         {
             targets.Add(onFieldTargetsList[0]);
+            Debug.Log($"unit: {UnitCompany.Unit.name} TARGETS:");
+            foreach (var target in onFieldTargetsList)  Debug.Log($"   {target.occupiedPositions[0]}");
+            Debug.Log($"chosen: {targets[0].occupiedPositions[0]}");
             return true;
         }
         else return false;

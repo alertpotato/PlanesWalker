@@ -214,6 +214,13 @@ public class BattlefieldLogic : MonoBehaviour
         removedUnits.AddRange(BattlefieldOrder.Where(x => x.UnitCompany.Unit == null));
         foreach (var unit in removedUnits) BattlefieldOrder.Remove(unit);
 
+        //Check if unit had no ability before and try add new one
+        foreach (var unit in BattlefieldOrder.Where(x => x.UnitAbility == null))
+        {
+            var ab = unit.UnitCompany.Unit.GetComponent<ArmyUnitClass>().GetPossibleAbility();
+            unit.AssignUnitAbility(ab);
+            if (ab!=null) Battlefield.GetFieldByCompany(unit.UnitCompany).GetComponent<OnFieldCompanyManager>().SelectAbility(unit.UnitCompany.Unit.GetComponent<ArmyUnitClass>().unit.CurrentUnitAttributes.SquadAbilities.FindIndex(abl=>abl==ab));
+        }
         //Add new units to the BattlefieldOrder
         foreach (var comp in onFieldUnits)
         {
@@ -236,13 +243,6 @@ public class BattlefieldLogic : MonoBehaviour
                 Battlefield.GetFieldByCompany(unit.UnitCompany).GetComponent<OnFieldCompanyManager>().SelectAbility(-1);
                 if (ab!=null) Battlefield.GetFieldByCompany(unit.UnitCompany).GetComponent<OnFieldCompanyManager>().SelectAbility(unit.UnitCompany.Unit.GetComponent<ArmyUnitClass>().unit.CurrentUnitAttributes.SquadAbilities.FindIndex(abl=>abl==ab));
             }
-        }
-        //Check if unit had no ability before and try add new one
-        foreach (var unit in BattlefieldOrder.Where(x => x.UnitAbility == null))
-        {
-            var ab = unit.UnitCompany.Unit.GetComponent<ArmyUnitClass>().GetPossibleAbility();
-            unit.AssignUnitAbility(ab);
-            if (ab!=null) Battlefield.GetFieldByCompany(unit.UnitCompany).GetComponent<OnFieldCompanyManager>().SelectAbility(unit.UnitCompany.Unit.GetComponent<ArmyUnitClass>().unit.CurrentUnitAttributes.SquadAbilities.FindIndex(abl=>abl==ab));
         }
         //Enemy units only logic
         foreach (var unit in BattlefieldOrder.Where(x => x.UnitCompany.unitOwner ==Battlefield.Formation.EnemyHero))

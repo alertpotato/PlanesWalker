@@ -138,7 +138,7 @@ public class OnFieldCompanyManager : MonoBehaviour
         Highlight.SetActive(false);
     }
 
-public void SelectField(GameObject newUnit,GameObject unitOwner)
+    public void SelectField(GameObject newUnit,GameObject unitOwner)
     {
         Battlefield.AddUnitToFormationLogic(newUnit,Company,this,unitOwner);
     }

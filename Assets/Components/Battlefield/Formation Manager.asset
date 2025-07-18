@@ -15,6 +15,6 @@ MonoBehaviour:
   PlayerFormation: []
   EnemyFormation: []
   PlayerStartingLine: 0
-  EnemyStartingLine: 0
+  EnemyStartingLine: 3
   PlayerHero: {fileID: 0}
   EnemyHero: {fileID: 0}

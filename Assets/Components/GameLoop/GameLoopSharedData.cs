@@ -60,7 +60,6 @@ public class GameLoopSharedData : MonoBehaviour
         RewardState.Config = this;
         RoundState.Config = this;
         DecisionState.Config = this;
-        Battlefield.GetComponent<Battlefield>().Initialize(MainCamera,Formation);
         //Test UI
         eventSystem = FindObjectOfType<EventSystem>();
     }
@@ -79,7 +78,7 @@ public class GameLoopSharedData : MonoBehaviour
         Formation.InitializeField(PlayerHero.GetComponent<Hero>(),EnemyHero.GetComponent<Hero>());
         //-----------????
         DeckManager.GetComponent<Deck>().InitializeDeck(PlayerHero.GetComponent<Hero>(),MainCamera,UnitCard);
-        Battlefield.GetComponent<Battlefield>().Initialize(MainCamera,Formation);
+        Battlefield.GetComponent<Battlefield>().Initialize(MainCamera,Formation,PreBattleState);
         
         //Supply
         WorldData.Reset();
@@ -99,8 +98,6 @@ public class GameLoopSharedData : MonoBehaviour
         difficultyManager.InitializeDifficulty(0,WorldData,RewardFactory,EventFactory,unitFactory);
         InterfaceUI.UpdateHintText(Day,WorldData.EnemySupply,Battlefield.GetComponent<BattlefieldLogic>().pauseBetweenAbilities);
     }
-    //TODO .....
-
     private void Update()
     {
         //TEST TEST TEST

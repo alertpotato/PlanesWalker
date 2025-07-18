@@ -71,7 +71,7 @@ public class UnitAttributes
     [Header("Squad attributes")]
     [Tooltip("Number of units in squad")]public int SquadSize;
     [Tooltip("Supply cost to deploy squad on battlefield")]public int[] CostOfDeployment;
-    [Tooltip("Squad abilities")]public List<UnitAbility> SquadAbilities = new List<UnitAbility>();
+    [Tooltip("Squad abilities")][SerializeReference]public List<UnitAbility> SquadAbilities = new List<UnitAbility>();
     
     public UnitAttributes(string name, float health, int CP, int cohesion,int squadSize,List<Func<UnitAbility>> abilities = null, int[] cost=null)
     {

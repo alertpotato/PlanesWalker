@@ -12,16 +12,21 @@ public class GameLoopPreBattleState : StateBehaviour
     public GameObject StartBattleButton;
     public List<GameObject> EnemyEventUnits = new List<GameObject>();
     public Dictionary<FormationType, int> EnemyEventFormation = new Dictionary<FormationType, int>();
+    [SerializeField]private bool DeployingPhase = true;
+    [SerializeField]private int unitsToPlace = 0;
     public override void OnEnter()
     {
         Config.Battlefield.SetActive(true);
         StartBattleButton.SetActive(true);
         Config.InterfaceUI.UpdateHelpText("Pre battle state","");
-        
+        //Deploying logic
+        DeployingPhase = true;
+        unitsToPlace = 1;
+        Config.Battlefield.GetComponent<Battlefield>().generateEmptyFields = true;
         //TEST TEST TEST
         //Config.CreateRandomUnits(Config.PlayerHero.GetComponent<Hero>(),20,Race.Human);
         // Create and place enemy units
-        FillEnemyArmy();
+        FillEnemyBannerList();
         //Rebuild units, update supply and apply hero modifiers
         OnBattleStartUnitTriggers();
         // Draw deck space
@@ -29,10 +34,20 @@ public class GameLoopPreBattleState : StateBehaviour
         Config.DeckManager.GetComponent<Deck>().RebuildDeck();
         // Draw field
         Config.Battlefield.GetComponent<Battlefield>().RebuildField();
-        
-        EnemyUnitAllocation();
         Config.Battlefield.GetComponent<Battlefield>().UpdateField();
     }
+
+    public void OnPlayerUnitDeployed()
+    {
+        unitsToPlace -= 1;
+        if (unitsToPlace == 0)
+        {
+            EnemyUnitAllocation();
+            unitsToPlace = 1;
+        }
+        //Config.Battlefield.GetComponent<Battlefield>().UpdateField();
+    }
+
     private void OnBattleStartUnitTriggers()
     {
         var playerHero = Config.PlayerHero;
@@ -51,6 +66,7 @@ public class GameLoopPreBattleState : StateBehaviour
     public override void OnExit()
     {
         StartBattleButton.SetActive(false);
+        Config.Battlefield.GetComponent<Battlefield>().generateEmptyFields = false;
         // Clean deck space
         Config.DeckManager.GetComponent<Deck>().WipeCards();
     }
@@ -58,13 +74,7 @@ public class GameLoopPreBattleState : StateBehaviour
     {
         ChangeState<GameLoopRoundState>();
     }
-    /*void OnShowarmy(InputValue value)
-    {
-        if (!IsActive()) return;
-        Debug.Log("Hello Q");
-        Config.ArmyDeck.GetComponent<ArmyDeck>().UpdateDeck();
-    }*/
-    public void FillEnemyArmy()
+    public void FillEnemyBannerList()
     {
         foreach (var unit in Config.EnemyHero.GetComponent<Hero>().bannersList)
         {
@@ -78,6 +88,7 @@ public class GameLoopPreBattleState : StateBehaviour
     }
     public void EnemyUnitAllocation()
     {
+        Debug.Log("EnemyUnitAllocation");
         //TODO Make new logic here
     }
 }

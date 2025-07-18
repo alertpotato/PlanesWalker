@@ -24,7 +24,9 @@ public class AbilityOrderUI : MonoBehaviour
         Back.color = backColor;
         OrderIndex.text = index.ToString();
         FromIcon.sprite = UnitSprites.GetIconSpriteByName(Unit.UnitCompany.Unit.GetComponent<ArmyUnitClass>().squadName);
-        if (Unit.UnitAbility != null)
+        List<Company> abTargets = new List<Company>();
+        if (Unit.UnitAbility != null) abTargets.AddRange(Unit.UnitAbility.GetAbilityTargets());
+        if (abTargets.Count > 0)
         {
             AbilityIcon.sprite = IconsSprites.GetSpriteByName(Unit.UnitAbility.AbilityName);
             ToIcon.sprite =

@@ -19,6 +19,7 @@ public class Battlefield : MonoBehaviour
     public OtherGraphic IconSprites;
     public BattlefieldLogic logic;
     public FormationManager Formation;
+    public GameLoopPreBattleState PreBattleState;
     public GameObject PlayerFieldParent;
     public GameObject EnemyFieldParent;
     public GameObject HighlitedUnit;
@@ -26,18 +27,26 @@ public class Battlefield : MonoBehaviour
     public float companySpacing = 0.2f;
     public float companyHeight = 2f;
     public float fieldZPos = -3.5f;
+    public bool generateEmptyFields = false;
 
-    public void Initialize(Camera camera,FormationManager formation)
+    // GameLoopPreBattleState ==> RebuildField() -> UpdateField()
+    
+    public void Initialize(Camera camera,FormationManager formation,GameLoopPreBattleState preBattleState)
     {
         MainCamera = camera;
         logic = transform.GetComponent<BattlefieldLogic>();
         logic.Battlefield = this;
         Formation = formation;
+        PreBattleState = preBattleState;
+        PlayerFieldParent.transform.position = new Vector3(0, -1.5f, fieldZPos);
+        EnemyFieldParent.transform.position = new Vector3(0, 1.5f, fieldZPos);
     }
     public void RebuildField()
     {
+        Formation.ClearField();
         InitializeField(Formation.PlayerHero, playerFieldList,PlayerFieldParent);
         InitializeField(Formation.EnemyHero, enemyFieldList,EnemyFieldParent);
+        UpdateField();
     }
     private void InitializeField(Hero owner, List<GameObject> cellList,GameObject parent)
     {
@@ -54,10 +63,37 @@ public class Battlefield : MonoBehaviour
             cellList.Add(cell);
         }
     }
+
+    public void GenerateEmptyCells()
+    {
+        Formation.CreateEmptyCompanies();
+        AddNewEmptyCells(Formation.PlayerHero, playerFieldList, PlayerFieldParent);
+        AddNewEmptyCells(Formation.EnemyHero, enemyFieldList, EnemyFieldParent);
+    }
+    public void RemoveEmptyCells()
+    {
+        var cellsToRemove = new List<GameObject>();
+        cellsToRemove.AddRange(playerFieldList.Where(x=>x.GetComponent<OnFieldCompanyManager>().Company.Unit==null));
+        cellsToRemove.AddRange(enemyFieldList.Where(x=>x.GetComponent<OnFieldCompanyManager>().Company.Unit==null));
+        foreach (var cell in cellsToRemove)
+        {
+            playerFieldList.Remove(cell);
+            enemyFieldList.Remove(cell);
+            Destroy(cell);
+        }
+        Formation.RemoveEmptyCompanies();
+    }
     public void UpdateField()
     {
-        PlayerFieldParent.transform.position = new Vector3(0, -1.5f, fieldZPos);
-        EnemyFieldParent.transform.position = new Vector3(0, 1.5f, fieldZPos);
+        if (Formation.GetDeployedCompanies().Count == 0)
+        {
+            Formation.ClearField();
+        }
+        RemoveEmptyCells();
+        if (generateEmptyFields)
+        {
+            GenerateEmptyCells();
+        }
         UpdateField(playerFieldList,-1);
         UpdateField(enemyFieldList,1);
     }
@@ -69,6 +105,23 @@ public class Battlefield : MonoBehaviour
             var tempPos = compMan.Company.occupiedPositions[0];
             comp.transform.localPosition = new Vector3(tempPos.X*(companySpacing+companyHeight),tempPos.Y*companyHeight,0);
             UpdateCompanySprite(compMan);
+        }
+    }
+    
+    private void AddNewEmptyCells(Hero owner, List<GameObject> cellList,GameObject parent)
+    {
+        var companies = Formation.GetDeployedCompanies(owner,true);
+        foreach (var comp in companies)
+        {
+            if (comp.Unit != null) continue;
+            GameObject cell = Instantiate(OnFieldCompanyPrefab,parent.transform);
+            //Mirror abilities interface position
+            float AbilitiesPosMod = -75;
+            if (parent==EnemyFieldParent) AbilitiesPosMod = 125;
+            cell.GetComponent<OnFieldCompanyManager>().InitializeCell(comp,this,AbilitiesPosMod);
+            cell.name = $"{owner.heroName}_{comp.Type.ToString()}_{comp.occupiedPositions[0].ToString()}";
+            cellList.Add(cell);
+            //Debug.Log($"Adding cell {comp.occupiedPositions[0].ToString()}");
         }
     }
 
@@ -88,10 +141,11 @@ public class Battlefield : MonoBehaviour
     
     public bool AddUnitToFormationLogic(GameObject newUnit, Company comp, OnFieldCompanyManager compMan,GameObject unitOwner)
     {
-        //if (unitOwner.GetComponent<Hero>()!=comp.Field.FieldOwner) return false;
         if (AddUnitToFormation(newUnit, comp, compMan))
         {
             logic.Order();
+            //If its player unit call unit deploy logic
+            if(comp.unitOwner==Formation.PlayerHero) PreBattleState.OnPlayerUnitDeployed();
             return true;
         }
         else {Debug.LogWarning($"Unsuccessful AddUnitToFormation Params:{newUnit} {comp} {compMan}");

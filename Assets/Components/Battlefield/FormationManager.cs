@@ -14,6 +14,7 @@ public class Company
     public GameObject Unit;
     public Hero unitOwner;
     public List<(int X, int Y)> occupiedPositions;
+    public string position0;
     public FormationType Type;
     public Company(List<(int X, int Y)> positions,FormationType type=FormationType.Frontline,Hero owner=null) 
     {
@@ -22,6 +23,7 @@ public class Company
         unitOwner = owner;
         occupiedPositions.AddRange(positions);
         Type = type;
+        position0 = positions[0].ToString();
     }
 }
 //----------------------------------------------------
@@ -45,12 +47,32 @@ public class FormationManager : ScriptableObject
         PlayerHero = playerHero;
         EnemyHero = enemyHero;
     }
+    public void CreateEmptyCompanies()
+    {
+        RemoveEmptyCompanies();
+        CalculatePossibleDeploymentPositions();
+        foreach (var pos in PlayerPossibleDeploymentPositions)
+        {
+            PlayerFormation.Add(new Company(new List<(int X, int Y)>{pos}, FormationType.Frontline,PlayerHero));
+        }
+        foreach (var pos in EnemyPossibleDeploymentPositions)
+        {
+            EnemyFormation.Add(new Company(new List<(int X, int Y)>{pos}, FormationType.Frontline,EnemyHero));
+        }
+
+        var logg = "EMPTY: ";
+        foreach (var fof in PlayerFormation.Where(f => f.Unit == null))
+        {
+            logg += $"{fof.occupiedPositions[0].ToString()}--";
+        }
+        Debug.Log(logg);
+    }
     //Deployment and movement logic
     public void CalculatePossibleDeploymentPositions()
     {
         PlayerPossibleDeploymentPositions.Clear();
         EnemyPossibleDeploymentPositions.Clear();
-        if (PlayerFormation.Count == 0) PlayerPossibleDeploymentPositions.Add((PlayerStartingLine, 0));
+        if (PlayerFormation.Count == 0) PlayerPossibleDeploymentPositions.Add((0, PlayerStartingLine));
         else
         {
             var newPossiblePlayerList = new List<(int X, int Y)>();
@@ -66,14 +88,10 @@ public class FormationManager : ScriptableObject
                     }
                 }
             }
-            foreach (var pos in deployedCompaniesPos)
-            {
-                newPossiblePlayerList.Remove(pos);
-            }
-            PlayerPossibleDeploymentPositions.AddRange(newPossiblePlayerList);
+            PlayerPossibleDeploymentPositions.AddRange(ListFunctions.RemoveDuplicatesAgainstOtherList(newPossiblePlayerList,deployedCompaniesPos));
         }
 
-        if (EnemyFormation.Count == 0) EnemyPossibleDeploymentPositions.Add((EnemyStartingLine, 0));
+        if (EnemyFormation.Count == 0) EnemyPossibleDeploymentPositions.Add((0, EnemyStartingLine));
         else
         {
             var newPossiblEnemyList = new List<(int X, int Y)>();
@@ -89,11 +107,7 @@ public class FormationManager : ScriptableObject
                     }
                 }
             }
-            foreach (var pos in deployedCompaniesPos)
-            {
-                newPossiblEnemyList.Remove(pos);
-            }
-            EnemyPossibleDeploymentPositions.AddRange(newPossiblEnemyList);
+            EnemyPossibleDeploymentPositions.AddRange(ListFunctions.RemoveDuplicatesAgainstOtherList(newPossiblEnemyList,deployedCompaniesPos));
         }
     }
 
@@ -108,13 +122,19 @@ public class FormationManager : ScriptableObject
         return deployedCompaniesPos;
     }
 
-    public List<Company> GetDeployedCompanies(Hero companyOwner = null)
+    public List<Company> GetDeployedCompanies(Hero companyOwner = null, bool getEmpty = false)
     {
         List<Company> deployedCompanies = new List<Company>();
-        if (companyOwner == PlayerHero) deployedCompanies.AddRange(PlayerFormation.Where(x=>x.Unit!=null));
-        else if (companyOwner== EnemyHero) deployedCompanies.AddRange(EnemyFormation.Where(x=>x.Unit!=null));
+        if (companyOwner == PlayerHero)
+            if (getEmpty) deployedCompanies.AddRange(PlayerFormation.Where(x=>x.Unit==null));
+            else deployedCompanies.AddRange(PlayerFormation.Where(x=>x.Unit!=null));
+        else if (companyOwner== EnemyHero)
+            if (getEmpty) deployedCompanies.AddRange(EnemyFormation.Where(x=>x.Unit==null));
+            else deployedCompanies.AddRange(EnemyFormation.Where(x=>x.Unit!=null));
         else
-        {deployedCompanies.AddRange(PlayerFormation.Where(x=>x.Unit!=null));deployedCompanies.AddRange(EnemyFormation.Where(x=>x.Unit!=null));}
+        {
+            deployedCompanies.AddRange(PlayerFormation.Where(x=>x.Unit!=null));deployedCompanies.AddRange(EnemyFormation.Where(x=>x.Unit!=null));
+        }
         return deployedCompanies;
     }
 
@@ -131,20 +151,6 @@ public class FormationManager : ScriptableObject
         foreach (var comp in companiesToRemove)
         {
             EnemyFormation.Remove(comp);
-        }
-    }
-
-    public void CreateEmptyCompanies()
-    {
-        RemoveEmptyCompanies();
-        CalculatePossibleDeploymentPositions();
-        foreach (var pos in PlayerPossibleDeploymentPositions)
-        {
-            PlayerFormation.Add(new Company(new List<(int X, int Y)>{pos}, FormationType.Frontline,PlayerHero));
-        }
-        foreach (var pos in EnemyPossibleDeploymentPositions)
-        {
-            EnemyFormation.Add(new Company(new List<(int X, int Y)>{pos}, FormationType.Frontline,EnemyHero));
         }
     }
     //Round logic
@@ -209,7 +215,7 @@ public class FormationManager : ScriptableObject
         return answer;
     }
 
-    public List<Company> GetNeighbouringCompanies(Company comp)
+    public List<Company> GetNeighbouringCompanies(Company comp,bool returnAllies = false)
     {
         List<Company> possibleCompanies = new List<Company>();
         List<(int X, int Y)> possiblePos = new List<(int X, int Y)>();
@@ -223,8 +229,15 @@ public class FormationManager : ScriptableObject
 
         foreach (var pos in possiblePos)
         {
-            var posComp = EnemyFormation.Where(x => x.occupiedPositions.Contains(pos) && x.unitOwner!=comp.unitOwner).First();
-            if (posComp != null && !possibleCompanies.Contains(posComp)) possibleCompanies.Add(posComp);
+            Company posComp = null;
+            var posComps =
+                EnemyFormation.Where(x => x.occupiedPositions.Contains(pos) && x.unitOwner != comp.unitOwner);
+            if (posComps.Count() > 0) posComp = EnemyFormation.Where(x => x.occupiedPositions.Contains(pos) && x.unitOwner!=comp.unitOwner).First();
+            if (posComp != null && !possibleCompanies.Contains(posComp))
+            {
+                possibleCompanies.Add(posComp);
+                Debug.Log($"comp:{comp.Unit.name} {comp.unitOwner.name} posCOmp:{posComp.unitOwner.name} {posComp.occupiedPositions[0]}");
+            }
         }
         return possibleCompanies;
     }

@@ -53,10 +53,10 @@ public abstract class UnitAbility
         targets.Clear();
         targets.Add(comp);
     }
-    public void InitAbility(Company unitCompany, FormationManager formation)
+    public void InitAbility(Company unitCompany, FormationManager formationManager)
     {
         UnitCompany = unitCompany;
-        formation = formation;
+        formation = formationManager;
     }
     public void ChangeCompany(Company unitCompany)
     {

@@ -2521,6 +2521,8 @@ MonoBehaviour:
   Config: {fileID: 1197611734}
   StartBattleButton: {fileID: 693189266}
   EnemyEventUnits: []
+  DeployingPhase: 1
+  unitsToPlace: 0
 --- !u!114 &1197611737
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3072,7 +3074,8 @@ MonoBehaviour:
   UnitSprites: {fileID: 11400000, guid: d6e64d7b762dfc64c96e321f620f1139, type: 2}
   IconSprites: {fileID: 11400000, guid: bca28af3eb0bffb4bb89604fcddbf8a7, type: 2}
   logic: {fileID: 1504221619}
-  Formation: {fileID: 0}
+  Formation: {fileID: 11400000, guid: 403bd610071db4e4481cf0a6f0e3e388, type: 2}
+  PreBattleState: {fileID: 0}
   PlayerFieldParent: {fileID: 841156622}
   EnemyFieldParent: {fileID: 1002038120}
   HighlitedUnit: {fileID: 0}
