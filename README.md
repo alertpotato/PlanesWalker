@@ -4,7 +4,7 @@ At this moment i'm iterating through combat mechanics.
 
 Built on Unity 2022.
 # Premise
-Game will be really light on story elements. You are an unnamed wizard in medieval fantasy environment who is stalking another wizard. Your magic power gives you an ability to craft reality around yourself laying a path towards more chaotic worlds. It is heavily inspired from "The Chronicles of Amber" book series.
+Game will be really light on story elements. You are an unnamed wizard in medieval fantasy environment who is stalking another wizard. Your magic power gives you an ability to craft reality around yourself laying a path towards more chaotic worlds. It is inspired from "The Chronicles of Amber" book series.
 # Game structure
 Game has one repeatable loop, where you need to go through certain amount of encounters(turns,days,timeframe not decided) ending with final battle.
 "Encounter" is an enemy army with possible rewards and world modifiers.
@@ -46,9 +46,10 @@ World characteristics that are changing:
 
 ## What is Hero
 Your army as well as any army you are going against is lead by "Hero".
+
 Heroes gives units boosts to characteristics and uses abilities in battle.
-Hero abilities will affect units positioning, units morale and give units unique abilities.
-They will have restrictions on how many times and how frequently you can use them in battle.
+Hero abilities will affect units positioning, units cohesion and give units unique abilities.
+
 Right now heroes are only exist outside of battlefield, but it is possible they will be a central unit on the battlefield.
 
 ## Units
@@ -90,7 +91,7 @@ Game structured so you will work mostly with supplies and weapons at the start o
 
 ## Cohesion
 
-Cohesion determines how damage is distributed between units in a squad. Goes from -10 to +10.
+Third core feature of the game. Cohesion determines how damage is distributed between units in a squad. Goes from -10 to +10.
 
 How it works. Lets say we have squad with 10 units each of them having 10 HP.
 - Cohesion=0 is classic HoMM style damage distribution. 50 damage taken means 5 units dead.
@@ -105,6 +106,10 @@ As you can see difference between being in positive cohesion compered to negativ
 Upon every battle start your units cohesion is always equals to whatever that unit has + your hero bonuses. Then you lose 1 cohesion every round your unit was engadeg in combat. This mechanic meant to be ever growing danger, 0-sum battle-ending mechanism.
 
 Where is a lot of other ways to gain or lose cohesion, related to hero and unit abilities.
+
+### What problem i tried to solve with such a system
+1. I do not like how linear damage is in many games, it feels unfair how easely you can lose units in games like HoMM. Cohesion solves that aspect and also introduces deep mechanic to play with.
+2. Any battle is chaos and endurance trial, no battle can be dragged forever. This makes sure you cannot cheese in some cituations by also adding this growing danger feeling with each turn. 
 
 ## Battle mechanic
 Turn-based, there is a square field, where you can deploy certain amount of troops you acquired. 
