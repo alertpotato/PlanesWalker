@@ -89,8 +89,20 @@ Game structured so you will work mostly with supplies and weapons at the start o
 
 ## Cohesion
 
-This is actually the thing that started this game idea. ...
+Cohesion determines how damage is distributed between units in a squad. Goes from -10 to +10.
+
+How it works. Lets say we have squad with 10 units each of them having 10 HP.
+- Cohesion=0 is classic HoMM style damage distribution. 50 damage taken means 5 units dead.
+- Cohesion>=0 means damage distributed between units, so less of them die. With 10 cohesion first unit will die only on recieving 91 damage. With +1 cohesion taking 50 damage our squad will only lose 4 units instead of 5.
+  >NumberOfUnitsLost = ( UnitHP*(1-COH/10) * NumberOfUnits - (MaxPossibleSquadHP - IncomingDamage) ) / UnitHP*(1-COH/10)
+- Cohesion<0 means squad taking additional damage due to battle chaos and deserters. On reaching -10 cohesion smallest amount of damage will result in whole sqaud lost. Reaching -3 cohesion upon taking 50 damage your squad will lose 6 units instead of 5(with -1 you will still lose 5 units but will take 54 damage instead of 50).
+  >AdditionalCohesionDamage = NumberOfUnitsLost * NumberOfUnits - IncomingDamage
+  
+As you can see difference between being in positive cohesion compered to negative is quite important. More units alive = more damage they retaliate.
+
+So how you gain and lose cohesion?
+Upon every battle start your units cohesion is always equals to whatever that unit has + your hero bonuses. Then you lose 1 cohesion every round your unit was engadeg in combat. This mechanic meant to be ever growing danger, 0-sum battle-ending mechanism.
+But ofcourse you will have certain hero and unit abilities that will replanish cohesion in combat.
 
 ## Battle mechanic
 Turn-based, there is a field like in Heroes of Might and Magic, where you can deploy certain amount of troops you acquired. After deployment stage starts turn based combat, where before each turn you plan in edvance actions you want your units to make, and then your and your enemy actions played in certain order.
-...
