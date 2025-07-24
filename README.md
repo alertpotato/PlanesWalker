@@ -107,10 +107,16 @@ Upon every battle start your units cohesion is always equals to whatever that un
 Where is a lot of other ways to gain or lose cohesion, related to hero and unit abilities.
 
 ## Battle mechanic
-Turn-based, there is a field like in Heroes of Might and Magic, where you can deploy certain amount of troops you acquired. 
+Turn-based, there is a square field, where you can deploy certain amount of troops you acquired. 
 
 Deployment stage will most likely have some strategic mini-game, where you and your opponent place unit 1 by 1, untill all is deployed or field is full.
 
 Each turn you first choose what abilities you want your troops to use, and then your and your enemy actions played in certain order for that round.
 
+There is idea to make 5 different types of cells for troops to be in: Front, Flank(2), Support, Reserve. Depending on the type of cell there is will be different rules of engagement. Possible rules:
+- Front attacks Front, if it is mounted units also attacks Flanks.
+- Flanks attacks Flanks, if opposite flank empty can attack Front, if it is mounted units also can target Support.
+- archers in Support can target Front or Flanks, if it is mounted support can target Flank or Front.
+- Reserve units can rest there replanishing there Cohesion, and switch with your units in other places between turns.
+  
 Nothing is set in stone about it, will be described better later.
