@@ -7,7 +7,7 @@ Built on Unity 2022.
 Game will be really light on story elements. You are an unnamed wizard in medieval fantasy environment who is stalking another wizard. Your magic power gives you an ability to craft reality around yourself laying a path towards more chaotic worlds. It is heavily inspired from "The Chronicles of Amber" book series.
 # Game structure
 Game has one repeatable loop, where you need to go through certain amount of encounters(turns,days,timeframe not decided) ending with final battle.
-"Encounter" is enemy army with possible rewards and possible world modifiers.
+"Encounter" is an enemy army with possible rewards and world modifiers.
 Gameplay loop is:
 - Choose one encounter out of a set
 - Place your army on the battlefield
@@ -22,7 +22,7 @@ While doing all of that there are 3 types of progression to follow: meta progres
   
 ### Meta progression
 Not yet defined.
-One of the ideas was to get players different starting heroes, and so they would be locked behind certain achievements etc.
+One of the ideas was to give players different starting heroes, and so they would be locked behind certain achievements etc.
 Possible to make different starting world conditions, about what it is later.
 
 ### World progression
@@ -34,7 +34,7 @@ World characteristics that are changing:
 - available races
 - individual race power
 - race society level(is it a goblin village or is a kingdom and they can have goblin knights?)
-- world resources and supplies(tied to units power)
+- world resources and supplies(tied to enemy units power)
 - technological level
 - magical level
 
@@ -70,7 +70,8 @@ There are certain templates like "Archers", "Hedge knights", "Hobelars", etc. th
 
 Armours and weapons are not set in stone yet. Right now there are 3 types of damage: pierce, slash and blunt. Armours have resists against them, weapons have damage values and penetration for each.
 
-Unit abilities are "Arrow volley" for units with ranged weapons, "Charge" for mounted units etc.
+Unit abilities are "Arrow volley" for units with ranged weapons, "Charge" for mounted units etc. Each ability can change how unit deals and takes damage, also determines behavior on the battlefield.
+Abilities is not some special things for units to do from time to time, its only way they are doing staff. Abilities also used to retaliate in combat, so some archers will have shooting abilities that allows to shoot back, some units on the contrary will have good "attacking" and bad "defending" abilities(or none whatsoever). 
 
 Each unit template have weight tables for each parameter, so it can be generated with different quality levels. One of the aspirations of the game would be hunt for "perfect" unit. For example Knights have lowest squad size, but greater health, cohesion and better equipment sets. it is rare but extremely powerful when they get bonuses to squad size, greatly multiplying squad power.
 
@@ -96,13 +97,20 @@ How it works. Lets say we have squad with 10 units each of them having 10 HP.
 - Cohesion>=0 means damage distributed between units, so less of them die. With 10 cohesion first unit will die only on recieving 91 damage. With +1 cohesion taking 50 damage our squad will only lose 4 units instead of 5.
   >NumberOfUnitsLost = ( UnitHP*(1-COH/10) * NumberOfUnits - (MaxPossibleSquadHP - IncomingDamage) ) / UnitHP*(1-COH/10)
 - Cohesion<0 means squad taking additional damage due to battle chaos and deserters. On reaching -10 cohesion smallest amount of damage will result in whole sqaud lost. Reaching -3 cohesion upon taking 50 damage your squad will lose 6 units instead of 5(with -1 you will still lose 5 units but will take 54 damage instead of 50).
-  >AdditionalCohesionDamage = NumberOfUnitsLost * NumberOfUnits - IncomingDamage
+  >AdditionalCohesionDamage = NumberOfUnitsLost * UnitHP - IncomingDamage
   
-As you can see difference between being in positive cohesion compered to negative is quite important. More units alive = more damage they retaliate.
+As you can see difference between being in positive cohesion compered to negative is quite noticeble. Managing your troops cohesion in combat meant to be main player task.
 
-So how you gain and lose cohesion?
+### Cohesion economy
 Upon every battle start your units cohesion is always equals to whatever that unit has + your hero bonuses. Then you lose 1 cohesion every round your unit was engadeg in combat. This mechanic meant to be ever growing danger, 0-sum battle-ending mechanism.
-But ofcourse you will have certain hero and unit abilities that will replanish cohesion in combat.
+
+Where is a lot of other ways to gain or lose cohesion, related to hero and unit abilities.
 
 ## Battle mechanic
-Turn-based, there is a field like in Heroes of Might and Magic, where you can deploy certain amount of troops you acquired. After deployment stage starts turn based combat, where before each turn you plan in edvance actions you want your units to make, and then your and your enemy actions played in certain order.
+Turn-based, there is a field like in Heroes of Might and Magic, where you can deploy certain amount of troops you acquired. 
+
+Deployment stage will most likely have some strategic mini-game, where you and your opponent place unit 1 by 1, untill all is deployed or field is full.
+
+Each turn you first choose what abilities you want your troops to use, and then your and your enemy actions played in certain order for that round.
+
+Nothing is set in stone about it, will be described better later.
