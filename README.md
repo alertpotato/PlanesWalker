@@ -2,7 +2,9 @@
 This is a prototype for a card-based game. It will include deckbuilding mechanics, turn-based combat and some auto-battler features.
 At this moment i'm iterating through combat mechanics.
 
-Built on Unity 2022.
+Built on Unity 2022. Download old builds: 
+[Prototype V1](https://drive.google.com/file/d/1Qh-TkL4kCk4BqsMDOLCXyL1BtkgUn9Ci/view?usp=sharing)
+[Prototype V2](https://drive.google.com/file/d/11L_-2gjfT28UW9zROj5E1n2aUGXrig0R/view?usp=sharing)
 # Premise
 Game will be really light on story elements. You are an unnamed wizard in medieval fantasy environment who is stalking another wizard. Your magic power gives you an ability to craft reality around yourself laying a path towards more chaotic worlds. It is inspired from "The Chronicles of Amber" book series.
 # Game structure
