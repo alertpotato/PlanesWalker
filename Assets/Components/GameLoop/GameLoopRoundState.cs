@@ -43,17 +43,22 @@ public class GameLoopRoundState : StateBehaviour
         //Config.Battlefield.GetComponent<Battlefield>().logic.FrontShift(Config.EnemyFormation);
         // Update field graphic
         Config.Battlefield.GetComponent<Battlefield>().UpdateField();
-        CheckWinCondition();
+        if (CheckWinCondition()) return;
+        
+        Config.Battlefield.GetComponent<Battlefield>().logic.Order();
     }
 
-    private void CheckWinCondition()
+    private bool CheckWinCondition()
     {
+        bool answer=false;
         if (Config.Formation.GetDeployedCompanies(Config.EnemyHero.GetComponent<Hero>()).Count == 0)
         {
             ChangeState<GameLoopRewardState>();
+            answer = true;
         }
         else if (Config.Formation.GetDeployedCompanies(Config.PlayerHero.GetComponent<Hero>()).Count==0) StartCoroutine(EndGameScreen());
         else ButtonStartRound();
+        return answer;
     }
     IEnumerator EndGameScreen()
     {

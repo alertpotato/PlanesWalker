@@ -43,7 +43,7 @@ public class OnFieldCompanyManager : MonoBehaviour
     public void DisableCellText()
     {
         HideUI(false);
-        CompanyHint(Company.Type.ToString() + "#" + Company.occupiedPositions[0]);
+        CompanyHint(Company.Type.ToString() + "#" + Company.Position);
     }
 
     private void HideUI(bool hide)

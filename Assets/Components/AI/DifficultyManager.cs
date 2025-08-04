@@ -195,7 +195,7 @@ public class DifficultyManager : MonoBehaviour
         GameObject newUnitObject = Instantiate(UnitPrefab,parent.transform);
         ArmyUnitClass unitClass = newUnitObject.GetComponent<ArmyUnitClass>();
         unitClass.InitializeUnit(newUnit);
-        newUnitObject.name = $"{unitClass.squadName}_{newUnitObject.GetInstanceID()}";
+        newUnitObject.name = $"{unitClass.squadName}{newUnitObject.GetInstanceID()}";
         newUnitObject.transform.position = Vector3.zero;
         return newUnitObject;
     }

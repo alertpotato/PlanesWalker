@@ -86,9 +86,8 @@ public class GameLoopPreBattleState : StateBehaviour
             Config.EnemyHero.GetComponent<Hero>().AddBannerList(unit);
         }
     }
-    public void EnemyUnitAllocation()
+    private void EnemyUnitAllocation()
     {
-        Debug.Log("EnemyUnitAllocation");
-        //TODO Make new logic here
+        if (Config.Battlefield.GetComponent<Battlefield>().logic.EnemyLogic(Config.EnemyHero)) Debug.Log("Enemy Unit Allocation");
     }
 }

@@ -23,23 +23,28 @@ public class Battlefield : MonoBehaviour
     public GameObject PlayerFieldParent;
     public GameObject EnemyFieldParent;
     public GameObject HighlitedUnit;
+    public GridManager Grid;
     [Header("FieldVars")]
     public float companySpacing = 0.2f;
     public float companyHeight = 2f;
-    public float fieldZPos = -3.5f;
+    public float fieldZPos = -3f;
     public bool generateEmptyFields = false;
 
     // GameLoopPreBattleState ==> RebuildField() -> UpdateField()
-    
+    private void Awake()
+    {
+        Grid = transform.GetComponent<GridManager>();
+    }
     public void Initialize(Camera camera,FormationManager formation,GameLoopPreBattleState preBattleState)
     {
         MainCamera = camera;
         logic = transform.GetComponent<BattlefieldLogic>();
         logic.Battlefield = this;
         Formation = formation;
+        Formation.FormationGrid = Grid;
         PreBattleState = preBattleState;
         PlayerFieldParent.transform.position = new Vector3(0, -1.5f, fieldZPos);
-        EnemyFieldParent.transform.position = new Vector3(0, 1.5f, fieldZPos);
+        EnemyFieldParent.transform.position = new Vector3(0, -1.5f, fieldZPos);
     }
     public void RebuildField()
     {
@@ -59,7 +64,7 @@ public class Battlefield : MonoBehaviour
             float AbilitiesPosMod = -75;
             if (parent==EnemyFieldParent) AbilitiesPosMod = 125;
             cell.GetComponent<OnFieldCompanyManager>().InitializeCell(comp,this,AbilitiesPosMod);
-            cell.name = $"{owner.heroName}_{comp.Type.ToString()}_{comp.occupiedPositions[0].ToString()}";
+            cell.name = $"{owner.heroName}_{comp.Type.ToString()}_{comp.Position.ToString()}";
             cellList.Add(cell);
         }
     }
@@ -102,11 +107,17 @@ public class Battlefield : MonoBehaviour
         foreach (GameObject comp in cellList)
         {
             var compMan = comp.GetComponent<OnFieldCompanyManager>();
-            var tempPos = compMan.Company.occupiedPositions[0];
-            comp.transform.localPosition = new Vector3(tempPos.X*(companySpacing+companyHeight),tempPos.Y*companyHeight,0);
+            var tempPos = compMan.Company.Position;
+            comp.transform.localPosition = new Vector3(tempPos.x*(companySpacing+companyHeight),tempPos.y*companyHeight,0);
+            //TODO temp fix to hide empty enemy comp
+            if (compMan.Company.Unit == null && compMan.Company.unitOwner == Formation.EnemyHero)
+            {
+                comp.transform.localPosition = new Vector3(999,999,0);
+            }
             UpdateCompanySprite(compMan);
         }
     }
+    
     
     private void AddNewEmptyCells(Hero owner, List<GameObject> cellList,GameObject parent)
     {
@@ -119,7 +130,7 @@ public class Battlefield : MonoBehaviour
             float AbilitiesPosMod = -75;
             if (parent==EnemyFieldParent) AbilitiesPosMod = 125;
             cell.GetComponent<OnFieldCompanyManager>().InitializeCell(comp,this,AbilitiesPosMod);
-            cell.name = $"{owner.heroName}_{comp.Type.ToString()}_{comp.occupiedPositions[0].ToString()}";
+            cell.name = $"{owner.heroName}_{comp.Type.ToString()}_{comp.Position.ToString()}";
             cellList.Add(cell);
             //Debug.Log($"Adding cell {comp.occupiedPositions[0].ToString()}");
         }

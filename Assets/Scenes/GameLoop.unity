@@ -3048,6 +3048,7 @@ GameObject:
   - component: {fileID: 1504221620}
   - component: {fileID: 1504221619}
   - component: {fileID: 1504221618}
+  - component: {fileID: 1504221621}
   m_Layer: 0
   m_Name: Battlefield
   m_TagString: Untagged
@@ -3081,7 +3082,8 @@ MonoBehaviour:
   HighlitedUnit: {fileID: 0}
   companySpacing: 0.2
   companyHeight: 2
-  fieldZPos: -3.5
+  fieldZPos: -3
+  generateEmptyFields: 0
 --- !u!114 &1504221619
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3123,6 +3125,20 @@ Transform:
   - {fileID: 1002038121}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1504221621
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1504221617}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0328f49b6f0046f5a58ed9e31d81ed2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  width: 10
+  height: 10
 --- !u!1 &1540212828
 GameObject:
   m_ObjectHideFlags: 0

@@ -25,13 +25,25 @@ public class AbilityOrderUI : MonoBehaviour
         OrderIndex.text = index.ToString();
         FromIcon.sprite = UnitSprites.GetIconSpriteByName(Unit.UnitCompany.Unit.GetComponent<ArmyUnitClass>().squadName);
         List<Company> abTargets = new List<Company>();
-        if (Unit.UnitAbility != null) abTargets.AddRange(Unit.UnitAbility.GetAbilityTargets());
+        
+        if (Unit.UnitAbility != null)
+        {
+            Unit.UnitAbility.TryGetCompanyTargets(out List<Company> comps);
+            abTargets.AddRange(comps);
+        }
+        else
+        {
+            Debug.LogWarning($"UnitAbility is null for {Unit.UnitCompany.Unit}");
+            return;
+        }
+        AbilityIcon.sprite = IconsSprites.GetSpriteByName(Unit.UnitAbility.AbilityName);
         if (abTargets.Count > 0)
         {
-            AbilityIcon.sprite = IconsSprites.GetSpriteByName(Unit.UnitAbility.AbilityName);
+            //TODO This is a mess
+            if (abTargets[0] == null) return;
             ToIcon.sprite =
                 UnitSprites.GetIconSpriteByName(
-                    (Unit.UnitAbility.targets[0].Unit.GetComponent<ArmyUnitClass>().squadName));
+                    (abTargets[0].Unit.GetComponent<ArmyUnitClass>().squadName));
         }
     }
 

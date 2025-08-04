@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using UnityEngine;
 using System.Linq;
+using Unity.VisualScripting;
+using UnityEngine.TestTools;
+using UnityEngine.UIElements;
 
 [Serializable]
 public enum FormationType { Frontline, Support, Reserve, Flank1, Flank2 };
@@ -13,17 +16,31 @@ public class Company
 {
     public GameObject Unit;
     public Hero unitOwner;
-    public List<(int X, int Y)> occupiedPositions;
-    public string position0;
+    public int X { get; set; }
+    public int Y { get; set; }
+    public (int x, int y) Position => (X, Y);
     public FormationType Type;
-    public Company(List<(int X, int Y)> positions,FormationType type=FormationType.Frontline,Hero owner=null) 
+    public Company(int x, int y,GridManager grid,FormationType type=FormationType.Frontline,Hero owner=null)
     {
-        occupiedPositions = new List<(int X, int Y)>();
         Unit = null;
         unitOwner = owner;
-        occupiedPositions.AddRange(positions);
         Type = type;
-        position0 = positions[0].ToString();
+        X = x;
+        Y = y;
+        grid.AddCompany(this);
+    }
+
+    public bool MoveCompany(int newX, int newY, GridManager grid)
+    {
+        bool move = false;
+        if (grid.MoveCompany(this, newX, newY))
+        {
+            X = newX;
+            Y = newY;
+            move = true;
+        }
+        else move = false;
+        return move;
     }
 }
 //----------------------------------------------------
@@ -36,6 +53,7 @@ public class FormationManager : ScriptableObject
     [SerializeField]private int EnemyStartingLine;
     public Hero PlayerHero;
     public Hero EnemyHero;
+    public GridManager FormationGrid;
     [SerializeField]private List<(int X, int Y)> PlayerPossibleDeploymentPositions = new List<(int X, int Y)>();
     [SerializeField]private List<(int X, int Y)> EnemyPossibleDeploymentPositions = new List<(int X, int Y)>();
     private List<(int X, int Y)> checkAround = new List<(int X, int Y)>{(0, -1),(1, 0),(0, 1),(-1, 0)};
@@ -53,19 +71,12 @@ public class FormationManager : ScriptableObject
         CalculatePossibleDeploymentPositions();
         foreach (var pos in PlayerPossibleDeploymentPositions)
         {
-            PlayerFormation.Add(new Company(new List<(int X, int Y)>{pos}, FormationType.Frontline,PlayerHero));
+            PlayerFormation.Add(new Company(pos.X,pos.Y,FormationGrid, FormationType.Frontline,PlayerHero));
         }
         foreach (var pos in EnemyPossibleDeploymentPositions)
         {
-            EnemyFormation.Add(new Company(new List<(int X, int Y)>{pos}, FormationType.Frontline,EnemyHero));
+            EnemyFormation.Add(new Company(pos.X,pos.Y,FormationGrid, FormationType.Frontline,EnemyHero));
         }
-
-        var logg = "EMPTY: ";
-        foreach (var fof in PlayerFormation.Where(f => f.Unit == null))
-        {
-            logg += $"{fof.occupiedPositions[0].ToString()}--";
-        }
-        Debug.Log(logg);
     }
     //Deployment and movement logic
     public void CalculatePossibleDeploymentPositions()
@@ -79,13 +90,10 @@ public class FormationManager : ScriptableObject
             var deployedCompaniesPos = GetDeployedCompaniesPositions(PlayerHero);
             foreach (var comp in PlayerFormation)
             {
-                foreach (var pos in comp.occupiedPositions)
+                foreach (var checkPos in checkAround)
                 {
-                    foreach (var checkPos in checkAround)
-                    {
-                        if (pos.Y+checkPos.Y>PlayerStartingLine) continue;
-                        newPossiblePlayerList.Add((pos.X+checkPos.X, pos.Y+checkPos.Y));
-                    }
+                    if (comp.Y+checkPos.Y>PlayerStartingLine) continue;
+                    newPossiblePlayerList.Add((comp.X+checkPos.X, comp.Y+checkPos.Y));
                 }
             }
             PlayerPossibleDeploymentPositions.AddRange(ListFunctions.RemoveDuplicatesAgainstOtherList(newPossiblePlayerList,deployedCompaniesPos));
@@ -98,13 +106,10 @@ public class FormationManager : ScriptableObject
             var deployedCompaniesPos = GetDeployedCompaniesPositions(EnemyHero);
             foreach (var comp in EnemyFormation)
             {
-                foreach (var pos in comp.occupiedPositions)
+                foreach (var checkPos in checkAround)
                 {
-                    foreach (var checkPos in checkAround)
-                    {
-                        if (pos.Y+checkPos.Y<PlayerStartingLine) continue;
-                        newPossiblEnemyList.Add((pos.X+checkPos.X, pos.Y+checkPos.Y));
-                    }
+                    if (comp.Y+checkPos.Y<PlayerStartingLine) continue;
+                    newPossiblEnemyList.Add((comp.X+checkPos.X, comp.Y+checkPos.Y));
                 }
             }
             EnemyPossibleDeploymentPositions.AddRange(ListFunctions.RemoveDuplicatesAgainstOtherList(newPossiblEnemyList,deployedCompaniesPos));
@@ -117,7 +122,7 @@ public class FormationManager : ScriptableObject
         var deployedCompaniesPos = new List<(int X, int Y)>();
         foreach (var comp in deployedCompanies)
         {
-            deployedCompaniesPos.AddRange(comp.occupiedPositions);
+            deployedCompaniesPos.Add(comp.Position);
         }
         return deployedCompaniesPos;
     }
@@ -138,18 +143,41 @@ public class FormationManager : ScriptableObject
         return deployedCompanies;
     }
 
+    public List<Company> GetFrontlineCompanies()
+    {
+        var EnemyEmptyComps = GetDeployedCompanies(EnemyHero,true);
+        var PlayerComps = GetDeployedCompanies(PlayerHero);
+        List<(int X, int Y)> FrontOccupiedPos = new List<(int X, int Y)>();
+        foreach (var comp in PlayerComps)
+        {
+            if (comp.Y == PlayerStartingLine)
+            {
+                FrontOccupiedPos.Add(comp.Position);
+            }
+        }
+
+        if (FrontOccupiedPos.Count > 0)
+        {
+            var SortedEnemyComp = EnemyEmptyComps.Where(comp => FrontOccupiedPos.Any(x => (x.X,EnemyStartingLine)==comp.Position)).ToList();
+            return SortedEnemyComp;
+        }
+        else return new List<Company>();
+    }
+
     public void RemoveEmptyCompanies()
     {
         var companiesToRemove = new List<Company>();
         companiesToRemove.AddRange(PlayerFormation.Where(x=>x.Unit==null));
         foreach (var comp in companiesToRemove)
         {
+            FormationGrid.RemoveCompany(comp);
             PlayerFormation.Remove(comp);
         }
         companiesToRemove.Clear();
         companiesToRemove.AddRange(EnemyFormation.Where(x=>x.Unit==null));
         foreach (var comp in companiesToRemove)
         {
+            FormationGrid.RemoveCompany(comp);
             EnemyFormation.Remove(comp);
         }
     }
@@ -203,6 +231,7 @@ public class FormationManager : ScriptableObject
     {
         PlayerFormation.Clear();
         EnemyFormation.Clear();
+        FormationGrid.grid.Clear();
     }
     //Logic logic
     private bool IsCompanyOnField(GameObject unit) //Checks if unit already assigned to any company(field cell)
@@ -219,28 +248,28 @@ public class FormationManager : ScriptableObject
     {
         List<Company> possibleCompanies = new List<Company>();
         List<(int X, int Y)> possiblePos = new List<(int X, int Y)>();
-        foreach (var compPos in comp.occupiedPositions)
+
+        foreach (var checkPos in checkAround)
         {
-            foreach (var checkPos in checkAround)
-            {
-                possiblePos.Add((compPos.X+checkPos.X, compPos.Y+checkPos.Y));
-            }
+            possiblePos.Add((comp.X+checkPos.X, comp.Y+checkPos.Y));
         }
+
 
         foreach (var pos in possiblePos)
         {
             Company posComp = null;
             var posComps =
-                EnemyFormation.Where(x => x.occupiedPositions.Contains(pos) && x.unitOwner != comp.unitOwner);
-            if (posComps.Count() > 0) posComp = EnemyFormation.Where(x => x.occupiedPositions.Contains(pos) && x.unitOwner!=comp.unitOwner).First();
+                EnemyFormation.Where(x => x.Position==pos && x.unitOwner != comp.unitOwner);
+            if (posComps.Count() > 0) posComp = EnemyFormation.Where(x => x.Position==pos && x.unitOwner!=comp.unitOwner).First();
             if (posComp != null && !possibleCompanies.Contains(posComp))
             {
                 possibleCompanies.Add(posComp);
-                Debug.Log($"comp:{comp.Unit.name} {comp.unitOwner.name} posCOmp:{posComp.unitOwner.name} {posComp.occupiedPositions[0]}");
+                Debug.Log($"comp:{comp.Unit.name} {comp.unitOwner.name} posCOmp:{posComp.unitOwner.name} {posComp.Position}");
             }
         }
         return possibleCompanies;
     }
+    
     /*private void FrontShift() // If front line is empty shift flanks or sup or reserve to front line
 {
     var onField = GetOnFieldcompanies();

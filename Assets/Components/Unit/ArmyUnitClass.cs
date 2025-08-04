@@ -39,7 +39,7 @@ public class ArmyUnitClass : MonoBehaviour
 
     private void RebuildUnit()
     {
-        unit.RebuildCurrentUnitAttributes();
+        unit.RebuildCurrentUnitAttributes(unitFactory);
         currentSquadHealth = unit.CurrentUnitAttributes.Health*unit.CurrentUnitAttributes.SquadSize;
         currentHeat = 0;
         advantage = 0;
@@ -69,7 +69,11 @@ public class ArmyUnitClass : MonoBehaviour
         UnitAbility activeAbility = null;
         foreach (var ability in unit.CurrentUnitAttributes.SquadAbilities)
         {
-            if (ability.SelectTargets()) return ability;
+            if (ability.SelectTargets())
+            {
+                activeAbility = ability;
+                break;
+            }
         }
         return activeAbility;
     }

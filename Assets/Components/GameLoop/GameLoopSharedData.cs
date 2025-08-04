@@ -229,8 +229,6 @@ public class GameLoopSharedData : MonoBehaviour
             Battlefield.GetComponent<Battlefield>().DeHighlightUnitUI();
             SelectedUnits.DeSelectEntity();
         }
-
-        
     }
     private void OnRestartGame(InputValue value)
     {

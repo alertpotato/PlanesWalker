@@ -18,7 +18,7 @@ public class FieldCompanyAbilityButtonManager : MonoBehaviour
     {
         IsButtonsActive = isButtonsActive;
         DeselectAbility();
-        if (IsButtonsActive) AbilityButton.onClick.AddListener(() => funcObect.SelectAbility(index,FieldCompany));
+        if (IsButtonsActive) AbilityButton.onClick.AddListener(() => funcObect.ManualAbilityPick(index,FieldCompany));
         ButtonIcon.sprite = icon;
         FieldCompany = fieldCompany;
         CurrentIndex = index;

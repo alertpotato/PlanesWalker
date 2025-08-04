@@ -56,11 +56,11 @@ public class UnitCardMain : MonoBehaviour
         cardCollider.size = new Vector3(cardSprite.size.x, cardSprite.size.y, 0.1f);
         transform.position = pos;
         startCardPos = pos;
-        
         CardUI.startingOrder = uiOrder;
         CardUI.InitializeUI(RelatedUnitClass);
-        if (extendInfo) CardUI.CreateAbilityUI();
         
+        //TODO Fails if unit has 0 abilities
+        if (extendInfo) CardUI.CreateAbilityUI();
         CardUI.UpdateAllUI();
     }
 

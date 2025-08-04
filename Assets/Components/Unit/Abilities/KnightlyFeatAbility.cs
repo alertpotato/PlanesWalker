@@ -24,9 +24,14 @@ public class KnightlyFeatAbility : UnitAbility
             var sortedUnits = from comp in onFieldTargetsList
                 orderby comp.Unit.GetComponent<ArmyUnitClass>().currentSquadHealth descending
                 select comp;
-            targets.Add(sortedUnits.First());
+            targets.Add(sortedUnits.First().Position);
             return true;
         }
         return false;
+    }
+    public override bool Edvance()
+    {
+        if (Move()) return true;
+        else return false;
     }
 }

@@ -14,15 +14,18 @@ public abstract class UnitAbility
 {
     public string AbilityName = "Default ability name";
     public string AbilityDescription = "Default ability description";
-    public List<Company> targets = new List<Company>();
+    public List<(int X, int Y)> targets = new List<(int X, int Y)>();
     public List<AbilityTags> Tags = new List<AbilityTags>();
     public List<AbilityTags> RetaliationTags = new List<AbilityTags>();
     public Company UnitCompany;
     public FormationManager formation;
     public float AbilityDamageModifier;
     public int InitiativeModifier = 0;
+    public int MoveSpeed = 0;
+    public int MoveDirection = 1;
     public abstract bool SelectTargets();
-    public (int,int,int) GetAbilityImpact()
+    public abstract bool Edvance();
+    public (int,int,int) GetAbilityImpact(Company retaliationCompany = null)
     {
         /*
         //TODO temp solution for targets[0] - figure out what to do here - maybe predifined list?
@@ -51,7 +54,7 @@ public abstract class UnitAbility
     public void AssignTargetForRetaliation(Company comp)
     {
         targets.Clear();
-        targets.Add(comp);
+        targets.Add(comp.Position);
     }
     public void InitAbility(Company unitCompany, FormationManager formationManager)
     {
@@ -125,13 +128,77 @@ public abstract class UnitAbility
         //TODO TEMP
         return (0,0);
     }
-    public List<Company> GetAbilityTargets()
+    public List<(int X, int Y)> GetAbilityTargets()
     {
         return targets;
+    }
+    
+    public bool TryGetCompanyTargets(out List<Company> list)
+    {
+        //TODO You can target your own troops?
+        List<Company> comps = new List<Company>();
+        bool result = false;
+        foreach (var pos in targets)
+        {
+            var newcomp = formation.FormationGrid.GetCompanyAt(pos.X, pos.Y);
+            if (newcomp != UnitCompany && newcomp != null && newcomp?.Unit != null)
+            {
+                comps.Add(newcomp);
+                result = true;
+            }
+        }
+        list = comps;
+        return result;
     }
 
     public List<Company> GetPossibleTargets()
     {
-        return formation.GetNeighbouringCompanies(UnitCompany);
+        List<Hero> EnemyHero = new List<Hero>();
+        if (UnitCompany.unitOwner==formation.EnemyHero) EnemyHero.Add(formation.PlayerHero);
+        else EnemyHero.Add(formation.EnemyHero);
+        return formation.FormationGrid.GetNeighbors(UnitCompany, EnemyHero);
+    }
+
+    public (int,int) GetMoveTarget()
+    {
+        
+        List<Hero> AllHeroes = new List<Hero>(){formation.EnemyHero,formation.PlayerHero};
+        var origPos = UnitCompany.Position;
+        (int,int) taget = origPos;
+        if (MoveSpeed > 0)
+        {
+            int adjustedMoveDirection = MoveDirection;
+            if (UnitCompany.unitOwner == formation.EnemyHero) adjustedMoveDirection = -MoveDirection;
+            for (int i = 0; i < MoveSpeed; i++)
+            {
+                int newPosX = origPos.x;
+                int newPosY = origPos.y + (MoveSpeed - i) * adjustedMoveDirection;
+                Company compInTheWay = formation.FormationGrid.GetCompanyAt(newPosX, newPosY);
+                if (compInTheWay == null || compInTheWay?.Unit==null)
+                {
+                    taget=(newPosX,newPosY);
+                    //Debug.Log($"{UnitCompany.Unit.name} POS {UnitCompany.Position} GetMoveTarget at {newPosX}:{newPosY}");
+                    return taget;
+                }
+            }
+        }
+        return taget;
+    }
+
+    public bool Move()
+    {
+        bool isMoved = false;
+        int adjustedMoveDirection = MoveDirection;
+        if (UnitCompany.unitOwner == formation.EnemyHero) adjustedMoveDirection = -MoveDirection;
+        for (int i = 0; i < MoveSpeed; i++)
+        {
+            if (UnitCompany.MoveCompany(UnitCompany.X, UnitCompany.Y + adjustedMoveDirection, formation.FormationGrid))
+            {
+                isMoved=true;
+                if (UnitCompany.Position==targets[0]) break;
+            }
+            else break;
+        }
+        return isMoved;
     }
 }

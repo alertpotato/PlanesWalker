@@ -65,7 +65,7 @@ public class UnitAttributes
     [Tooltip("Name of the attribute set")]public string AttributesName;
     [Tooltip("Description of the attribute set")]public string AttributesDescription;
     [Tooltip("Health amount of individual unit")]public float Health;
-    [Tooltip("Unity combat proficiency")]public int CombatProficiency;
+    [Tooltip("Unit combat proficiency")]public int CombatProficiency;
     [Tooltip("Unit cohesion")]public int Cohesion;
     
     [Header("Squad attributes")]
@@ -73,7 +73,7 @@ public class UnitAttributes
     [Tooltip("Supply cost to deploy squad on battlefield")]public int[] CostOfDeployment;
     [Tooltip("Squad abilities")][SerializeReference]public List<UnitAbility> SquadAbilities = new List<UnitAbility>();
     
-    public UnitAttributes(string name, float health, int CP, int cohesion,int squadSize,List<Func<UnitAbility>> abilities = null, int[] cost=null)
+    public UnitAttributes(string name, float health, int CP, int cohesion,int squadSize,UnitFactory factory,List<string> abilityTypes, int[] cost=null)
     {
         AttributesName=name;
         Health=health;
@@ -81,11 +81,11 @@ public class UnitAttributes
         Cohesion=cohesion;
         SquadSize=squadSize;
         CostOfDeployment=cost;
-        if (abilities != null)
-            foreach (var ab in abilities)
-            {
-                SquadAbilities.Add(ab());
-            }
+        
+        foreach (var tp in abilityTypes)
+        {
+            SquadAbilities.Add( factory.GetAbility(tp) );
+        }
         //Description fill
         MakeDesc();
     }
@@ -133,7 +133,7 @@ public class UnitAttributes
         }
     }
 
-    public UnitAttributes(UnitAttributes attributesToCopy)
+    public UnitAttributes(UnitAttributes attributesToCopy,UnitFactory factory)
     {
         AttributesName=attributesToCopy.AttributesName;
         AttributesDescription =attributesToCopy.AttributesDescription;
@@ -142,7 +142,12 @@ public class UnitAttributes
         Cohesion=attributesToCopy.Cohesion;
         SquadSize = attributesToCopy.SquadSize;
         CostOfDeployment=attributesToCopy.CostOfDeployment;
-        SquadAbilities=attributesToCopy.SquadAbilities;
+        //TODO Change this logic so its not rewriting abilities?
+        SquadAbilities.Clear();
+        foreach (var tp in attributesToCopy.SquadAbilities)
+        {
+            SquadAbilities.Add( factory.GetAbility(tp.AbilityName) );
+        }
     }
 
     public void AddNewAttribute(UnitAttributes newAttributes)
@@ -200,24 +205,24 @@ public class Unit
     [Header("Unit equipment")]
     [Tooltip("Unit armour")]public ArmourSet armour;
     [Tooltip("Unit weapons")]public List<Weapon> weapons = new List<Weapon>();
-    public Unit(Race unitRace,UnitAttributes baseUnitAttributes,ArmourSet Armour=new ArmourSet(),List<Weapon> Weapons=null)
+    public Unit(Race unitRace,UnitAttributes baseUnitAttributes,UnitFactory factory,ArmourSet Armour=new ArmourSet(),List<Weapon> Weapons=null)
     {
         UnitName = baseUnitAttributes.AttributesName;
         UnitRace = unitRace;
         BaseUnitAttributes = baseUnitAttributes;
         armour = Armour;
         weapons.AddRange(Weapons);
-        RebuildCurrentUnitAttributes();
+        RebuildCurrentUnitAttributes(factory);
     }
 
-    public void RebuildCurrentUnitAttributes()
+    public void RebuildCurrentUnitAttributes(UnitFactory factory)
     {
-        SavedUnitAttributes = new UnitAttributes(BaseUnitAttributes);
+        SavedUnitAttributes = new UnitAttributes(BaseUnitAttributes,factory);
         foreach (var UnitAttr in UnitUpgrades)
         {
             SavedUnitAttributes.AddNewAttribute(UnitAttr);
         }
-        CurrentUnitAttributes = new UnitAttributes(SavedUnitAttributes);
+        CurrentUnitAttributes = new UnitAttributes(SavedUnitAttributes,factory);
     }
 
     public void AddUpgrades(List<UnitAttributes> upgrades)
@@ -260,17 +265,18 @@ public class UnitFactory : ScriptableObject
 
     public List<ArmourSet> armourSetList;
     public List<Weapon> weaponList;
-
+    
     [Tooltip("All default unit characteristics")]
     public List<UnitTemplates> templates;
 
+    private Dictionary<string, Func<UnitAbility>> abilityFactory;
 
     public void InizializeUnitFactory()
     {
         FillListOfPoints();
-        FillTemplates();
+        FillAbilityFactory();
         FillArmourSet();
-
+        FillTemplates();
     }
 
     public Unit GetRandomUnit()
@@ -283,7 +289,7 @@ public class UnitFactory : ScriptableObject
 
         int indexOfSelectedUnit = WeightFunctions.GetRandomWeightedIndex(localUnitWeights);
 
-        return new Unit(Race.Human, templates[indexOfSelectedUnit].templateUnitAttributes, Weapons: new List<Weapon> { weaponList[0] });
+        return new Unit(Race.Human, templates[indexOfSelectedUnit].templateUnitAttributes,this, Weapons: new List<Weapon> { weaponList[0] });
     }
 
 public int GenerateUpgradePoints()
@@ -341,6 +347,7 @@ public int GenerateUpgradePoints()
     {
         armourSetList.Clear();
         weaponList.Clear();
+        
         ArmourSet LeatherArmourSet = new ArmourSet("Leather Armour",new int[4]{0,1,0,0},ArmourType.Leather,0,1,1);
         ArmourSet QuiltedLeatherArmourSet = new ArmourSet("Quilted Leather Armour",new int[4]{1,1,0,0},ArmourType.Leather,1,2,1);
         ArmourSet ChainArmourSet = new ArmourSet("Chainmail",new int[4]{0,1,1,0},ArmourType.Chainmail,1,3,2);
@@ -360,18 +367,38 @@ public int GenerateUpgradePoints()
         weaponList.Add(ArcherWeapon);
     }
 
+    private void FillAbilityFactory()
+    {
+        var abilityFactories = new Dictionary<string, Func<UnitAbility>>
+        {
+            { "Melee Combat", () => new MeleeCombatAbility() },
+            { "Arrow Volley", () => new ArrowVolleyAbility() },
+            { "Knightly Feat", () => new KnightlyFeatAbility() },
+            { "Suppressive Fire", () => new SuppressiveFireAbility() },
+            { "Mounted Charge", () => new MountedChargeAbility() },
+        };
+        abilityFactory = abilityFactories;
+    }
+
+    public UnitAbility GetAbility(string abilityType)
+    {
+        return abilityFactory[abilityType]();
+    }
+
     private void FillTemplates()
     {
         templates.Clear();
         //Sets of abilities 
+        
         var melee = new List<Func<UnitAbility>> { () => new MeleeCombatAbility() };
         var knight = new List<Func<UnitAbility>> { () => new KnightlyFeatAbility(), () => new MeleeCombatAbility()};
         var merc = new List<Func<UnitAbility>> { () => new MeleeCombatAbility(),() => new SuppressiveFireAbility() };
         var ranged = new List<Func<UnitAbility>> {() => new ArrowVolleyAbility(),() => new MeleeCombatAbility() };
         var mounted = new List<Func<UnitAbility>> { () => new MountedChargeAbility(),() => new MeleeCombatAbility() };
         // LOOK INTO SAVE LOAD ?
-        var unitAttrMilitia = new UnitAttributes("Militia",10,1,1,8,melee,new int[]{1,0,0,0});
+        var unitAttrMilitia = new UnitAttributes("Militia",10,1,1,8,this,new List<string> { "Melee Combat" },new int[]{1,0,0,0});
         templates.Add(new UnitTemplates(unitAttrMilitia,1,1));
+        /*
         var unitAttrSpear = new UnitAttributes("Spearman",10,2,2,6,melee,new int[]{1,0,0,0});
         templates.Add(new UnitTemplates(unitAttrSpear,1,2));
         var unitAttrArcher = new UnitAttributes("Archer",10,2,1,5,melee,new int[]{1,0,0,0});
@@ -384,6 +411,7 @@ public int GenerateUpgradePoints()
         templates.Add(new UnitTemplates(unitAttrHobelar,1,3));
         var unitAttrKnight = new UnitAttributes("Hedge Knight",10,4,3,2,melee,new int[]{1,0,0,0});
         templates.Add(new UnitTemplates(unitAttrKnight,1,4));
+        */
     }
 
 }

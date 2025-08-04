@@ -37,10 +37,15 @@ public class SuppressiveFireAbility : UnitAbility
             if (possibleUnits.Count > 0)
             {
                 int index = rand.Next(possibleUnits.Count);
-                targets.Add(possibleUnits[index]);
+                targets.Add(possibleUnits[index].Position);
                 return true;
             }
         }
         return false;
+    }
+    public override bool Edvance()
+    {
+        if (Move()) return true;
+        else return false;
     }
 }

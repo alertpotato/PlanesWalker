@@ -14,6 +14,7 @@ public class MountedChargeAbility : UnitAbility
         Tags.Add(AbilityTags.Mounted);
         AbilityDamageModifier = 1.2f;
         InitiativeModifier = 0;
+        MoveSpeed = 2;
         RetaliationTags.Add(AbilityTags.MeleeRetaliation);
         AbilityDescription = $"Mounted charge [melee][mounted]\n  Damage: {Mathf.Round(AbilityDamageModifier*100)}%\n  Target priority:\nRanged->any other unit";
     }
@@ -31,7 +32,7 @@ public class MountedChargeAbility : UnitAbility
             {
                 Random rand = new Random();
                 int index = rand.Next(onFieldTargetsList.Count);
-                targets.Add(onFieldTargetsList[index]);
+                targets.Add(onFieldTargetsList[index].Position);
                 return true;
             }
         }
@@ -49,10 +50,19 @@ public class MountedChargeAbility : UnitAbility
             if (possibleUnits.Count > 0)
             {
                 int index = rand.Next(possibleUnits.Count);
-                targets.Add(possibleUnits[index]);
+                targets.Add(possibleUnits[index].Position);
                 return true;
             }
         }
         return false;
+    }
+    public override bool Edvance()
+    {
+        if (Move())
+        {
+            SelectTargets();
+            return true;
+        }
+        else return false;
     }
 }
