@@ -1,55 +1,28 @@
 # PlanesWalker
 
-A personal **card-based tactical-combat prototype** built with **Unity and C#**. The project explores unit abilities, planned actions, turn resolution and the interaction between unit stats and battlefield position.
+PlanesWalker is a Unity game prototype about travelling between dimensions and gathering an army from magical and non-magical worlds. The idea grew from the world-hopping fantasy of *The Chronicles of Amber* and *Magic: The Gathering*.
 
-Prototype development was intermittent from **August 2023 to August 2025**, following an initial repository setup in February 2022. This is an experimental personal project, not a finished or commercially released game.
+I imagined a roguelike journey built around choosing the next encounter, recruiting squads and improving the army between battles. The prototype includes an encounter-selection loop with generated enemies, rewards and increasing difficulty. The broader idea was to organise encounters into acts, each ending in a boss fight before moving on to the next.
 
-## Try an earlier build
+Combat is a mix of a card game and an autobattler, where cards represent squads placed on a tactical battlefield. Positioning affects their available targets and actions, while abilities let the player change how each squad behaves.
 
-- [Prototype V1](https://drive.google.com/file/d/1Qh-TkL4kCk4BqsMDOLCXyL1BtkgUn9Ci/view?usp=sharing)
-- [Prototype V2](https://drive.google.com/file/d/11L_-2gjfT28UW9zROj5E1n2aUGXrig0R/view?usp=sharing)
+I took inspiration from the unit-stack system in Heroes of Might and Magic, where a single battlefield unit represents a group of creatures. I wanted to explore different rules for those groups: simultaneous damage instead of attacks followed by retaliation, engagement limits based on squad size, and morale affecting damage distribution and casualties.
 
-These are the historical builds published with the project. They represent earlier iterations and may differ from the source branches.
+## Implemented systems
 
-## What I worked on
+- **Grid-based tactical combat:** squad deployment, positioning and targeting rules.
+- **Squad behaviour and abilities:** selectable actions and reusable ability and effect logic.
+- **Turn resolution:** action ordering and simultaneous damage application.
+- **Squad-size calculations:** engagement limits that affect how much of a squad can contribute damage.
+- **Morale and casualties:** morale-dependent damage distribution and squad losses.
+- **Stats and progression:** unit attributes and weighted stat-upgrade rules.
+- **Encounter-based progression:** selection between generated encounters, enemy compositions and rewards, with increasing difficulty across successive battles.
+- **Between-battle progression:** recruitment, unit upgrades and resource rewards carried between encounters.
+- **Gameplay architecture:** separation of combat rules from the interaction and presentation layer.
 
-- Unit abilities and interactions, including melee attacks, ranged attacks, charges and retaliation.
-- Turn resolution and action ordering.
-- Grid-based deployment, positioning and targeting.
-- Unit stats, weighted stat progression and upgrade rules.
-- A reusable ability/effect structure, with gameplay rules separated from the interaction layer.
-- Design documentation for encounters, rewards, resource use and the intended progression loop.
+## Running the game
 
-## Combat structure
-
-The prototype separates planning from resolution:
-
-1. Deploy the available units on the battlefield.
-2. Select actions and targets through the on-screen UI.
-3. Resolve the planned actions in the round's action order.
-4. Evaluate the resulting unit state and plan the next round.
-
-The broader design proposes an encounter loop with rewards and changing world conditions. Meta progression, world generation and all planned content should not be assumed to be fully implemented in the downloadable prototypes.
-
-## Design example: cohesion
-
-The design explores **cohesion** as a way to change how incoming damage translates into casualties within a squad. The intended choice is whether to keep a unit engaged or preserve its effectiveness through positioning, abilities and time out of combat.
-
-This makes cohesion both a combat parameter and a pacing constraint: remaining engaged can become progressively more dangerous. The original notes contain the early calculations and examples; they are historical working notes rather than a validated balancing specification.
-
-- [Original design notes, preserved at their published revision](https://github.com/alertpotato/PlanesWalker/blob/4760c7b/README.md)
-
-## Code walkthrough
-
-| Area | Entry point | What to look for |
-| --- | --- | --- |
-| Ability rules | [UnitAbility.cs](Assets/Components/Unit/Abilities/UnitAbility.cs) | The common structure used by unit actions |
-| Concrete abilities | [ArrowVolleyAbility.cs](Assets/Components/Unit/Abilities/ArrowVolleyAbility.cs), [MountedChargeAbility.cs](Assets/Components/Unit/Abilities/MountedChargeAbility.cs) | Different actions built on that structure |
-| Round flow | [GameLoopRoundState.cs](Assets/Components/GameLoop/GameLoopRoundState.cs) | Sequencing a combat round |
-| Battlefield rules | [BattlefieldLogic.cs](Assets/Components/Battlefield/BattlefieldLogic.cs) | Battlefield interactions and targeting rules |
-| Unit data | [ArmyUnitClass.cs](Assets/Components/Unit/ArmyUnitClass.cs) | Unit characteristics and configuration |
-
-## Open in Unity
+### Open in Unity
 
 1. Clone or download the repository's default **`Master`** branch.
 2. Add the repository root in Unity Hub.
@@ -60,7 +33,13 @@ This makes cohesion both a combat parameter and a pacing constraint: remaining e
 
 The repository also contains prototype branches whose behavior and input may differ.
 
-## Related work
+### Download a build
 
-- [My current game-development portfolio](https://drive.google.com/file/d/18c2vwif-Fdyiiagyl8mQI3w3LAcYNHuj/view)
-- [GitHub profile](https://github.com/alertpotato)
+- [Prototype V1](https://drive.google.com/file/d/1Qh-TkL4kCk4BqsMDOLCXyL1BtkgUn9Ci/view?usp=sharing)
+- [Prototype V2](https://drive.google.com/file/d/11L_-2gjfT28UW9zROj5E1n2aUGXrig0R/view?usp=sharing)
+
+Download and extract a build to try it without Unity Editor. These builds are earlier iterations and may differ from the source branches.
+
+## Design notes
+
+[Original design notes](https://github.com/alertpotato/PlanesWalker/blob/4760c7b/README.md)
